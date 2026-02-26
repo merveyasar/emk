@@ -1,0 +1,91 @@
+{% extends "admin/change_form.html" %} {% load static %} {% block content %}
+<div class="preview-grid-container">
+  <div class="admin-form-side">{{ block.super }}</div>
+
+  <div class="live-preview-side">
+    <div class="preview-sticky">
+      <h3 style="color: #666; margin-bottom: 15px; font-family: sans-serif">
+        Canlı Önizleme (Dashboard)
+      </h3>
+
+      <div class="announcement-card-preview">
+        <div class="d-flex-preview mb-3">
+          <div class="spinner-grow-preview"></div>
+          <h6 class="fw-bold-preview">CANLI DUYURU</h6>
+        </div>
+        <p id="preview-text" class="small-preview">
+          Formu doldurmaya başlayın...
+        </p>
+        <a href="#" class="btn-preview">Detayları Gör</a>
+      </div>
+
+      <p style="margin-top: 20px; font-size: 12px; color: #999">
+        * Sadece "İçerik" veya "Kısa Açıklama" alanını simüle eder.
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Admin panelini ikiye bölen düzen */
+  .preview-grid-container {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .admin-form-side {
+    flex: 1;
+    min-width: 0;
+  }
+  .live-preview-side {
+    width: 400px;
+    position: sticky;
+    top: 50px;
+  }
+
+  /* Senin Dashboard CSS'lerinin admin uyarlaması */
+  .announcement-card-preview {
+    background: #121212; /* Koyu tema */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 24px;
+    padding: 25px;
+    font-family: "Inter", sans-serif;
+  }
+  .d-flex-preview {
+    display: flex;
+    align-items: center;
+  }
+  .spinner-grow-preview {
+    width: 10px;
+    height: 10px;
+    background-color: #ffc107;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  .fw-bold-preview {
+    font-weight: bold;
+    margin: 0;
+    color: white;
+    font-size: 14px;
+  }
+  .small-preview {
+    font-size: 14px;
+    margin: 15px 0;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .btn-preview {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: white;
+    color: black;
+    text-decoration: none;
+    padding: 8px;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 12px;
+  }
+</style>
+{% endblock %}
