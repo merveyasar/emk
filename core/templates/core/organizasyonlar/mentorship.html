@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mentorship Programı | Tecrübe Paylaşımı - KOÜ EMK{% endblock %}
+
+{% block content %}
+<style>
+    :root { --ment-blue: #1e3a8a; --ment-orange: #F28C28; }
+
+    /* Hero: Güven ve Bağlantı */
+    .ment-hero {
+        background: linear-gradient(rgba(30, 58, 138, 0.85), rgba(18, 18, 18, 0.9)), url('https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&w=1350&q=80') center/cover;
+        height: 50vh;
+        display: flex;
+        align-items: center;
+        border-radius: 0 0 50px 50px;
+        margin-top: -24px;
+        color: white;
+    }
+
+    /* Süreç Akış Şeması (Steps) */
+    .step-box {
+        text-align: center;
+        padding: 30px;
+        position: relative;
+    }
+    .step-icon {
+        width: 80px; height: 80px;
+        background: var(--ment-orange);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center; justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2rem;
+        box-shadow: 0 10px 20px rgba(242, 140, 40, 0.3);
+    }
+    .step-line::after {
+        content: '';
+        position: absolute;
+        top: 70px; left: 100%;
+        width: 100%; height: 2px;
+        background: #dee2e6;
+        z-index: -1;
+    }
+
+    /* Mentör Kartları */
+    .mentor-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        border: 1px solid #eee;
+        transition: 0.3s;
+    }
+    .mentor-card:hover { transform: translateY(-10px); border-color: var(--ment-orange); }
+    .mentor-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid #eee; }
+
+    /* Başvuru Alanı */
+    .apply-box {
+        background: var(--emk-dark);
+        border-radius: 30px;
+        padding: 50px;
+        color: white;
+    }
+</style>
+
+<div class="ment-wrapper mb-5">
+
+    <section class="ment-hero text-center">
+        <div class="container" data-aos="zoom-in">
+            <h1 class="display-3 fw-bold mb-3">MENTORSHIP PROGRAMI</h1>
+            <p class="lead opacity-75">Mezunlarımızın tecrübesi, öğrencilerimizin enerjisiyle buluşuyor.</p>
+        </div>
+    </section>
+
+    <section class="container py-5 mt-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h2 class="display-5 fw-bold mb-4">Bir Mezun, Bir Öğrenci</h2>
+                <p class="text-muted fs-5">KOÜ EMK Mentorship Programı, kariyer yolculuğuna yeni başlayan öğrencilerimizi, sektörde tecrübe kazanmış mezunlarımızla bir araya getiriyor. Bu program sayesinde staj, iş arama süreçleri ve kariyer planlama gibi konularda doğrudan mezunlarımızdan rehberlik alabilirsiniz.</p>
+                <div class="d-flex gap-4 mt-4">
+                    <div class="text-center">
+                        <h4 class="fw-bold text-primary mb-0">50+</h4>
+                        <small class="text-muted">Aktif Mentör</small>
+                    </div>
+                    <div class="vr"></div>
+                    <div class="text-center">
+                        <h4 class="fw-bold text-primary mb-0">120+</h4>
+                        <small class="text-muted">Başarılı Eşleşme</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80" class="img-fluid rounded-5 shadow-lg">
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5 bg-light rounded-5 my-5">
+        <h2 class="text-center fw-bold mb-5">PROGRAM AKIŞI</h2>
+        
+        <div class="row">
+            <div class="col-md-3 step-box" data-aos="fade-up">
+                <div class="step-icon"><i class="fas fa-edit"></i></div>
+                <h6 class="fw-bold">Başvuru</h6>
+                <p class="small text-muted">Formlar üzerinden talepler alınır.</p>
+            </div>
+            <div class="col-md-3 step-box" data-aos="fade-up" data-aos-delay="100">
+                <div class="step-icon"><i class="fas fa-handshake"></i></div>
+                <h6 class="fw-bold">Eşleşme</h6>
+                <p class="small text-muted">İlgi alanlarına göre eşleşmeler yapılır.</p>
+            </div>
+            <div class="col-md-3 step-box" data-aos="fade-up" data-aos-delay="200">
+                <div class="step-icon"><i class="fas fa-comments"></i></div>
+                <h6 class="fw-bold">Görüşmeler</h6>
+                <p class="small text-muted">Dönem boyu süren mentörlük seansları.</p>
+            </div>
+            <div class="col-md-3 step-box" data-aos="fade-up" data-aos-delay="300">
+                <div class="step-icon"><i class="fas fa-rocket"></i></div>
+                <h6 class="fw-bold">Kariyer</h6>
+                <p class="small text-muted">İş ve staj kapılarının aralanması.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <h2 class="fw-bold text-center mb-5">MENTÖR PORTFÖYÜMÜZDEN</h2>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="zoom-in">
+                <div class="mentor-card">
+                    <img src="https://via.placeholder.com/150" class="mentor-img">
+                    <h6 class="fw-bold mb-1">Can Mete</h6>
+                    <p class="small text-warning fw-bold mb-2">Yönetim Danışmanı</p>
+                    <p class="small text-muted">KOÜ EMK Mezunu '10</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+                <div class="mentor-card">
+                    <img src="https://via.placeholder.com/150" class="mentor-img">
+                    <h6 class="fw-bold mb-1">Zeynep Yılmaz</h6>
+                    <p class="small text-warning fw-bold mb-2">Tedarik Zinciri Müdürü</p>
+                    <p class="small text-muted">KOÜ EMK Mezunu '14</p>
+                </div>
+            </div>
+            </div>
+    </section>
+
+    <section class="container py-5">
+        <div class="apply-box shadow-2xl" data-aos="flip-up">
+            <div class="row align-items-center text-center text-lg-start">
+                <div class="col-lg-7">
+                    <h2 class="fw-bold mb-3">Bu Yolculukta Yerini Al!</h2>
+                    <p class="opacity-75 mb-0">İster tecrübelerini paylaşan bir mentör ol, ister kariyerine yön veren bir öğrenci. Formu doldur, EMK ailesinin gücünü hisset.</p>
+                </div>
+                <div class="col-lg-5 text-lg-end mt-4 mt-lg-0">
+                    <div class="d-flex flex-wrap justify-content-center justify-content-lg-end gap-3">
+                        <a href="#" class="btn btn-warning btn-lg px-4 py-3 fw-bold rounded-pill text-dark">MENTİ BAŞVURUSU</a>
+                        <a href="#" class="btn btn-outline-light btn-lg px-4 py-3 fw-bold rounded-pill">MENTÖR BAŞVURUSU</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

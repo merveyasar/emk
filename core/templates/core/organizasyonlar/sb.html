@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SB | Sektöre Büyüteç - KOÜ EMK{% endblock %}
+
+{% block content %}
+<style>
+    :root { --sb-orange: #F28C28; --sb-dark: #121212; }
+
+    /* 1. Video/Görsel Hero */
+    .sb-hero-wrap {
+        position: relative;
+        height: 75vh;
+        width: 100%;
+        margin-top: -24px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .sb-hero-img {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        filter: brightness(0.35);
+        transform: scale(1.1);
+        transition: 10s linear;
+    }
+    .sb-hero-wrap:hover .sb-hero-img { transform: scale(1); } /* Yavaşça uzaklaşma efekti */
+
+    .sb-hero-content { position: relative; z-index: 5; text-align: center; }
+    .sb-hero-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.5rem, 8vw, 5.5rem); font-weight: 800; color: white; line-height: 1; }
+
+    /* 2. Sayaç Kartı */
+    .sb-timer-card {
+        background: white;
+        border-radius: 30px;
+        padding: 45px;
+        margin-top: -100px;
+        position: relative;
+        z-index: 10;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        border-bottom: 8px solid var(--sb-orange);
+    }
+    .timer-val { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; color: var(--sb-dark); line-height: 1; }
+    .timer-lab { font-size: 0.8rem; font-weight: 700; color: var(--sb-orange); letter-spacing: 3px; }
+
+    /* 3. Resimli Nedir Bölümü */
+    .info-img-wrapper {
+        position: relative;
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    .info-img-overlay {
+        position: absolute;
+        bottom: 0; left: 0; width: 100%;
+        padding: 30px;
+        background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        color: white;
+    }
+
+    /* 4. Sektör Badge Tasarımı */
+    .sector-pill {
+        background: white;
+        border: 1px solid #eee;
+        border-radius: 100px;
+        padding: 15px 35px;
+        margin: 10px;
+        display: inline-block;
+        font-weight: 700;
+        transition: 0.4s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    }
+    .sector-pill:hover { background: var(--sb-orange); color: white; transform: translateY(-5px); }
+
+    /* 5. Masonry Galeri */
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-auto-rows: 250px;
+        gap: 20px;
+    }
+    .gallery-item { border-radius: 20px; overflow: hidden; position: relative; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+    .gallery-item:hover img { transform: scale(1.1); filter: brightness(0.6); }
+    .tall { grid-row: span 2; }
+    .wide { grid-column: span 2; }
+</style>
+
+<div class="sb-page-wrapper" style="overflow-x: hidden;">
+
+    <section class="sb-hero-wrap">
+        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1350&q=80" class="sb-hero-img">
+        <div class="sb-hero-content" data-aos="zoom-out">
+            <h1 class="sb-hero-title">SEKTÖRE <br><span style="color: var(--sb-orange);">BÜYÜTEÇ</span></h1>
+            <p class="lead text-light opacity-75 fs-4 mt-3">Geleceğin Sektörlerine Yakından Bakın</p>
+        </div>
+    </section>
+
+    <section class="container mb-5">
+        <div class="sb-timer-card" data-aos="fade-up">
+            <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                <div class="text-center">
+                    <span class="timer-val" id="days">00</span>
+                    <span class="timer-lab">GÜN</span>
+                </div>
+                <div class="h1 text-muted opacity-25">:</div>
+                <div class="text-center">
+                    <span class="timer-val" id="hours">00</span>
+                    <span class="timer-lab">SAAT</span>
+                </div>
+                <div class="h1 text-muted opacity-25">:</div>
+                <div class="text-center">
+                    <span class="timer-val" id="minutes">00</span>
+                    <span class="timer-lab">DAKİKA</span>
+                </div>
+                <div class="h1 text-muted opacity-25">:</div>
+                <div class="text-center">
+                    <span class="timer-val" id="seconds" style="color: var(--sb-orange);">00</span>
+                    <span class="timer-lab">SANİYE</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5 mt-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="info-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80" class="img-fluid" alt="SB Analiz">
+                    <div class="info-img-overlay">
+                        <h4 class="fw-bold mb-0">Sektörel Vizyon</h4>
+                        <small>Her yıl farklı bir bakış açısı.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <h6 class="text-warning fw-bold ls-2 mb-3">BÜYÜTEÇ ALTINDA KARİYER</h6>
+                <h2 class="display-4 fw-bold mb-4">Sektöre Büyüteç <span class="text-warning">Nedir?</span></h2>
+                <p class="text-muted fs-5">Sektöre Büyüteç (SB), üniversite-sanayi iş birliğinin en somut örneğidir. Öğrencilerimize sadece bir konferans değil, sektörün mutfağını görme fırsatı sunar. Üst düzey yöneticilerin tecrübelerini, vaka analizlerini ve atölye çalışmalarını tek bir çatıda birleştirir.</p>
+                <div class="d-flex gap-4 mt-4">
+                    <div class="p-3 bg-light rounded-4 text-center w-100 border">
+                        <h3 class="fw-bold mb-0">15+</h3>
+                        <small class="text-muted fw-bold">YILLIK TECRÜBE</small>
+                    </div>
+                    <div class="p-3 bg-light rounded-4 text-center w-100 border">
+                        <h3 class="fw-bold mb-0">100+</h3>
+                        <small class="text-muted fw-bold">KONUK ŞİRKET</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-white border-top border-bottom">
+        <div class="container text-center py-4" data-aos="fade-up">
+            <h2 class="fw-bold mb-5">MERCEK ALTINA ALINAN SEKTÖRLER</h2>
+            <div class="d-flex flex-wrap justify-content-center">
+                <div class="sector-pill">Otomotiv</div>
+                <div class="sector-pill">FMCG</div>
+                <div class="sector-pill">Tedarik Zinciri</div>
+                <div class="sector-pill">Yazılım</div>
+                <div class="sector-pill">Savunma Sanayii</div>
+                <div class="sector-pill">Finans</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5 mt-5">
+        <h2 class="display-5 fw-bold text-center mb-5" data-aos="fade-up">ETKİNLİK ARŞİVİ</h2>
+        <div class="gallery-grid" data-aos="fade-up">
+            <div class="gallery-item tall"><img src="https://via.placeholder.com/400x600?text=Konferans+Ani"></div>
+            <div class="gallery-item wide"><img src="https://via.placeholder.com/800x300?text=Grup+Fotografi"></div>
+            <div class="gallery-item"><img src="https://via.placeholder.com/400x300?text=Atolye+Calismasi"></div>
+            <div class="gallery-item"><img src="https://via.placeholder.com/400x300?text=Sektor+Sunumu"></div>
+            <div class="gallery-item wide"><img src="https://via.placeholder.com/800x300?text=Networking+Anlari"></div>
+        </div>
+    </section>
+
+    <section class="container py-5 mb-5">
+        <div class="p-5 rounded-5 text-white shadow-2xl overflow-hidden position-relative" style="background: var(--sb-dark); border-right: 12px solid var(--sb-orange);" data-aos="flip-up">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-7">
+                    <h2 class="display-4 fw-bold mb-4">Bir Sonraki Durağı <br>Sen Belirle!</h2>
+                    <p class="lead opacity-75">Gelecek SB'de hangi sektörü masaya yatırmalıyız? Fikirlerin programımızı şekillendiriyor kanka!</p>
+                </div>
+                <div class="col-lg-5">
+                    <div class="bg-white p-4 rounded-4 text-dark shadow-lg">
+                        <form action="#">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Bir Sektör Öner</label>
+                                <select class="form-select border-2 p-3">
+                                    <option selected>Sektör seçiniz...</option>
+                                    <option>E-Ticaret & Retail</option>
+                                    <option>Yapay Zeka & Veri Bilimi</option>
+                                    <option>Sürdürülebilirlik & Yeşil Enerji</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-emk w-100 py-3 fw-bold">OYUMU GÖNDER</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    const sbTargetDate = new Date("Feb 15, 2026 09:00:00").getTime();
+
+    function updateSBTimer() {
+        const now = new Date().getTime();
+        const diff = sbTargetDate - now;
+
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('days').innerText = d < 10 ? '0' + d : d;
+        document.getElementById('hours').innerText = h < 10 ? '0' + h : h;
+        document.getElementById('minutes').innerText = m < 10 ? '0' + m : m;
+        document.getElementById('seconds').innerText = s < 10 ? '0' + s : s;
+    }
+    
+    setInterval(updateSBTimer, 1000);
+    updateSBTimer();
+</script>
+{% endblock %}

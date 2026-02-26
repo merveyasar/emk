@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Teknik Geziler | Sahada Mühendislik - KOÜ EMK{% endblock %}
+
+{% block content %}
+<style>
+    :root { --tg-orange: #F28C28; --tg-dark: #121212; }
+
+    /* Hero Bölümü */
+    .tg-hero {
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+        height: 50vh;
+        display: flex;
+        align-items: center;
+        border-radius: 0 0 50px 50px;
+        margin-top: -24px;
+    }
+
+    /* Sayaç ve Başvuru Kartı */
+    .tg-action-card {
+        background: #fff;
+        border-radius: 25px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        padding: 40px;
+        margin-top: -70px;
+        z-index: 10;
+        position: relative;
+        border-left: 10px solid var(--tg-orange);
+    }
+
+    /* Pulse Efekti (Başvuru Butonu İçin) */
+    @keyframes pulse-orange {
+        0% { box-shadow: 0 0 0 0 rgba(242, 140, 40, 0.5); }
+        70% { box-shadow: 0 0 0 20px rgba(242, 140, 40, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(242, 140, 40, 0); }
+    }
+    .btn-pulse { animation: pulse-orange 2s infinite; }
+
+    /* Sol Menü (Dönemler) */
+    .tg-sidebar .nav-link {
+        color: var(--emk-dark);
+        background: #f1f1f1;
+        margin-bottom: 12px;
+        padding: 20px;
+        border-radius: 15px;
+        font-weight: 700;
+        transition: 0.3s;
+        border: none;
+        text-align: left;
+    }
+    .tg-sidebar .nav-link.active {
+        background: var(--tg-orange) !important;
+        color: white !important;
+        transform: scale(1.05);
+    }
+
+    /* Fabrika Kartları */
+    .factory-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: 0.4s;
+    }
+    .factory-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+    .factory-img { height: 200px; object-fit: cover; width: 100%; }
+</style>
+
+<div class="tg-wrapper mb-5">
+    
+    <section class="tg-hero text-center text-white">
+        <div class="container" data-aos="zoom-in">
+            <h1 class="display-3 fw-bold">TEKNİK GEZİLER</h1>
+            <p class="lead opacity-75">Üretimi yerinde inceliyor, mühendisliği sahada öğreniyoruz.</p>
+        </div>
+    </section>
+
+    <section class="container mb-5">
+        <div class="tg-action-card" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-lg-3 text-center text-lg-start mb-4 mb-lg-0">
+                    <h5 class="fw-bold mb-1">SIRADAKİ GEZİ:</h5>
+                    <p class="text-warning fw-bold mb-0">Ford Otosan Fabrikası</p>
+                </div>
+                <div class="col-lg-5 mb-4 mb-lg-0">
+                    <div class="d-flex justify-content-center gap-4 text-center">
+                        <div><span class="h2 fw-bold" id="tg-days">00</span><br><small class="text-muted">GÜN</small></div>
+                        <div class="h2 opacity-25">|</div>
+                        <div><span class="h2 fw-bold" id="tg-hours">00</span><br><small>SAAT</small></div>
+                        <div class="h2 opacity-25">|</div>
+                        <div><span class="h2 fw-bold" id="tg-mins">00</span><br><small>DK</small></div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center text-lg-end">
+                    <a href="https://forms.gle/SENIN_FORM_LINKIN" target="_blank" class="btn btn-emk btn-lg px-5 py-3 rounded-pill fw-bold btn-pulse">
+                        <i class="fab fa-google me-2"></i>HEMEN BAŞVUR
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h2 class="display-5 fw-bold mb-4">Teknik Gezi Koordinatörlüğü</h2>
+                <p class="text-muted lead">Bu koordinatörlük, EMK'nın operasyonel gücünü temsil eder. Amacımız, Endüstri Mühendisliği öğrencilerini sınıflardan çıkarıp; devasa üretim hatlarının, lojistik depoların ve karmaşık sistemlerin tam merkezine götürmektir.</p>
+                <div class="alert alert-warning border-0 rounded-4 p-4 mt-4">
+                    <h6 class="fw-bold"><i class="fas fa-info-circle me-2"></i>Neden Katılmalısın?</h6>
+                    <small>Sektördeki lider firmaların üretim süreçlerini yerinde görerek, teorik derslerin (Üretim Planlama, ERP, Simülasyon) pratikteki karşılığını anlama şansı yakalarsın.</small>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <img src="https://images.unsplash.com/photo-1565034946487-077786996e27?auto=format&fit=crop&w=800&q=80" class="img-fluid rounded-5 shadow-lg">
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <h2 class="fw-bold mb-5 text-center">GEZİ GÜNLÜKLERİ</h2>
+        <div class="row">
+            <div class="col-lg-3 tg-sidebar" data-aos="fade-right">
+                <div class="nav flex-column nav-pills" id="tg-tabs">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tg2025">2024 - 2025 Dönemi</button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tg2024">2023 - 2024 Dönemi</button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tg2023">2022 - 2023 Dönemi</button>
+                </div>
+            </div>
+
+            <div class="col-lg-9" data-aos="fade-left">
+                <div class="tab-content border-start ps-lg-5">
+                    
+                    <div class="tab-pane fade show active" id="tg2025">
+                        <h4 class="fw-bold mb-4">Bu Dönemin Durakları</h4>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="factory-card">
+                                    <img src="https://via.placeholder.com/400x200?text=HYUNDAI+ASSAN" class="factory-img">
+                                    <div class="p-3">
+                                        <h5 class="fw-bold">Hyundai Assan</h5>
+                                        <p class="small text-muted">Yalın üretim süreçleri ve JIT uygulamaları incelendi.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="factory-card">
+                                    <img src="https://via.placeholder.com/400x200?text=KORDSA" class="factory-img">
+                                    <div class="p-3">
+                                        <h5 class="fw-bold">Kordsa Global</h5>
+                                        <p class="small text-muted">Ar-Ge merkezi ve malzeme üretim hatları gezildi.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tg2024">
+                        <h4 class="fw-bold">Geçen Dönem Neredeydik?</h4>
+                        <p class="text-muted">Bu döneme ait kayıtlar arşivlenmektedir.</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <div class="p-5 rounded-5 text-white shadow-lg" style="background: var(--tg-dark); border-right: 10px solid var(--tg-orange);" data-aos="flip-up">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h2 class="fw-bold">Gezmek İstediğin Fabrikayı Söyle!</h2>
+                    <p class="lead opacity-75">Bir sonraki rotamızı senin isteklerine göre belirliyoruz. Hangi üretim bandının başında olmak istersin?</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a href="https://forms.gle/SENIN_ONERI_FORMU_LINKIN" target="_blank" class="btn btn-outline-warning btn-lg px-5 py-3 rounded-pill fw-bold">ROTAYI ÖNER</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    // Teknik Gezi Tarihi (Geri Sayım İçin)
+    const countDate = new Date("Mar 12, 2026 08:00:00").getTime();
+
+    function updateCounter() {
+        const now = new Date().getTime();
+        const gap = countDate - now;
+
+        const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+        const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
+
+        document.getElementById('tg-days').innerText = d;
+        document.getElementById('tg-hours').innerText = h;
+        document.getElementById('tg-mins').innerText = m;
+    }
+    setInterval(updateCounter, 1000);
+    updateCounter();
+</script>
+{% endblock %}

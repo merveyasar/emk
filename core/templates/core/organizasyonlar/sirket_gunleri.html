@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Şirket Günleri | Kariyerin Zirvesi - KOÜ EMK{% endblock %}
+
+{% block content %}
+<style>
+    :root { 
+        --sg-orange: #F28C28; 
+        --sg-dark: #121212; 
+    }
+
+    /* 1. Hero Alanı */
+    .sg-hero {
+        background: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8)), 
+                    url('https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1350&q=80') center/cover;
+        height: 60vh;
+        display: flex;
+        align-items: center;
+        border-radius: 0 0 60px 60px;
+        margin-top: -24px;
+        position: relative;
+    }
+
+    /* 2. Sayaç Kartı (Dashboard Stili) */
+    .sg-timer-card {
+        background: white;
+        border-radius: 35px;
+        padding: 45px;
+        margin-top: -90px;
+        position: relative;
+        z-index: 10;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        border-bottom: 8px solid var(--sg-orange);
+    }
+    .timer-val { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; color: var(--sg-dark); line-height: 1; }
+    .timer-lab { font-size: 0.8rem; font-weight: 700; color: var(--sg-orange); letter-spacing: 3px; }
+
+    /* 3. Şirket Arşivi (Logo Grid) */
+    .company-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 30px;
+        padding: 20px;
+    }
+    .company-logo-box {
+        background: #fff;
+        padding: 20px;
+        border-radius: 20px;
+        border: 1px solid #eee;
+        transition: 0.4s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100px;
+    }
+    .company-logo-box:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border-color: var(--sg-orange);
+    }
+    .company-logo-box img { 
+        max-width: 100%; 
+        max-height: 100%; 
+        filter: grayscale(1); 
+        transition: 0.3s; 
+    }
+    .company-logo-box:hover img { filter: grayscale(0); }
+
+    /* 4. Form Alanı (Glassmorphism) */
+    .sg-form-wrap {
+        background: linear-gradient(135deg, #121212 0%, #222 100%);
+        border-radius: 40px;
+        padding: 60px;
+        color: white;
+        border-right: 12px solid var(--sg-orange);
+    }
+</style>
+
+<div class="sg-page-wrapper" style="overflow-x: hidden;">
+
+    <section class="sg-hero text-center text-white">
+        <div class="container" data-aos="zoom-out">
+            <h1 class="display-2 fw-bold mb-4" style="font-family: 'Space Grotesk';">ŞİRKET GÜNLERİ</h1>
+            <p class="lead mx-auto opacity-75" style="max-width: 800px; font-size: clamp(1rem, 2vw, 1.25rem);">
+                Kocaeli Üniversitesi'nin en büyük kariyer fuarı. Sektörün devleriyle geleceğini optimize et.
+            </p>
+        </div>
+    </section>
+
+    <section class="container mb-5">
+        <div class="sg-timer-card shadow-2xl" data-aos="fade-up">
+            <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                <div class="text-center">
+                    <span class="timer-val" id="days">00</span>
+                    <span class="timer-lab">GÜN</span>
+                </div>
+                <div class="h1 text-muted opacity-25">:</div>
+                <div class="text-center">
+                    <span class="timer-val" id="hours">00</span>
+                    <span class="timer-lab">SAAT</span>
+                </div>
+                <div class="h1 text-muted opacity-25">:</div>
+                <div class="text-center">
+                    <span class="timer-val" id="minutes">00</span>
+                    <span class="timer-lab">DAKİKA</span>
+                </div>
+                <div class="h1 text-muted opacity-25">:</div>
+                <div class="text-center">
+                    <span class="timer-val" id="seconds" style="color: var(--sg-orange);">00</span>
+                    <span class="timer-lab">SANİYE</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5 mt-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h2 class="display-4 fw-bold mb-4">Şirket Günleri <span style="color: var(--sg-orange);">Nedir?</span></h2>
+                <p class="text-muted fs-5 mb-4">
+                    Şirket Günleri, her yıl onlarca ulusal ve uluslararası firmayı kampüsümüzde ağırladığımız, öğrencilerimize staj ve iş imkanları sunan prestijli bir kariyer organizasyonudur.
+                </p>
+                <div class="row g-4">
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded-4 border-start border-4 border-warning">
+                            <h3 class="fw-bold mb-0">40+</h3>
+                            <small class="text-muted fw-bold">KATILIMCI FİRMA</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded-4 border-start border-4 border-warning">
+                            <h3 class="fw-bold mb-0">2000+</h3>
+                            <small class="text-muted fw-bold">ZİYARETÇİ</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="p-2 border border-warning rounded-4 shadow-2xl bg-white">
+                    <img src="https://via.placeholder.com/600x800?text=SİRKET+GUNLERI+AFIS" class="img-fluid rounded-4" alt="Şirket Günleri Afişi">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-light py-5 my-5">
+        <div class="container py-5">
+            <h2 class="display-5 fw-bold text-center mb-5" data-aos="fade-up">KATILIMCI ARŞİVİ</h2>
+            
+            <div class="mb-5" data-aos="fade-up">
+                <h4 class="fw-bold text-muted border-bottom pb-2 mb-4">2024 - 2025 Dönemi</h4>
+                <div class="company-grid">
+                    <div class="company-logo-box"><img src="https://via.placeholder.com/120x60?text=LOGO" alt="Logo"></div>
+                    <div class="company-logo-box"><img src="https://via.placeholder.com/120x60?text=LOGO" alt="Logo"></div>
+                    <div class="company-logo-box"><img src="https://via.placeholder.com/120x60?text=LOGO" alt="Logo"></div>
+                    <div class="company-logo-box"><img src="https://via.placeholder.com/120x60?text=LOGO" alt="Logo"></div>
+                    <div class="company-logo-box"><img src="https://via.placeholder.com/120x60?text=LOGO" alt="Logo"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5 mb-5">
+        <div class="sg-form-wrap shadow-2xl" data-aos="zoom-in">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-7">
+                    <h2 class="display-4 fw-bold mb-4">Gelecek Yıl Kimleri <br>Görmek İstersin?</h2>
+                    <p class="lead opacity-75">Hangi dev şirketin HR ekibiyle tanışmak istersin? Önerilerini paylaş, hayallerindeki firmayı kampüse getirelim.</p>
+                </div>
+                <div class="col-lg-5">
+                    <div class="bg-white p-4 rounded-4 text-dark shadow-lg">
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Şirket Önerin</label>
+                                <input type="text" class="form-control p-3 border-2" placeholder="Örn: Trendyol, Ford, Mercedes...">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Neden Bu Şirket?</label>
+                                <textarea class="form-control border-2" rows="3" placeholder="Fikrini kısaca belirt..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-emk w-100 py-3 fw-bold">ÖNERİMİ GÖNDER</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    // Şirket Günleri Tarihi: 10 Nisan 2026
+    const sgTargetDate = new Date("Apr 10, 2026 09:00:00").getTime();
+
+    function updateSGTimer() {
+        const now = new Date().getTime();
+        const diff = sgTargetDate - now;
+
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('days').innerText = d < 10 ? '0' + d : d;
+        document.getElementById('hours').innerText = h < 10 ? '0' + h : h;
+        document.getElementById('minutes').innerText = m < 10 ? '0' + m : m;
+        document.getElementById('seconds').innerText = s < 10 ? '0' + s : s;
+    }
+    
+    setInterval(updateSGTimer, 1000);
+    updateSGTimer();
+</script>
+{% endblock %}

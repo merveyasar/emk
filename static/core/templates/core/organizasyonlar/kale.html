@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}KALE | Kaliteni Göster, Araştır, Lider Ol, Etkile - KOÜ EMK{% endblock %}
+
+{% block content %}
+<style>
+    :root { 
+        --kale-orange: #F28C28; 
+        --kale-dark: #121212; 
+    }
+
+    /* 1. Hero Bölümü */
+    .kale-hero {
+        background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), 
+                    url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1350&q=80') center/cover;
+        height: 50vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-radius: 0 0 50px 50px;
+        margin-top: -24px;
+        text-align: center;
+        width: 100%;
+    }
+
+    /* 2. Canlı Sayaç */
+    .kale-timer-card {
+        background: white;
+        border-radius: 30px;
+        padding: 40px;
+        margin-top: -80px;
+        position: relative;
+        z-index: 10;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        border-bottom: 8px solid var(--kale-orange);
+    }
+    .timer-val { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; color: var(--kale-dark); line-height: 1; }
+    .timer-lab { font-size: 0.75rem; font-weight: 700; color: var(--kale-orange); letter-spacing: 2px; }
+
+    /* 3. Motto İkonları */
+    .feature-icon-v2 {
+        width: 60px; height: 60px;
+        background: rgba(242, 140, 40, 0.1);
+        color: var(--kale-orange);
+        border-radius: 15px;
+        display: flex;
+        align-items: center; justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        transition: 0.3s;
+    }
+    .feature-box:hover .feature-icon-v2 {
+        background: var(--kale-orange);
+        color: white;
+        transform: rotate(-10deg);
+    }
+
+    /* 4. Sol Menü (Tabs) */
+    .kale-sidebar .nav-link {
+        color: #555 !important;
+        background: #f8f9fa;
+        margin-bottom: 12px;
+        padding: 18px 25px;
+        border-radius: 15px;
+        font-weight: 700;
+        border: 1px solid #eee;
+        transition: 0.3s;
+        text-align: left;
+    }
+    .kale-sidebar .nav-link.active {
+        background: var(--kale-orange) !important;
+        color: white !important;
+        border-color: var(--kale-orange);
+        transform: translateX(10px);
+        box-shadow: 0 10px 20px rgba(242, 140, 40, 0.2);
+    }
+
+    /* 5. Slogan Alanı */
+    .slogan-box-v2 {
+        background: #fff;
+        border-left: 6px solid var(--kale-orange);
+        padding: 25px;
+        margin-bottom: 30px;
+        border-radius: 0 20px 20px 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .member-img-wrapper {
+        border-radius: 20px;
+        overflow: hidden;
+        height: 280px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        transition: 0.3s;
+    }
+    .member-img-wrapper:hover { transform: translateY(-5px); }
+    .member-img { width: 100%; height: 100%; object-fit: cover; }
+</style>
+
+<div class="kale-page-wrapper" style="overflow-x: hidden;">
+    
+    <section class="kale-hero">
+        <div class="container" data-aos="zoom-in">
+            <h1 class="display-2 fw-bold text-white mb-2" style="font-family: 'Space Grotesk';">KALE</h1>
+            <p class="fw-bold ls-3 mb-0 text-uppercase" style="letter-spacing: 4px; font-size: clamp(0.7rem, 2vw, 1rem); color: var(--kale-orange);">
+                Kaliteni Göster • Araştır • Lider Ol • Etkile
+            </p>
+        </div>
+    </section>
+
+    <section class="container mb-5">
+        <div class="kale-timer-card shadow-2xl" data-aos="fade-up">
+            <div class="d-flex justify-content-center align-items-center flex-wrap gap-4">
+                <div class="text-center">
+                    <span class="timer-val" id="k-days">00</span>
+                    <span class="timer-lab">GÜN</span>
+                </div>
+                <div class="h2 text-muted opacity-25">:</div>
+                <div class="text-center">
+                    <span class="timer-val" id="k-hours">00</span>
+                    <span class="timer-lab">SAAT</span>
+                </div>
+                <div class="h2 text-muted opacity-25">:</div>
+                <div class="text-center">
+                    <span class="timer-val" id="k-mins">00</span>
+                    <span class="timer-lab">DAKİKA</span>
+                </div>
+                <div class="h2 text-muted opacity-25">:</div>
+                <div class="text-center">
+                    <span class="timer-val" id="k-secs" style="color: var(--kale-orange);">00</span>
+                    <span class="timer-lab">SANİYE</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5 mt-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h2 class="display-4 fw-bold mb-4">KALE <span style="color: var(--kale-orange);">Nedir?</span></h2>
+                <p class="text-muted fs-5 mb-4">
+                    Üniversitemizin en köklü eğitim organizasyonu olan KALE, bir mühendisin sadece teknik bilgisini değil; karakterini ve liderlik duruşunu inşa ettiği bir gelişim portalıdır.
+                </p>
+                <div class="row g-4">
+                    <div class="col-6 feature-box">
+                        <div class="feature-icon-v2"><i class="fas fa-gem"></i></div>
+                        <h6 class="fw-bold">KALİTENİ GÖSTER</h6>
+                        <small class="text-muted">Standartları sen belirle.</small>
+                    </div>
+                    <div class="col-6 feature-box">
+                        <div class="feature-icon-v2"><i class="fas fa-search"></i></div>
+                        <h6 class="fw-bold">ARAŞTIR</h6>
+                        <small class="text-muted">Bilgiye aç ol.</small>
+                    </div>
+                    <div class="col-6 feature-box">
+                        <div class="feature-icon-v2"><i class="fas fa-crown"></i></div>
+                        <h6 class="fw-bold">LİDER OL</h6>
+                        <small class="text-muted">Vizyonunla yönet.</small>
+                    </div>
+                    <div class="col-6 feature-box">
+                        <div class="feature-icon-v2"><i class="fas fa-users"></i></div>
+                        <h6 class="fw-bold">ETKİLE</h6>
+                        <small class="text-muted">Farkını hissettir.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="position-relative p-2 border border-warning rounded-5 shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80" class="img-fluid rounded-5">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <div class="row">
+            <div class="col-lg-3 kale-sidebar" data-aos="fade-right">
+                <h4 class="fw-bold mb-4 text-uppercase ls-2">KALE GÜNLÜKLERİ</h4>
+                <div class="nav flex-column nav-pills" id="kale-tabs">
+                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#kale25">KALE '25 Dönemi</button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#kale24">KALE '24 Dönemi</button>
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#kale23">KALE '23 Dönemi</button>
+                </div>
+            </div>
+
+            <div class="col-lg-9" data-aos="fade-left">
+                <div class="tab-content border-start ps-lg-5">
+                    <div class="tab-pane fade show active" id="kale25">
+                        <div class="slogan-box-v2">
+                            <h3 class="fw-bold mb-0 italic" style="color: var(--kale-dark);">"Zirveye Giden Yol, Kaliteden Geçer!"</h3>
+                        </div>
+                        <h5 class="fw-bold mb-4">Dönem Anıları</h5>
+                        <div class="row g-3">
+                            <div class="col-md-4 col-6">
+                                <div class="member-img-wrapper"><img src="https://via.placeholder.com/300x400" class="member-img"></div>
+                            </div>
+                            <div class="col-md-4 col-6">
+                                <div class="member-img-wrapper"><img src="https://via.placeholder.com/300x400" class="member-img"></div>
+                            </div>
+                            <div class="col-md-4 col-6">
+                                <div class="member-img-wrapper"><img src="https://via.placeholder.com/300x400" class="member-img"></div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5 mb-5">
+        <div class="p-5 rounded-5 text-white shadow-2xl overflow-hidden position-relative" style="background: var(--kale-dark); border-right: 12px solid var(--kale-orange);" data-aos="flip-up">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold mb-3">KALE'yi Birlikte Tasarlayalım</h2>
+                    <p class="lead opacity-75">Gelecek KALE için konuşmacı veya tema önerilerini bekliyoruz kanka.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a href="https://forms.gle/KALE_ONERI" target="_blank" class="btn btn-emk btn-lg rounded-pill px-5 shadow-lg">FİKRİNİ PAYLAŞ</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    const kaleTargetDate = new Date("Apr 15, 2026 09:00:00").getTime();
+
+    function updateKaleTimer() {
+        const now = new Date().getTime();
+        const diff = kaleTargetDate - now;
+
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('k-days').innerText = d < 10 ? '0'+d : d;
+        document.getElementById('k-hours').innerText = h < 10 ? '0'+h : h;
+        document.getElementById('k-mins').innerText = m < 10 ? '0'+m : m;
+        document.getElementById('k-secs').innerText = s < 10 ? '0'+s : s;
+    }
+    
+    setInterval(updateKaleTimer, 1000);
+    updateKaleTimer();
+</script>
+{% endblock %}

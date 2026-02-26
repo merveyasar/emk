@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Case of Legends | Zirveye Giden Yol - KOÜ EMK{% endblock %}
+
+{% block content %}
+<style>
+    :root { --col-gold: #D4AF37; --col-dark: #0a0a0a; --col-silver: #C0C0C0; }
+
+    /* Hero: Rekabet ve Prestij */
+    .col-hero {
+        background: linear-gradient(rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.9)), url('https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1350&q=80') center/cover;
+        height: 55vh;
+        display: flex;
+        align-items: center;
+        border-radius: 0 0 60px 60px;
+        margin-top: -24px;
+        border-bottom: 4px solid var(--col-gold);
+    }
+
+    /* Canlı Sayaç Kartı */
+    .col-timer-card {
+        background: linear-gradient(145deg, #1a1a1a, #000);
+        border-radius: 30px;
+        padding: 40px;
+        margin-top: -80px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+    .col-val { font-size: 3.5rem; font-weight: 800; color: var(--col-gold); font-family: 'Space Grotesk', sans-serif; }
+    .col-lab { font-size: 0.75rem; color: #fff; letter-spacing: 3px; opacity: 0.6; }
+
+    /* Vaka Dönemleri Arşivi */
+    .case-history-card {
+        background: white;
+        border-radius: 25px;
+        padding: 30px;
+        border-left: 6px solid var(--col-gold);
+        transition: 0.4s;
+        height: 100%;
+    }
+    .case-history-card:hover { transform: scale(1.03); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+    
+    .winner-badge {
+        background: rgba(212, 175, 55, 0.1);
+        color: var(--col-gold);
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.85rem;
+    }
+
+    /* Başvuru Formu Bölümü */
+    .col-apply-section {
+        background: var(--col-dark);
+        border-radius: 40px;
+        padding: 60px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    .col-apply-section::after {
+        content: "COL";
+        position: absolute;
+        bottom: -50px;
+        right: -20px;
+        font-size: 20rem;
+        font-weight: 900;
+        color: rgba(212, 175, 55, 0.03);
+    }
+</style>
+
+<div class="col-wrapper mb-5">
+
+    <section class="col-hero text-center text-white">
+        <div class="container" data-aos="zoom-out">
+            <h6 class="text-gold fw-bold ls-3 mb-3" style="color: var(--col-gold);">THE ULTIMATE CHALLENGE</h6>
+            <h1 class="display-2 fw-bold mb-4">CASE OF LEGENDS</h1>
+            <p class="lead mx-auto opacity-75" style="max-width: 750px;">Kocaeli Üniversitesi'nin ilk ve tek vaka analizi yarışması. Efsanelerin arasına katılmaya hazır mısın?</p>
+        </div>
+    </section>
+
+    <section class="container">
+        <div class="col-timer-card text-center" data-aos="fade-up">
+            <h5 class="text-white mb-4 fw-bold opacity-50">BÜYÜK FİNALE KALAN SÜRE</h5>
+            <div class="row g-4 justify-content-center align-items-center">
+                <div class="col-6 col-md-2">
+                    <div class="col-val" id="col-days">00</div>
+                    <div class="col-lab">GÜN</div>
+                </div>
+                <div class="col-1 d-none d-md-block text-gold fs-1">:</div>
+                <div class="col-6 col-md-2">
+                    <div class="col-val" id="col-hours">00</div>
+                    <div class="col-lab">SAAT</div>
+                </div>
+                <div class="col-1 d-none d-md-block text-gold fs-1">:</div>
+                <div class="col-6 col-md-2">
+                    <div class="col-val" id="col-mins">00</div>
+                    <div class="col-lab">DAKİKA</div>
+                </div>
+                <div class="col-1 d-none d-md-block text-gold fs-1">:</div>
+                <div class="col-6 col-md-2">
+                    <div class="col-val" id="col-secs">00</div>
+                    <div class="col-lab">SANİYE</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5 mt-5">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h2 class="display-5 fw-bold mb-4 text-dark">Efsaneler Nasıl Doğar?</h2>
+                <p class="text-muted fs-5">Case of Legends (COL), öğrencilerin gerçek hayat senaryolarını analiz ederek çözüm ürettiği, stratejik düşünme ve sunum becerilerini yarıştırdığı bir vaka analizi yarışmasıdır. Sektör devi firmaların sponsorluğunda, gerçek iş problemlerini çözerek kariyerine efsane bir başlangıç yapabilirsin.</p>
+                <div class="mt-4 border-start border-4 border-gold ps-4 py-2">
+                    <h5 class="fw-bold">İlk ve Tek!</h5>
+                    <p class="small text-muted mb-0">Üniversitemiz bünyesinde düzenlenen ilk vaka analizi yarışması olma gururunu taşıyoruz.</p>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="row g-3">
+                    <div class="col-6"><img src="https://via.placeholder.com/400x500?text=Vaka+Analizi" class="img-fluid rounded-4 shadow-lg"></div>
+                    <div class="col-6 mt-5"><img src="https://via.placeholder.com/400x500?text=Final+Sunumu" class="img-fluid rounded-4 shadow-lg"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-light py-5 my-5">
+        <div class="container py-5">
+            <h2 class="fw-bold text-center mb-5">COL ARŞİVİ</h2>
+            <div class="row g-4">
+                <div class="col-lg-4" data-aos="fade-up">
+                    <div class="case-history-card">
+                        <span class="winner-badge mb-3 d-inline-block">COL '24</span>
+                        <h4 class="fw-bold">Operasyonel Mükemmellik</h4>
+                        <p class="small text-muted mb-4">Bu yılki vaka, otomotiv sektöründeki tedarik zinciri aksamaları üzerine kurgulandı.</p>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-trophy text-gold me-2"></i>
+                            <span class="small fw-bold">Şampiyon: Team Alpha</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="case-history-card">
+                        <span class="winner-badge mb-3 d-inline-block">COL '23</span>
+                        <h4 class="fw-bold">Dijital Dönüşüm Vakası</h4>
+                        <p class="small text-muted mb-4">E-ticaret lojistiğinde yapay zeka entegrasyonu çözümleri yarıştı.</p>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-trophy text-gold me-2"></i>
+                            <span class="small fw-bold">Şampiyon: Logistics Masters</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="case-history-card">
+                        <span class="winner-badge mb-3 d-inline-block">COL '22</span>
+                        <h4 class="fw-bold">Yalın Üretim Finali</h4>
+                        <p class="small text-muted mb-4">Üretim bandındaki verimlilik kaybını minimize eden stratejiler geliştirildi.</p>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-trophy text-gold me-2"></i>
+                            <span class="small fw-bold">Şampiyon: Kaizen Ekibi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <div class="col-apply-section shadow-lg" data-aos="zoom-in">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-7">
+                    <h2 class="display-5 fw-bold mb-4">Efsaneler Arasına Katıl!</h2>
+                    <p class="lead opacity-75">Takımını kur, stratejini belirle ve jüri karşısında farkını göster. Büyük ödüller ve staj imkanları seni bekliyor.</p>
+                    <div class="mt-4">
+                        <a href="https://forms.gle/COL_FORMLINK" target="_blank" class="btn btn-warning btn-lg px-5 py-3 rounded-pill fw-bold text-dark shadow-lg">
+                            <i class="fab fa-google me-2"></i>BAŞVURU FORMUNU DOLDUR
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-5 text-center">
+                    <div class="p-4 border border-gold rounded-circle d-inline-block">
+                        <i class="fas fa-chess-knight fa-8x text-gold"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    // COL Final Tarihi: 20 Mayıs 2026
+    const colTargetDate = new Date("May 20, 2026 09:00:00").getTime();
+
+    function updateColTimer() {
+        const now = new Date().getTime();
+        const diff = colTargetDate - now;
+
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('col-days').innerText = d < 10 ? '0' + d : d;
+        document.getElementById('col-hours').innerText = h < 10 ? '0' + h : h;
+        document.getElementById('col-mins').innerText = m < 10 ? '0' + m : m;
+        document.getElementById('col-secs').innerText = s < 10 ? '0' + s : s;
+    }
+    
+    setInterval(updateColTimer, 1000);
+    updateColTimer();
+</script>
+{% endblock %}

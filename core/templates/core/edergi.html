@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}E-Dergi | Endüstriyel Perspektif - KOÜ EMK{% endblock %}
+
+{% block content %}
+<style>
+    :root { --dergi-orange: #F28C28; --dergi-dark: #121212; }
+
+    /* 1. Hero: Modern Kütüphane Havası */
+    .dergi-hero {
+        background: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.9)), 
+                    url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1350&q=80') center/cover;
+        height: 50vh;
+        display: flex;
+        align-items: center;
+        border-radius: 0 0 50px 50px;
+        margin-top: -24px;
+        color: white;
+    }
+
+    /* 2. Dergi Kartı (3D Hover Efektli) */
+    .magazine-card {
+        background: white;
+        border-radius: 20px;
+        padding: 15px;
+        transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 1px solid #eee;
+        height: 100%;
+        perspective: 1000px;
+    }
+    .magazine-card:hover {
+        transform: translateY(-15px) rotateY(5deg);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        border-color: var(--dergi-orange);
+    }
+
+    .magazine-cover-box {
+        width: 100%;
+        height: 350px;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+    }
+    .magazine-cover-box img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* 3. Dergi Bilgileri */
+    .magazine-issue {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: var(--dergi-orange);
+        letter-spacing: 2px;
+        text-uppercase;
+    }
+    .magazine-title { font-weight: 800; color: var(--dergi-dark); margin: 5px 0; }
+    
+    .btn-read {
+        background: var(--dergi-dark);
+        color: white;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 700;
+        width: 100%;
+        transition: 0.3s;
+        border: none;
+        margin-top: 15px;
+    }
+    .magazine-card:hover .btn-read { background: var(--dergi-orange); }
+
+    /* 4. Arşiv Filtresi */
+    .archive-pills .nav-link {
+        color: #666;
+        font-weight: 700;
+        border-radius: 50px;
+        padding: 8px 25px;
+        margin: 5px;
+        background: #f1f1f1;
+    }
+    .archive-pills .nav-link.active {
+        background: var(--dergi-orange) !important;
+        color: white !important;
+    }
+</style>
+
+<div class="dergi-page-wrapper" style="overflow-x: hidden;">
+
+    <section class="dergi-hero text-center">
+        <div class="container" data-aos="zoom-in">
+            <h1 class="display-3 fw-bold mb-3" style="font-family: 'Space Grotesk';">E-DERGİ</h1>
+            <p class="lead opacity-75 fs-4">Endüstriyel Dünyaya Dijital Bir Pencere</p>
+            <div class="mx-auto mt-4" style="width: 100px; height: 5px; background: var(--dergi-orange);"></div>
+        </div>
+    </section>
+
+    <section class="container py-5 mt-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5" data-aos="fade-right">
+                <div class="magazine-card shadow-2xl p-3" style="border-top: 8px solid var(--dergi-orange);">
+                    <div class="magazine-cover-box">
+                        <img src="https://via.placeholder.com/400x600?text=GÜNCEL+SAYI+KAPAĞI" alt="Son Sayı">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7" data-aos="fade-left">
+                <span class="magazine-issue">SAYI: 42 • OCAK 2026</span>
+                <h2 class="display-4 fw-bold my-3">Dijital Dönüşüm ve <br><span class="text-warning">Yapay Zeka Etkisi</span></h2>
+                <p class="text-muted fs-5 mb-4">
+                    Bu sayımızda, endüstrideki yapay zeka devrimini, akıllı fabrikaları ve veri biliminin mühendislikteki geleceğini masaya yatırdık. Sektör liderleriyle yapılan özel röportajlar ve vaka analizleri seni bekliyor.
+                </p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="btn btn-warning btn-lg px-5 py-3 fw-bold rounded-pill text-dark shadow-lg">ŞİMDİ OKU</a>
+                    <a href="#" class="btn btn-outline-dark btn-lg px-5 py-3 fw-bold rounded-pill">PDF İNDİR</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-light py-5 mt-5">
+        <div class="container py-4">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="fw-bold">DERGİ ARŞİVİ</h2>
+                <p class="text-muted">Geçmişten günümüze tüm sayılarımız.</p>
+                <nav class="nav archive-pills justify-content-center mt-4">
+                    <a class="nav-link active" href="#">TÜMÜ</a>
+                    <a class="nav-link" href="#">2025</a>
+                    <a class="nav-link" href="#">2024</a>
+                    <a class="nav-link" href="#">2023</a>
+                </nav>
+            </div>
+
+            <div class="row g-4" data-aos="fade-up">
+                <div class="col-lg-3 col-md-6">
+                    <div class="magazine-card">
+                        <div class="magazine-cover-box" style="height: 280px;">
+                            <img src="https://via.placeholder.com/300x450?text=SAYI+41" alt="Sayı 41">
+                        </div>
+                        <span class="magazine-issue">Sayı: 41</span>
+                        <h6 class="magazine-title text-truncate">Lojistik 4.0</h6>
+                        <button class="btn-read">OKU</button>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="magazine-card">
+                        <div class="magazine-cover-box" style="height: 280px;">
+                            <img src="https://via.placeholder.com/300x450?text=SAYI+40" alt="Sayı 40">
+                        </div>
+                        <span class="magazine-issue">Sayı: 40</span>
+                        <h6 class="magazine-title text-truncate">Yalın Üretim</h6>
+                        <button class="btn-read">OKU</button>
+                    </div>
+                </div>
+                </div>
+        </div>
+    </section>
+
+    <section class="container py-5 mb-5">
+        <div class="p-5 rounded-5 text-white shadow-2xl overflow-hidden position-relative" style="background: var(--dergi-dark); border-right: 12px solid var(--dergi-orange);" data-aos="flip-up">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold mb-3">Senin de Bir Yazın <br>Yayınlansın İster misin?</h2>
+                    <p class="lead opacity-75">Endüstri Mühendisliği üzerine araştırmalarını, deneyimlerini veya makalelerini binlerce okurla buluşturalım.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a href="mailto:edergi@kouemk.org" class="btn btn-warning btn-lg rounded-pill px-5 shadow-lg fw-bold text-dark">BİZE ULAŞ</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

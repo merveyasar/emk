@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GDKG | Gülümseyen Düşler Kitaplardan Geçer - KOÜ EMK{% endblock %}
+
+{% block content %}
+<style>
+    :root { --gdkg-pink: #e91e63; --gdkg-blue: #00bcd4; }
+
+    /* Hero: Sıcak ve Umut Verici */
+    .gdkg-hero {
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1350&q=80') center/cover;
+        height: 50vh;
+        display: flex;
+        align-items: center;
+        border-radius: 0 0 50px 50px;
+        margin-top: -24px;
+        color: white;
+    }
+
+    /* İstatistik Kartları */
+    .gdkg-stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border-bottom: 5px solid var(--gdkg-pink);
+        transition: 0.3s;
+    }
+    .gdkg-stat-card:hover { transform: translateY(-5px); }
+
+    /* Dönemsel Anılar (Yolculuk Kartları) */
+    .journey-card {
+        background: white;
+        border-radius: 25px;
+        overflow: hidden;
+        margin-bottom: 40px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .journey-img {
+        flex: 1 1 400px;
+        height: 350px;
+        object-fit: cover;
+    }
+    .journey-content {
+        flex: 1 1 400px;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .city-badge {
+        display: inline-block;
+        background: var(--gdkg-pink);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    /* Destek Formu */
+    .support-section {
+        background: linear-gradient(135deg, #fce4ec 0%, #e1f5fe 100%);
+        border-radius: 40px;
+        padding: 60px;
+    }
+</style>
+
+<div class="gdkg-wrapper mb-5">
+
+    <section class="gdkg-hero text-center">
+        <div class="container" data-aos="zoom-in">
+            <h1 class="display-3 fw-bold mb-3">GÜLÜMSEYEN DÜŞLER <br> KİTAPLARDAN GEÇER</h1>
+            <p class="lead fw-bold ls-2">Bir kitap, bir çocuk, bin umut.</p>
+        </div>
+    </section>
+
+    <section class="container py-5 mt-4">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h2 class="display-5 fw-bold mb-4">Bu Bir Kütüphaneden Fazlası</h2>
+                <p class="text-muted fs-5">GDKG, Kocaeli Üniversitesi Endüstri Mühendisliği Kulübü'nün her yıl Anadolu'nun ücra bir köy okuluna ışık götürdüğü projedir. Amacımız sadece kitap toplamak değil; rafları sevgiyle dizmek, boyası dökülen duvarları renklendirmek ve oradaki kardeşlerimize hayallerinin peşinden gitmeleri için ilham olmaktır.</p>
+                <div class="row g-3 mt-4 text-center">
+                    <div class="col-4">
+                        <div class="gdkg-stat-card">
+                            <h3 class="fw-bold text-pink">+15</h3>
+                            <small class="text-muted">KÜTÜPHANE</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="gdkg-stat-card" style="border-color: var(--gdkg-blue);">
+                            <h3 class="fw-bold text-info">+10K</h3>
+                            <small class="text-muted">KİTAP</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="gdkg-stat-card">
+                            <h3 class="fw-bold text-pink">+500</h3>
+                            <small class="text-muted">GÜLÜMSEME</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="p-2 bg-white rounded-5 shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80" class="img-fluid rounded-5" alt="GDKG Çocuklar">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <h2 class="display-6 fw-bold text-center mb-5">BİR YOLCULUK HİKAYESİ</h2>
+        
+        <div class="journey-card" data-aos="fade-up">
+            <img src="https://via.placeholder.com/800x600?text=Mardin+Gezisi" class="journey-img">
+            <div class="journey-content">
+                <span class="city-badge">MARDİN / 2024</span>
+                <h3 class="fw-bold">Geleceğe Uzanan Eller Kütüphanesi</h3>
+                <p class="text-muted">Bu yıl Mardin'in bir köyünde, tozlu rafları hayallerle doldurduk. Ekibimizle birlikte kütüphaneyi boyadık, çocuklarla oyunlar oynadık ve onlara mühendislik vizyonumuzu anlattık.</p>
+                <div class="mt-3">
+                    <button class="btn btn-outline-pink btn-sm rounded-pill px-4">Anılara Göz At</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="journey-card flex-row-reverse" data-aos="fade-up">
+            <img src="https://via.placeholder.com/800x600?text=Van+Gezisi" class="journey-img">
+            <div class="journey-content">
+                <span class="city-badge" style="background: var(--gdkg-blue);">VAN / 2023</span>
+                <h3 class="fw-bold">Düşler Sınır Tanımaz Kütüphanesi</h3>
+                <p class="text-muted">Van'daki kardeşlerimize binlerce kitap ulaştırdık. Açılış gününde yaşadığımız o duygu dolu anlar, GDKG'nin neden bizim için bir projeden daha fazlası olduğunu tekrar hatırlattı.</p>
+                <div class="mt-3">
+                    <button class="btn btn-outline-info btn-sm rounded-pill px-4">Galeriyi Aç</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <div class="support-section" data-aos="zoom-in">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-7">
+                    <h2 class="fw-bold mb-4">Bir Tuğla Da Sen Koymak İster Misin?</h2>
+                    <p class="lead text-dark opacity-75">Kitap bağışı yapmak, bir köy okulu önermek veya projemize sponsor olmak için bizimle iletişime geçebilirsin. Küçük bir dokunuş, büyük bir düşü başlatabilir.</p>
+                    <div class="d-flex gap-3 mt-4">
+                        <a href="#" class="btn btn-pink btn-lg px-5 py-3 rounded-pill fw-bold shadow">KİTAP BAĞIŞI</a>
+                        <a href="#" class="btn btn-outline-dark btn-lg px-5 py-3 rounded-pill fw-bold">OKUL ÖNER</a>
+                    </div>
+                </div>
+                <div class="col-lg-5 text-center">
+                    <div class="bg-white p-4 rounded-circle d-inline-block shadow-lg" style="width: 250px; height: 250px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-hand-holding-heart fa-7x text-pink"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<style>
+    .text-pink { color: var(--gdkg-pink); }
+    .btn-pink { background: var(--gdkg-pink); color: white; border: none; }
+    .btn-pink:hover { background: #c2185b; color: white; }
+    .btn-outline-pink { border: 2px solid var(--gdkg-pink); color: var(--gdkg-pink); font-weight: 700; }
+    .btn-outline-pink:hover { background: var(--gdkg-pink); color: white; }
+</style>
+
+{% endblock %}

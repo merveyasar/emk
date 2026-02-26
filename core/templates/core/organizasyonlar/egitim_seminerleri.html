@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Eğitim Seminerleri | Kendini Geliştir - KOÜ EMK{% endblock %}
+
+{% block content %}
+<style>
+    :root { --edu-blue: #0d6efd; --edu-orange: #F28C28; --edu-success: #198754; }
+
+    /* Hero: Akademik ve Modern */
+    .edu-hero {
+        background: linear-gradient(rgba(13, 110, 253, 0.8), rgba(18, 18, 18, 0.9)), url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1350&q=80') center/cover;
+        height: 45vh;
+        display: flex;
+        align-items: center;
+        border-radius: 0 0 50px 50px;
+        margin-top: -24px;
+    }
+
+    /* Eğitim Kartları */
+    .edu-card {
+        background: white;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: 0.3s;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+    .edu-card:hover { transform: translateY(-10px); }
+
+    /* Durum Rozetleri */
+    .status-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 8px 15px;
+        border-radius: 50px;
+        font-weight: 800;
+        font-size: 0.75rem;
+        z-index: 5;
+    }
+    .status-open { background: var(--edu-success); color: white; box-shadow: 0 0 15px rgba(25, 135, 84, 0.4); }
+    .status-closed { background: #dc3545; color: white; }
+
+    /* Tip Rozetleri (Online/Yüz Yüze) */
+    .type-badge {
+        background: rgba(255,255,255,0.9);
+        color: var(--emk-dark);
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .edu-img-wrapper { height: 200px; overflow: hidden; position: relative; }
+    .edu-img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Galeri */
+    .gallery-img {
+        border-radius: 15px;
+        cursor: pointer;
+        transition: 0.3s;
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+    }
+    .gallery-img:hover { filter: brightness(0.7); }
+</style>
+
+<div class="edu-wrapper mb-5">
+    
+    <section class="edu-hero text-center text-white">
+        <div class="container" data-aos="zoom-in">
+            <h1 class="display-3 fw-bold">EĞİTİM SEMİNERLERİ</h1>
+            <p class="lead opacity-75">Sertifikalı eğitimler ve uzmanından seminerlerle vizyonunu genişlet.</p>
+        </div>
+    </section>
+
+    <section class="container py-5 mt-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h2 class="display-5 fw-bold mb-4">Akademik Gelişim Merkezi</h2>
+                <p class="text-muted fs-5">Eğitim Seminerleri koordinatörlüğü olarak, sadece üniversite müfredatıyla sınırlı kalmıyoruz. Excel'den Yalın Üretim'e, Diksiyon'dan Veri Analitiği'ne kadar geniş bir yelpazede eğitimler organize ediyoruz.</p>
+                <ul class="list-unstyled mt-4">
+                    <li class="mb-3"><i class="fas fa-check-circle text-primary me-2"></i> Sertifikalı Eğitim Programları</li>
+                    <li class="mb-3"><i class="fas fa-check-circle text-primary me-2"></i> Online & Yüz Yüze Hibrit İmkanlar</li>
+                    <li class="mb-3"><i class="fas fa-check-circle text-primary me-2"></i> Sektör Profesyoneli Eğitmenler</li>
+                </ul>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="row g-3">
+                    <div class="col-6"><img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=400&q=80" class="img-fluid rounded-4 shadow"></div>
+                    <div class="col-6 mt-4"><img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=400&q=80" class="img-fluid rounded-4 shadow"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5 bg-light rounded-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">GÜNCEL EĞİTİM TAKVİMİ</h2>
+            <p class="text-muted">Kayıt yaptırmak için "Başvur" butonuna tıklayarak Google Form'u doldurabilirsin.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="edu-card">
+                    <span class="status-badge status-open">KAYITLAR AÇIK</span>
+                    <div class="edu-img-wrapper">
+                        <img src="https://via.placeholder.com/400x200?text=İleri+Excel+Eğitimi" class="edu-img">
+                        <div class="position-absolute bottom-0 start-0 m-3">
+                            <span class="type-badge"><i class="fas fa-laptop me-1"></i> Online</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="fw-bold">İleri Excel Uygulamaları</h4>
+                        <p class="small text-muted mb-4">Endüstri mühendislerinin olmazsa olmazı Excel'i uzmanından öğrenin.</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-primary fw-bold small"><i class="far fa-calendar-alt me-1"></i> 15 Şubat 2026</span>
+                            <a href="https://forms.gle/SizinFormLinkiniz" target="_blank" class="btn btn-primary rounded-pill px-4 btn-sm fw-bold">BAŞVUR</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="edu-card opacity-75">
+                    <span class="status-badge status-closed">KAYITLAR KAPANDI</span>
+                    <div class="edu-img-wrapper">
+                        <img src="https://via.placeholder.com/400x200?text=Yalın+Üretim+Semineri" class="edu-img">
+                        <div class="position-absolute bottom-0 start-0 m-3">
+                            <span class="type-badge"><i class="fas fa-users me-1"></i> Yüz Yüze</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="fw-bold">Yalın Üretim 101</h4>
+                        <p class="small text-muted mb-4">Toyota üretim sisteminin temellerini bu seminerde konuştuk.</p>
+                        <div class="text-muted small"><i class="fas fa-check me-1"></i> Tamamlandı</div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+    </section>
+
+    <section class="container py-5">
+        <h2 class="fw-bold text-center mb-5">EĞİTİM ANILARI</h2>
+        <div class="row g-3">
+            <div class="col-md-3 col-6" data-aos="zoom-in"><img src="https://via.placeholder.com/400x400?text=Kare+1" class="gallery-img shadow"></div>
+            <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="50"><img src="https://via.placeholder.com/400x400?text=Kare+2" class="gallery-img shadow"></div>
+            <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="100"><img src="https://via.placeholder.com/400x400?text=Kare+3" class="gallery-img shadow"></div>
+            <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="150"><img src="https://via.placeholder.com/400x400?text=Kare+4" class="gallery-img shadow"></div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <div class="bg-dark p-5 rounded-5 text-white text-center shadow-lg" data-aos="flip-up">
+            <h2 class="fw-bold mb-3">Hangi Eğitimi Almak İstersin?</h2>
+            <p class="opacity-75 mb-4 mx-auto" style="max-width: 700px;">Geliştirmek istediğin bir yeteneğin mi var? Veya şu eğitimi alırsak hepimize çok faydası olur dediğin bir konu? Formu doldur, eğitmeni getirelim!</p>
+            <div class="d-flex justify-content-center">
+                <a href="https://forms.gle/OneriFormuLinkiniz" target="_blank" class="btn btn-outline-warning btn-lg px-5 py-3 rounded-pill fw-bold">EĞİTİM ÖNER</a>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

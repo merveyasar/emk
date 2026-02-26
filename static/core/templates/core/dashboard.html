@@ -1,0 +1,400 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}KOÜ EMK | Dashboard{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+    :root { 
+        --emk-orange: #F28C28; 
+        --emk-orange-rgb: 242, 140, 40;
+        --emk-dark: #0f0f0f; 
+        --emk-bg: #f8f9fa;
+        --glass-bg: rgba(255, 255, 255, 0.85);
+    }
+
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--emk-bg); }
+
+    /* --- 1. Gelişmiş Hero Bölümü --- */
+    .dash-hero {
+        background: linear-gradient(rgba(18, 18, 18, 0.8), rgba(18, 18, 18, 0.8)), 
+                    url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2069'); 
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+        padding: 100px 0 180px;
+        border-radius: 0 0 60px 60px;
+        margin-top: -24px;
+        color: white;
+        position: relative;
+    }
+
+    /* --- 2. Organizasyon Kartları (Fixlendi) --- */
+    .org-hub-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 24px;
+        /* Analiz barı ile çakışmaması için mesafe eklendi */
+        margin-top: 40px; 
+        position: relative;
+        z-index: 5;
+    }
+    .org-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 24px;
+        padding: 35px 25px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        height: 100%;
+    }
+    .org-card:hover {
+        transform: translateY(-15px);
+        background: white;
+        border-color: var(--emk-orange);
+        box-shadow: 0 20px 40px rgba(var(--emk-orange-rgb), 0.15);
+    }
+    .org-card i {
+        transition: 0.3s;
+        background: linear-gradient(45deg, var(--emk-orange), #ffb347);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .org-card:hover i { transform: scale(1.2); }
+
+    .status-badge {
+        position: absolute; top: 15px; right: 15px;
+        font-size: 0.65rem; font-weight: 800; padding: 5px 12px;
+        border-radius: 50px; background: rgba(var(--emk-orange-rgb), 0.1); color: var(--emk-orange);
+        letter-spacing: 1px;
+    }
+
+    /* --- 3. Widget Tasarımları --- */
+    .dash-widget {
+        background: white; border-radius: 28px; padding: 30px;
+        border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+        transition: 0.3s;
+    }
+    .dash-widget:hover { box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+
+    .event-row {
+        display: flex; align-items: center; padding: 18px;
+        border-radius: 18px; margin-bottom: 12px; transition: 0.3s;
+        border: 1px solid transparent;
+    }
+    .event-row:hover { background: #fffaf5; border-color: rgba(242, 140, 40, 0.2); }
+
+    .date-box {
+        width: 60px; height: 60px; background: var(--emk-dark);
+        color: white; border-radius: 16px; display: flex;
+        flex-direction: column; align-items: center; justify-content: center;
+        font-weight: 800; margin-right: 20px; flex-shrink: 0;
+    }
+
+    /* --- 4. Özel Duyuru Alanı --- */
+    .announcement-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: white; border-radius: 24px; padding: 25px;
+    }
+
+    /* --- 5. Sayısal Veriler Barı (Fixlendi) --- */
+    .stat-bar-container {
+        margin-top: -60px; /* Hero üzerine hafif bindirme */
+        position: relative;
+        z-index: 10;
+    }
+    .stat-bar {
+        background: white; 
+        border-radius: 25px; 
+        padding: 30px 20px;
+        border: 1px solid #eee;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+    }
+    .stat-item h3 { color: var(--emk-orange); font-weight: 800; margin-bottom: 0; }
+
+    /* --- 6. Sponsor ve Medya --- */
+    .news-img { height: 200px; object-fit: cover; border-radius: 20px 20px 0 0; }
+    .galeri-thumb { height: 140px; width: 100%; object-fit: cover; border-radius: 18px; transition: 0.4s; }
+    .galeri-thumb:hover { transform: scale(1.05); z-index: 2; position: relative; }
+
+    .sponsor-wrapper { overflow: hidden; white-space: nowrap; background: white; padding: 30px 0; }
+    .sponsor-track { display: inline-block; animation: scroll 25s linear infinite; }
+    .sponsor-track img { height: 35px; margin: 0 50px; opacity: 0.4; transition: 0.3s; }
+    .sponsor-track img:hover { opacity: 1; filter: grayscale(0); }
+    @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+</style>
+
+<div style="background: var(--emk-bg);">
+
+    <section class="dash-hero">
+        <div class="container" data-aos="fade-up">
+            <div class="row align-items-center">
+                <div class="col-lg-7 text-center text-lg-start">
+                    <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold">#GELECEĞİOPTİMİZEET</span>
+                    <h1 class="display-2 fw-800 mb-4">EMK <span style="color: var(--emk-orange);">PORTAL</span></h1>
+                    <p class="lead opacity-75 mb-4">Kocaeli Üniversitesi'nin lider topluluğuyla kariyerine yön ver. Projeler, etkinlikler ve networking ağımıza hemen katıl.</p>
+                    <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
+                    <p class="lead opacity-75 mb-4">Bazen bazı şeyler olur. KOÜ EMK en güzel oluşumdur.</p>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-none d-lg-block">
+                    <div class="announcement-card" data-aos="zoom-in">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="spinner-grow text-warning spinner-grow-sm me-2"></div>
+                            <h6 class="fw-bold mb-0 text-white">CANLI DUYURU</h6>
+                        </div>
+                        <p class="small mb-3 text-white"><strong>Şirket Günleri '26</strong> mentorluk başvuruları yoğun istek üzerine uzatıldı! Son tarih: 30 Ocak.</p>
+                        <a href="#" class="btn btn-sm btn-light rounded-pill w-100 fw-bold">Detayları Gör</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<style>
+    /* --- Gelişmiş Kart Tasarımı --- */
+    .org-hub-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 25px;
+        margin-top: 40px; 
+        position: relative;
+        z-index: 5;
+    }
+
+    .org-card {
+        position: relative;
+        background: white;
+        border-radius: 28px;
+        padding: 40px 25px;
+        text-align: center;
+        border: 1px solid #edf2f7;
+        transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        overflow: hidden; /* Resmin dışarı taşmaması için */
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        z-index: 1;
+    }
+
+    /* Arka Plan Resim Ayarı */
+    .org-card::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0; /* Başlangıçta görünmez */
+        transition: all 0.5s ease;
+        z-index: -1;
+        filter: brightness(0.4) blur(2px); /* Yazıların okunması için karartma ve blur */
+    }
+
+    /* Hover Durumu */
+    .org-card:hover {
+        transform: translateY(-12px);
+        border-color: var(--emk-orange);
+        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    }
+
+    .org-card:hover::before {
+        opacity: 1; /* Mouse üstündeyken resim görünür */
+    }
+
+    .org-card:hover h5, 
+    .org-card:hover p, 
+    .org-card:hover i {
+        color: white !important; /* Resim gelince yazılar beyaz olur */
+        -webkit-text-fill-color: white !important; /* Gradyan ikonlar için */
+    }
+
+    /* --- Her Karta Özel Resimler --- */
+    .card-kale::before { background-image: url('https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=500'); }
+    .card-sb::before { background-image: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=500'); }
+    .card-gezi::before { background-image: url('https://images.unsplash.com/photo-1565034946487-077786996e27?q=80&w=500'); }
+    .card-egitim::before { background-image: url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=500'); }
+    .card-seminer::before { background-image: url('https://images.unsplash.com/photo-1475721027785-f74eccf877e2?q=80&w=500'); }
+    .card-mentor::before { background-image: url('https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=500'); }
+    .card-col::before { background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=500'); }
+    .card-sirket::before { background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=500'); }
+
+    /* Responsive */
+    @media (max-width: 1200px) { .org-hub-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 576px) { .org-hub-grid { grid-template-columns: 1fr; } }
+</style>
+
+<div class="container mt-5">
+    <div class="org-hub-grid">
+        <a href="{% url 'kale' %}" class="text-decoration-none">
+            <div class="org-card card-kale" data-aos="zoom-in" data-aos-delay="100">
+                <span class="status-badge">AKTİF</span>
+                <i class="fas fa-chess-castle fa-3x mb-3"></i>
+                <h5 class="fw-bold text-dark">KALE</h5>
+                <p class="small text-muted mb-0">Kaliteni Göster, Araştır...</p>
+            </div>
+        </a>
+        
+        <a href="{% url 'sb' %}" class="text-decoration-none">
+            <div class="org-card card-sb" data-aos="zoom-in" data-aos-delay="200">
+                <span class="status-badge">YAKINDA</span>
+                <i class="fas fa-magnifying-glass-chart fa-3x mb-3"></i>
+                <h5 class="fw-bold text-dark">SB</h5>
+                <p class="small text-muted mb-0">Sektöre Büyüteç</p>
+            </div>
+        </a>
+
+        <a href="#" class="text-decoration-none">
+            <div class="org-card card-gezi" data-aos="zoom-in" data-aos-delay="300">
+                <span class="status-badge">SÜREKLİ</span>
+                <i class="fas fa-bus-alt fa-3x mb-3"></i>
+                <h5 class="fw-bold text-dark">TEKNİK GEZİLER</h5>
+                <p class="small text-muted mb-0">Üretimi Yerinde Gör</p>
+            </div>
+        </a>
+
+        <a href="#" class="text-decoration-none">
+            <div class="org-card card-egitim" data-aos="zoom-in" data-aos-delay="400">
+                <span class="status-badge">SERTİFİKALI</span>
+                <i class="fas fa-graduation-cap fa-3x mb-3"></i>
+                <h5 class="fw-bold text-dark">EĞİTİMLER</h5>
+                <p class="small text-muted mb-0">Yetkinliğini Artır</p>
+            </div>
+        </a>
+
+        <a href="#" class="text-decoration-none">
+            <div class="org-card card-seminer" data-aos="zoom-in" data-aos-delay="500">
+                <span class="status-badge">CANLI</span>
+                <i class="fas fa-microphone-lines fa-3x mb-3"></i>
+                <h5 class="fw-bold text-dark">SEMİNERLER</h5>
+                <p class="small text-muted mb-0">Liderlerden Dinle</p>
+            </div>
+        </a>
+
+        <a href="#" class="text-decoration-none">
+            <div class="org-card card-mentor" data-aos="zoom-in" data-aos-delay="600">
+                <span class="status-badge">BİREBİR</span>
+                <i class="fas fa-handshake-angle fa-3x mb-3"></i>
+                <h5 class="fw-bold text-dark">MENTORLUK</h5>
+                <p class="small text-muted mb-0">Tecrübe Paylaşımı</p>
+            </div>
+        </a>
+
+        <a href="{% url 'col' %}" class="text-decoration-none">
+            <div class="org-card card-col" data-aos="zoom-in" data-aos-delay="700">
+                <span class="status-badge">MAYIS</span>
+                <i class="fas fa-trophy fa-3x mb-3"></i>
+                <h5 class="fw-bold text-dark">COL</h5>
+                <p class="small text-muted mb-0">Case of Legends</p>
+            </div>
+        </a>
+
+        <a href="{% url 'sb' %}" class="text-decoration-none">
+            <div class="org-card card-sirket" data-aos="zoom-in" data-aos-delay="800">
+                <span class="status-badge">NİSAN</span>
+                <i class="fas fa-building-user fa-3x mb-3"></i>
+                <h5 class="fw-bold text-dark">ŞİRKET GÜNLERİ</h5>
+                <p class="small text-muted mb-0">Kariyer Fuarı</p>
+            </div>
+        </a>
+    </div>
+</div>
+    <section class="container py-5 mt-5">
+        <div class="row g-4">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="dash-widget h-100 d-flex flex-column justify-content-center">
+                    <h2 class="fw-bold mb-4">Biz <span class="text-warning">Kimiz?</span></h2>
+                    <p class="text-muted fs-5">
+                        Kocaeli Üniversitesi'nin en köklü ve en büyük oluşumuyuz. Mühendislik disiplinini yönetimsel vizyonla birleştiriyor, 30 yılı aşkın tecrübemizle geleceğin liderlerini yetiştiriyoruz.
+                    </p>
+                    <div class="mt-3">
+                        <a href="{% url 'hakkimizda' %}" class="btn btn-dark rounded-pill px-4 py-2">Hikayemizi Oku</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="h-100 p-5 text-white bg-dark rounded-4 shadow-lg position-relative overflow-hidden" style="border-left: 8px solid var(--emk-orange);">
+                    <div style="position: absolute; right: -20px; bottom: -20px; opacity: 0.1;">
+                        <i class="fas fa-book-open fa-10x"></i>
+                    </div>
+                    <h3 class="fw-bold text-white">Endüstriyel Bakış</h3>
+                    <p class="opacity-75 mb-4 text-white">Dergimizin yeni sayısında "Yapay Zeka ve Verimlilik" konusunu işledik. Sektörden uzman görüşleri seni bekliyor.</p>
+                    <a href="{% url 'edergi' %}" class="btn btn-warning fw-bold px-4 rounded-pill">E-DERGİYİ OKU</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container py-5">
+        <div class="row g-4">
+            <div class="col-lg-5" data-aos="fade-up">
+                <div class="dash-widget">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold mb-0">Etkinlik Takvimi</h4>
+                        <a href="#" class="small text-warning text-decoration-none fw-bold">Tümünü Gör</a>
+                    </div>
+                    <div class="event-row">
+                        <div class="date-box"><span>24</span><small>OCA</small></div>
+                        <div><h6 class="fw-bold mb-0 text-dark">Yönetim Kurulu Toplantısı</h6><small class="text-muted"><i class="fas fa-location-dot me-1"></i> Kulüp Odası</small></div>
+                    </div>
+                    <div class="event-row">
+                        <div class="date-box" style="background: var(--emk-orange);"><span>10</span><small>ŞUB</small></div>
+                        <div><h6 class="fw-bold mb-0 text-dark">Ford Otosan Teknik Gezi</h6><small class="text-muted"><i class="fas fa-location-dot me-1"></i> Gölcük Fabrikası</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7" data-aos="fade-up" data-aos-delay="100">
+                <div class="dash-widget">
+                    <h4 class="fw-bold mb-4">Son Anılar</h4>
+                    <div class="row g-3">
+                        <div class="col-4"><img src="https://via.placeholder.com/300" class="galeri-thumb shadow-sm"></div>
+                        <div class="col-4"><img src="https://via.placeholder.com/300" class="galeri-thumb shadow-sm"></div>
+                        <div class="col-4"><img src="https://via.placeholder.com/300" class="galeri-thumb shadow-sm"></div>
+                        <div class="col-12 mt-2">
+                             <div class="position-relative">
+                                <img src="https://via.placeholder.com/800x300" class="galeri-thumb shadow-sm" style="height: 180px;">
+                                <div class="position-absolute top-50 start-50 translate-middle">
+                                    <button class="btn btn-light btn-sm rounded-pill px-3 shadow fw-bold">+ Galeriye Git</button>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white py-5 border-top">
+        <div class="container text-center mb-4">
+            <h6 class="text-muted fw-bold">DEĞERLİ SPONSORLARIMIZ</h6>
+        </div>
+        <div class="sponsor-wrapper">
+            <div class="sponsor-track">
+                <img src="https://via.placeholder.com/150x50?text=FORD">
+                <img src="https://via.placeholder.com/150x50?text=BRISA">
+                <img src="https://via.placeholder.com/150x50?text=TÜPRAŞ">
+                <img src="https://via.placeholder.com/150x50?text=KOC+SISTEM">
+                <img src="https://via.placeholder.com/150x50?text=HYUNDAI">
+                <img src="https://via.placeholder.com/150x50?text=FORD">
+                <img src="https://via.placeholder.com/150x50?text=BRISA">
+                <img src="https://via.placeholder.com/150x50?text=TÜPRAŞ">
+                <img src="https://via.placeholder.com/150x50?text=KOC+SISTEM">
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true
+    });
+</script>
+{% endblock %}
