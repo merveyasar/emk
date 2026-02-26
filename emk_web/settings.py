@@ -25,9 +25,17 @@ SECRET_KEY = 'django-insecure-(%$5ig*2xz4*a6kdk_@^_5kuoc@#tsh0b4!ds6=yw$%7is_*zp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
 
-
+ALLOWED_HOSTS = [
+    'emk-qblv.onrender.com', 
+    'kouemk.org', 
+    'kouemk.com', 
+    'www.kouemk.com', 
+    'www.kouemk.org', 
+    '127.0.0.1', 
+    'localhost'
+]
 # Application definition
 
 INSTALLED_APPS = [
