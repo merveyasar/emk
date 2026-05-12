@@ -1,200 +1,198 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}KOÜ EMK | Kulüp Tüzüğü{% endblock %}
-
-{% block content %}
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-
+{% extends 'base.html' %} {% load static %} {% block title %}KOÜ EMK | Kulüp
+Tüzüğü{% endblock %} {% block content %}
 <style>
-    :root { 
-        --emk-orange: #F28C28; 
-        --emk-dark: #121212; 
-        --emk-bg: #f8f9fa;
-    }
+  /* Tüzük Hero - Derinlik ve Kavis */
+  .tuzuk-hero {
+    background:
+      linear-gradient(rgba(15, 16, 18, 0.8), rgba(15, 16, 18, 0.95)),
+      url("https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=2070")
+        center/cover;
+    padding: 120px 0 160px;
+    color: white;
+    border-radius: 0 0 60px 60px;
+    margin-top: -100px; /* Navbar ile bütünleşmesi için */
+    padding-top: 160px;
+    text-align: center;
+  }
 
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--emk-bg); }
+  /* Akordeon Modernizasyonu */
+  .tuzuk-wrapper {
+    margin-top: -80px;
+    padding-bottom: 100px;
+    position: relative;
+    z-index: 10;
+  }
 
-    /* 1. Tüzük Hero */
-    .tuzuk-hero {
-        background: linear-gradient(rgba(18, 18, 18, 0.85), rgba(18, 18, 18, 0.85)), 
-                    url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=2070'); /* Hukuk/Belge temalı resim */
-        background-size: cover;
-        background-position: center;
-        padding: 100px 0;
-        color: white;
-        border-radius: 0 0 60px 60px;
-        margin-top: -24px;
-        text-align: center;
-    }
+  .accordion-item {
+    border: none;
+    background: white;
+    border-radius: 24px !important;
+    margin-bottom: 18px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
 
-    /* 2. Akordeon (Tüzük Maddeleri) Tasarımı */
-    .tuzuk-wrapper {
-        margin-top: -50px;
-        padding-bottom: 100px;
-        position: relative;
-        z-index: 10;
-    }
+  .accordion-item:hover {
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+  }
 
-    .accordion-item {
-        border: none;
-        background: white;
-        border-radius: 20px !important;
-        margin-bottom: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-        overflow: hidden;
-        border: 1px solid #eee;
-    }
+  .accordion-button {
+    padding: 25px 30px;
+    font-weight: 700;
+    color: var(--emk-dark);
+    background: white !important;
+    font-size: 1.1rem;
+    box-shadow: none !important;
+  }
 
-    .accordion-button {
-        padding: 25px;
-        font-weight: 700;
-        color: var(--emk-dark);
-        background: white !important;
-        box-shadow: none !important;
-    }
+  .accordion-button:not(.collapsed) {
+    color: var(--emk-orange);
+    background: #fff !important;
+  }
 
-    .accordion-button:not(.collapsed) {
-        color: var(--emk-orange);
-        border-bottom: 1px solid #f8f9fa;
-    }
+  .accordion-button::after {
+    background-size: 1rem;
+    transition: transform 0.3s ease;
+  }
 
-    .accordion-button::after {
-        background-size: 1rem;
-    }
+  .accordion-body {
+    padding: 10px 35px 35px;
+    color: #666;
+    line-height: 1.8;
+    background: #fff;
+    font-size: 0.95rem;
+  }
 
-    .accordion-body {
-        padding: 30px;
-        color: #555;
-        line-height: 1.8;
-        background: #fdfdfd;
-    }
+  /* Sidebar - Modern Dokunuş */
+  .info-sidebar {
+    background: white;
+    border-radius: 30px;
+    padding: 35px;
+    border-top: 6px solid var(--emk-orange);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 110px;
+  }
 
-    /* Sidebar Bilgi Kartı */
-    .info-sidebar {
-        background: white;
-        border-radius: 25px;
-        padding: 30px;
-        border-left: 5px solid var(--emk-orange);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-        position: sticky;
-        top: 100px;
-    }
+  .law-icon {
+    font-size: 2.5rem;
+    color: var(--emk-orange);
+    margin-bottom: 20px;
+    display: inline-block;
+  }
 
-    .law-icon {
-        font-size: 3rem;
-        color: var(--emk-orange);
-        margin-bottom: 20px;
-        opacity: 0.2;
-    }
+  .download-card {
+    background: #fcfcfc;
+    border: 1px dashed #ddd;
+    border-radius: 20px;
+    transition: 0.3s;
+  }
+
+  .download-card:hover {
+    border-color: var(--emk-orange);
+    background: #fff;
+  }
 </style>
 
-<div class="tuzuk-hero" data-aos="fade-down">
-    <div class="container">
-        <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold">RESMİ BELGELER</span>
-        <h1 class="display-4 fw-800">Kulüp <span style="color: var(--emk-orange);">Tüzüğü</span></h1>
-        <p class="lead opacity-75">KOÜ EMK'nın işleyiş, hak ve sorumluluklarını belirleyen temel ilkeler.</p>
-    </div>
+<div class="tuzuk-hero" data-path="{{ request.path }}">
+  <div class="container" data-aos="fade-down">
+    <span
+      class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold small"
+      >RESMİ BELGELER</span
+    >
+    <h1 class="display-4 fw-bold">
+      Kulüp <span style="color: var(--emk-orange)">Tüzüğü</span>
+    </h1>
+    <p
+      class="lead opacity-75 mx-auto"
+      style="max-width: 600px"
+      id="hero_subtitle"
+      data-editable="Hero Alt Başlık"
+    >
+      <!--prettier-ignore-->
+      {{ page_data.hero_subtitle|default:"KOÜ EMK'nın işleyiş, hak ve sorumluluklarını belirleyen temel ilkeler." }}
+    </p>
+  </div>
 </div>
 
 <div class="container tuzuk-wrapper">
-    <div class="row g-5">
-        <div class="col-lg-8" data-aos="fade-right">
-            <div class="accordion" id="tuzukAccordion">
-                
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#m1">
-                            MADDE 1: Kulübün Adı ve Merkezi
-                        </button>
-                    </h2>
-                    <div id="m1" class="accordion-collapse collapse show" data-bs-parent="#tuzukAccordion">
-                        <div class="accordion-body">
-                            Kulübün adı "Kocaeli Üniversitesi Endüstri Mühendisliği Kulübü"dür. Kısa adı "KOÜ EMK" olarak kullanılır. Kulübün merkezi Kocaeli Üniversitesi Umuttepe Yerleşkesi Mühendislik Fakültesi'dir.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#m2">
-                            MADDE 2: Kulübün Amacı
-                        </button>
-                    </h2>
-                    <div id="m2" class="accordion-collapse collapse" data-bs-parent="#tuzukAccordion">
-                        <div class="accordion-body">
-                            Kulübün temel amacı; Endüstri Mühendisliği öğrencileri başta olmak üzere tüm öğrencilerin akademik, sosyal ve kültürel gelişimlerine katkıda bulunmak, üniversite-sanayi iş birliğini güçlendirmek ve üyelerini profesyonel iş hayatına hazırlamaktır.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#m3">
-                            MADDE 3: Üyelik Şartları
-                        </button>
-                    </h2>
-                    <div id="m3" class="accordion-collapse collapse" data-bs-parent="#tuzukAccordion">
-                        <div class="accordion-body">
-                            Kocaeli Üniversitesi bünyesinde kayıtlı olan her öğrenci kulübe üye olabilir. Üyelik başvurusu dijital portal üzerinden veya kulüp odasından form doldurularak gerçekleştirilir. Üyeler, kulüp tüzüğüne ve etik değerlerine uymakla yükümlüdür.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#m4">
-                            MADDE 4: Yönetim Kurulu Yapısı
-                        </button>
-                    </h2>
-                    <div id="m4" class="accordion-collapse collapse" data-bs-parent="#tuzukAccordion">
-                        <div class="accordion-body">
-                            Yönetim kurulu; Başkan, Başkan Yardımcısı, Genel Sekreter, Sayman ve koordinatörlerden oluşur. Seçimler her yıl akademik takvim başında düzenlenen genel kurul toplantısında demokratik usullerle yapılır.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#m5">
-                            MADDE 5: Disiplin Hükümleri
-                        </button>
-                    </h2>
-                    <div id="m5" class="accordion-collapse collapse" data-bs-parent="#tuzukAccordion">
-                        <div class="accordion-body">
-                            Üniversite disiplin yönetmeliğine aykırı davranan veya kulüp prestijine zarar veren üyelerin üyelikleri, Yönetim Kurulu ve Denetim Kurulu kararıyla askıya alınabilir veya sonlandırılabilir.
-                        </div>
-                    </div>
-                </div>
-
+  <div class="row g-5">
+    <!-- Maddeler Sol -->
+    <div class="col-lg-8" data-aos="fade-right">
+      <div class="accordion" id="tuzukAccordion">
+        {% for article in articles %}
+        <div
+          class="accordion-item"
+          data-aos="fade-up"
+          data-aos-delay="{{ forloop.counter|add:0 }}00"
+        >
+          <h2 class="accordion-header">
+            <button
+              class="accordion-button {% if not forloop.first %}collapsed{% endif %}"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#m{{ forloop.counter }}"
+              id="article_title_{{ forloop.counter }}"
+              data-editable="Madde {{ forloop.counter }} Başlığı"
+            >
+              {{ article.title }}
+            </button>
+          </h2>
+          <div
+            id="m{{ forloop.counter }}"
+            class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+            data-bs-parent="#tuzukAccordion"
+          >
+            <div
+              class="accordion-body"
+              id="article_content_{{ forloop.counter }}"
+              data-editable="Madde {{ forloop.counter }} İçeriği"
+            >
+              {{ article.content }}
             </div>
+          </div>
         </div>
-
-        <div class="col-lg-4" data-aos="fade-left">
-            <div class="info-sidebar">
-                <i class="fas fa-gavel law-icon"></i>
-                <h5 class="fw-bold mb-3">Bilgilendirme</h5>
-                <p class="small text-muted mb-4">Bu tüzük, kulübün tüm üyeleri için bağlayıcıdır. Güncellemeler Genel Kurul kararı ile yapılır.</p>
-                
-                <div class="p-3 rounded-4 bg-light mb-4">
-                    <h6 class="fw-bold small mb-2"><i class="fas fa-download me-2 text-warning"></i> PDF Olarak İndir</h6>
-                    <p class="small text-muted mb-3">Tüzüğün tam metnini resmi formatta indirmek için tıklayın.</p>
-                    <button class="btn btn-dark btn-sm w-100 rounded-pill">Dosyayı İndir</button>
-                </div>
-
-                <div class="text-center">
-                    <img src="https://via.placeholder.com/150x50?text=EMK+LOGO" class="img-fluid opacity-50" alt="Logo">
-                </div>
-            </div>
-        </div>
+        {% endfor %}
+      </div>
     </div>
+
+    <!-- Bilgi Sidebar Sağ -->
+    <div class="col-lg-4" data-aos="fade-left">
+      <div class="info-sidebar">
+        <div class="text-center">
+          <i class="fas fa-balance-scale law-icon"></i>
+          <h5 class="fw-bold mb-3">Bilgilendirme</h5>
+          <p
+            class="small text-muted mb-4 lh-lg"
+            id="sidebar_info"
+            data-editable="Bilgilendirme Metni"
+          >
+            <!--prettier-ignore-->
+            {{ page_data.sidebar_info|default:"Bu tüzük, kulübün tüm üyeleri için bağlayıcıdır ve kulüp organlarının çalışma prensiplerini tanımlar." }}
+          </p>
+        </div>
+
+        <div class="p-4 download-card text-center">
+          <div class="mb-3">
+            <i class="fas fa-file-pdf fa-2x text-danger opacity-75"></i>
+          </div>
+          <h6 class="fw-bold mb-2">Resmi Doküman</h6>
+          <p class="x-small text-muted mb-3">
+            Tüzüğün güncel PDF versiyonunu cihazınıza indirebilirsiniz.
+          </p>
+          <a
+            href="{{ page_data.pdf_link|default:'#' }}"
+            id="pdf_link"
+            class="btn btn-emk w-100 rounded-pill py-2"
+            data-editable="PDF İndirme URL'si"
+          >
+            <i class="fas fa-download me-2"></i> İndir
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
-<div class="py-5"></div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        AOS.init({ duration: 1000, once: true });
-    });
-</script>
 {% endblock %}

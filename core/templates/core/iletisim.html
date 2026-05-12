@@ -1,224 +1,224 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}KOÜ EMK | İletişim{% endblock %}
-
-{% block content %}
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+{% extends 'base.html' %} {% load static %} {% block title %}İletişim | KOÜ
+EMK{% endblock %} {% block content %}
 <style>
-    :root { 
-        --emk-orange: #F28C28; 
-        --emk-dark: #121212; 
-        --emk-bg: #f8f9fa;
-    }
+  #contact-page-wrapper {
+    background-color: var(--emk-body-bg);
+  }
 
-    #contact-page-wrapper {
-        display: block;
-        width: 100%;
-        background-color: var(--emk-bg);
-        overflow: hidden;
-    }
+  /* 1. Hero Bölümü - Modern Kavis */
+  .contact-hero {
+    background:
+      linear-gradient(rgba(15, 16, 18, 0.7), rgba(15, 16, 18, 0.9)),
+      url("https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070")
+        center/cover;
+    padding: 120px 0 180px;
+    text-align: center;
+    color: white;
+    border-radius: 0 0 60px 60px;
+    margin-top: -100px; /* Navbar ile bütünleşmesi için */
+    padding-top: 160px;
+  }
 
-    /* 1. Hero Bölümü */
-    .contact-hero {
-        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                    url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070');
-        background-size: cover;
-        background-position: center;
-        padding: 100px 0 160px;
-        text-align: center;
-        color: white;
-        border-radius: 0 0 60px 60px;
-        margin-top: -24px;
-    }
+  /* 2. Bilgi Kartları (Floating) */
+  .overlap-section {
+    margin-top: -100px;
+    position: relative;
+    z-index: 10;
+  }
 
-    /* 2. Kartlar (Overlap) */
-    .overlap-section {
-        margin-top: -80px;
-        position: relative;
-        z-index: 10;
-        padding-bottom: 40px;
-    }
+  .info-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 35px 25px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    height: 100%;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
 
-    .info-card {
-        background: white;
-        border-radius: 25px;
-        padding: 35px 25px;
-        border: 1px solid #eee;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        height: 100%;
-        text-align: center;
-        transition: 0.3s;
-    }
-    .info-card:hover { transform: translateY(-10px); border-color: var(--emk-orange); }
+  .info-card:hover {
+    transform: translateY(-10px);
+    background: white;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
+  }
 
-    .icon-circle {
-        width: 60px; height: 60px;
-        background: rgba(242, 140, 40, 0.1);
-        color: var(--emk-orange);
-        border-radius: 18px;
-        display: flex; align-items: center; justify-content: center;
-        margin: 0 auto 20px;
-        font-size: 1.5rem;
-    }
+  .icon-circle {
+    width: 55px;
+    height: 55px;
+    background: rgba(242, 140, 40, 0.1);
+    color: var(--emk-orange);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 1.4rem;
+  }
 
-    /* 3. Form & Harita */
-    .contact-main {
-        position: relative;
-        z-index: 5;
-        padding-bottom: 120px; /* Footer çakışmasını önleyen kritik boşluk */
-    }
+  /* 3. Form Konteynırı */
+  .contact-container {
+    background: white;
+    border-radius: 30px;
+    padding: 50px;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.03);
+    margin-top: 60px;
+    margin-bottom: 100px;
+  }
 
-    .contact-container {
-        background: white;
-        border-radius: 35px;
-        padding: 40px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.04);
-        border: 1px solid #eee;
-    }
+  .custom-input {
+    background: #f9f9f9;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    padding: 14px 18px;
+    transition: 0.3s;
+    font-size: 0.95rem;
+  }
 
-    .form-group { margin-bottom: 20px; }
-    .form-group label { font-weight: 700; font-size: 0.75rem; margin-bottom: 8px; display: block; color: var(--emk-dark); letter-spacing: 0.5px; }
-    
-    .custom-input {
-        width: 100%;
-        padding: 14px 20px;
-        border-radius: 12px;
-        border: 1px solid #eee;
-        background: #fcfcfc;
-        transition: 0.3s;
-    }
-    .custom-input:focus {
-        outline: none;
-        border-color: var(--emk-orange);
-        background: white;
-        box-shadow: 0 0 0 4px rgba(242, 140, 40, 0.1);
-    }
+  .custom-input:focus {
+    background: white;
+    border-color: var(--emk-orange);
+    box-shadow: 0 10px 20px rgba(242, 140, 40, 0.05);
+    outline: none;
+  }
 
-    .submit-btn {
-        background: var(--emk-orange);
-        color: white;
-        border: none;
-        width: 100%;
-        padding: 16px;
-        border-radius: 12px;
-        font-weight: 800;
-        letter-spacing: 1px;
-        transition: 0.3s;
-        cursor: pointer;
-    }
-    .submit-btn:hover { background: var(--emk-dark); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+  /* Sosyal Medya Butonları */
+  .social-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: 0.3s;
+    text-decoration: none;
+  }
 
-    .map-frame {
-        border-radius: 25px;
-        overflow: hidden;
-        height: 100%;
-        min-height: 450px;
-        border: 1px solid #eee;
-    }
-
-    /* Sosyal Medya Butonları */
-    .social-btn {
-        width: 45px; height: 45px;
-        border-radius: 12px;
-        display: inline-flex; align-items: center; justify-content: center;
-        margin: 0 5px;
-        color: white;
-        transition: 0.3s;
-        text-decoration: none;
-    }
-    .social-btn:hover { transform: scale(1.1); color: white; }
-
-    @media (max-width: 991px) {
-        .map-frame { min-height: 300px; margin-top: 30px; }
-        .contact-container { padding: 30px 20px; }
-    }
+  .map-frame {
+    border-radius: 24px;
+    overflow: hidden;
+    height: 100%;
+    min-height: 450px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  }
 </style>
 
-<div id="contact-page-wrapper">
-    
-    <header class="contact-hero">
-        <div class="container" data-aos="fade-down">
-            <h1 class="display-4 fw-bold mb-3">Bize <span style="color: var(--emk-orange);">Ulaşın</span></h1>
-            <p class="opacity-75 mx-auto" style="max-width: 600px;">KOÜ EMK ile kariyer yolculuğunuzda bir adım öne geçin. Sorularınız için bize mesaj gönderebilirsiniz.</p>
+<div
+  id="contact-page-wrapper"
+  data-model="ContactPage"
+  data-path="{{ request.path }}"
+>
+  <!-- Hero Section -->
+  <header class="contact-hero">
+    <div class="container" data-aos="fade-down">
+      <h1
+        class="display-3 fw-bold mb-3"
+        id="hero_title"
+        data-editable="Hero Başlığı"
+      >
+        <!--prettier-ignore-->
+        {{ page_data.hero_title|default:"Bize Ulaşın" }}
+      </h1>
+      <p
+        class="opacity-75 mx-auto lead"
+        style="max-width: 650px"
+        id="hero_subtitle"
+        data-editable="Hero Açıklama"
+      >
+        <!--prettier-ignore-->
+        {{ page_data.hero_subtitle|default:"Optimize edilmiş çözümler ve yeni projeler için her zaman bir kahve uzağınızdayız." }}
+      </p>
+    </div>
+  </header>
+
+  <!-- Bilgi Kartları -->
+  <section class="container overlap-section">
+    <div class="row g-4">
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="info-card text-center">
+          <div class="icon-circle"><i class="fas fa-map-marked-alt"></i></div>
+          <h5 class="fw-bold mb-2">Konum</h5>
+          <p
+            class="text-muted small mb-0"
+            id="contact_address"
+            data-editable="Adres Bilgisi"
+          >
+            <!--prettier-ignore-->
+            {{ page_data.contact_address|default:"KOÜ Mühendislik Fakültesi, Umuttepe Yerleşkesi" }}
+          </p>
         </div>
-    </header>
+      </div>
 
-    <section class="container overlap-section">
-        <div class="row g-4 justify-content-center">
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="info-card">
-                    <div class="icon-circle"><i class="fas fa-location-dot"></i></div>
-                    <h5 class="fw-bold">Ziyaret Edin</h5>
-                    <p class="text-muted small mb-0">KOÜ Mühendislik Fakültesi, B Blok Kat: -1, Umuttepe/Kocaeli</p>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="info-card">
-                    <div class="icon-circle"><i class="fas fa-envelope-open-text"></i></div>
-                    <h5 class="fw-bold">Mail Atın</h5>
-                    <p class="text-muted small mb-0">info@kouemk.org<br>sirketgunleri@kouemk.org</p>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-12" data-aos="fade-up" data-aos-delay="300">
-                <div class="info-card">
-                    <div class="icon-circle"><i class="fas fa-share-nodes"></i></div>
-                    <h5 class="fw-bold">Sosyal Medya</h5>
-                    <div class="d-flex justify-content-center gap-2">
-                        <a href="#" class="social-btn" style="background: #E1306C;"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-btn" style="background: #0077b5;"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="social-btn" style="background: #1DA1F2;"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
-            </div>
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="info-card text-center">
+          <div class="icon-circle"><i class="fas fa-paper-plane"></i></div>
+          <h5 class="fw-bold mb-2">E-Posta</h5>
+          <p
+            class="text-muted small mb-0"
+            id="contact_emails"
+            data-editable="E-Posta Adresleri"
+          >
+            <!--prettier-ignore-->
+            {{ page_data.contact_emails|safe|default:"info@kouemk.org" }}
+          </p>
         </div>
-    </section>
+      </div>
 
-    <main class="container contact-main">
-        <div class="contact-container" data-aos="fade-up">
-            <div class="row g-5">
-                <div class="col-lg-6">
-                    <h3 class="fw-bold mb-4">Mesaj Gönder</h3>
-                    <form action="#" method="POST">
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label>ADINIZ</label>
-                                <input type="text" class="custom-input" placeholder="Ahmet Yılmaz" required>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>E-POSTA</label>
-                                <input type="email" class="custom-input" placeholder="mail@adres.com" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>KONU</label>
-                            <input type="text" class="custom-input" placeholder="Hangi konuda yazıyorsunuz?" required>
-                        </div>
-                        <div class="form-group">
-                            <label>MESAJINIZ</label>
-                            <textarea class="custom-input" rows="5" placeholder="Mesajınız..." required></textarea>
-                        </div>
-                        <button type="submit" class="submit-btn shadow">GÖNDER</button>
-                    </form>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="map-frame shadow-sm">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.060682599487!2d29.9202513!3d40.8222621!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cb4f5f5f5f5f5f%3A0x5f5f5f5f5f5f5f5f!2sKocaeli%20%C3%9Cniversitesi%20M%C3%BChendislik%20Fak%C3%BCltesi!5e0!3m2!1str!2str!4v1620000000000!5m2!1str!2str" 
-                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                    </div>
-                </div>
-            </div>
+      <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="info-card text-center">
+          <div class="icon-circle"><i class="fas fa-hashtag"></i></div>
+          <h5 class="fw-bold mb-2">Sosyal Medya</h5>
+          <div class="d-flex justify-content-center gap-3">
+            <a
+              href="{{ page_data.instagram_url|default:'#' }}"
+              class="social-btn"
+              style="
+                background: linear-gradient(
+                  45deg,
+                  #f09433,
+                  #e6683c,
+                  #dc2743,
+                  #cc2366,
+                  #bc1888
+                );
+              "
+            >
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a
+              href="{{ page_data.linkedin_url|default:'#' }}"
+              class="social-btn"
+              style="background: #0077b5"
+            >
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
         </div>
-    </main>
+      </div>
+    </div>
+  </section>
 
+  <!-- Main Content: Form & Map -->
+  <main class="container">
+    <div class="contact-container" data-aos="fade-up">
+      <div class="row g-5">
+        <div class="col-lg-12">
+          <div class="map-frame">
+            <iframe
+              src="{{ page_data.google_map_url|default:'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.060682599487!2d29.9202513!3d40.8222621!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cb4f5f5f5f5f5f%3A0x5f5f5f5f5f5f5f5f!2sKocaeli%20%C3%9Cniversitesi%20M%C3%BChendislik%20Fak%C3%BCltesi!5e0!3m2!1str!2str!4v1620000000000!5m2!1str!2str' }}"
+              id="google_map_url"
+              data-editable="Google Harita Embed URL"
+              width="100%"
+              height="100%"
+              style="border: 0"
+              allowfullscreen=""
+              loading="lazy"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        if(window.AOS) { AOS.init({ duration: 1000, once: true }); }
-    });
-</script>
 {% endblock %}

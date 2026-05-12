@@ -1,203 +1,292 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Teknik Geziler | Sahada Mühendislik - KOÜ EMK{% endblock %}
-
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block title %}Teknik Geziler |
+Sahada Mühendislik - KOÜ EMK{% endblock %} {% block content %}
 <style>
-    :root { --tg-orange: #F28C28; --tg-dark: #121212; }
+  :root {
+    --tg-orange: #f28c28;
+    --tg-dark: #121212;
+  }
 
-    /* Hero Bölümü */
-    .tg-hero {
-        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
-        height: 50vh;
-        display: flex;
-        align-items: center;
-        border-radius: 0 0 50px 50px;
-        margin-top: -24px;
-    }
+  /* Hero Bölümü */
+  .tg-hero {
+    background:
+      linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+      url("https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80")
+        center/cover;
+    height: 50vh;
+    display: flex;
+    align-items: center;
+    border-radius: 0 0 50px 50px;
+    margin-top: -24px;
+  }
 
-    /* Sayaç ve Başvuru Kartı */
-    .tg-action-card {
-        background: #fff;
-        border-radius: 25px;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-        padding: 40px;
-        margin-top: -70px;
-        z-index: 10;
-        position: relative;
-        border-left: 10px solid var(--tg-orange);
-    }
+  /* Sayaç ve Başvuru Kartı */
+  .tg-action-card {
+    background: #fff;
+    border-radius: 25px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    padding: 40px;
+    margin-top: -70px;
+    z-index: 10;
+    position: relative;
+    border-left: 10px solid var(--tg-orange);
+  }
 
-    /* Pulse Efekti (Başvuru Butonu İçin) */
-    @keyframes pulse-orange {
-        0% { box-shadow: 0 0 0 0 rgba(242, 140, 40, 0.5); }
-        70% { box-shadow: 0 0 0 20px rgba(242, 140, 40, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(242, 140, 40, 0); }
+  /* Pulse Efekti (Başvuru Butonu İçin) */
+  @keyframes pulse-orange {
+    0% {
+      box-shadow: 0 0 0 0 rgba(242, 140, 40, 0.5);
     }
-    .btn-pulse { animation: pulse-orange 2s infinite; }
+    70% {
+      box-shadow: 0 0 0 20px rgba(242, 140, 40, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(242, 140, 40, 0);
+    }
+  }
+  .btn-pulse {
+    animation: pulse-orange 2s infinite;
+  }
 
-    /* Sol Menü (Dönemler) */
-    .tg-sidebar .nav-link {
-        color: var(--emk-dark);
-        background: #f1f1f1;
-        margin-bottom: 12px;
-        padding: 20px;
-        border-radius: 15px;
-        font-weight: 700;
-        transition: 0.3s;
-        border: none;
-        text-align: left;
-    }
-    .tg-sidebar .nav-link.active {
-        background: var(--tg-orange) !important;
-        color: white !important;
-        transform: scale(1.05);
-    }
+  /* Sol Menü (Dönemler) */
+  .tg-sidebar .nav-link {
+    color: var(--emk-dark);
+    background: #f1f1f1;
+    margin-bottom: 12px;
+    padding: 20px;
+    border-radius: 15px;
+    font-weight: 700;
+    transition: 0.3s;
+    border: none;
+    text-align: left;
+  }
+  .tg-sidebar .nav-link.active {
+    background: var(--tg-orange) !important;
+    color: white !important;
+    transform: scale(1.05);
+  }
 
-    /* Fabrika Kartları */
-    .factory-card {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        border: 1px solid rgba(0,0,0,0.05);
-        transition: 0.4s;
-    }
-    .factory-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
-    .factory-img { height: 200px; object-fit: cover; width: 100%; }
+  /* Fabrika Kartları */
+  .factory-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: 0.4s;
+  }
+  .factory-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  }
+  .factory-img {
+    height: 200px;
+    object-fit: cover;
+    width: 100%;
+  }
 </style>
+<!-- Stil bloğun aynen kalsın kanka -->
 
-<div class="tg-wrapper mb-5">
-    
-    <section class="tg-hero text-center text-white">
-        <div class="container" data-aos="zoom-in">
-            <h1 class="display-3 fw-bold">TEKNİK GEZİLER</h1>
-            <p class="lead opacity-75">Üretimi yerinde inceliyor, mühendisliği sahada öğreniyoruz.</p>
+<div
+  class="tg-wrapper mb-5"
+  data-model="OrganizationEvent"
+  data-sub-model="TG"
+  data-path="{{ request.path }}"
+>
+  <section class="tg-hero text-center text-white">
+    <div class="container" data-aos="zoom-in">
+      <h1
+        class="display-3 fw-bold"
+        id="hero_title"
+        data-editable="Hero Başlığı"
+      >
+        {{ page_data.hero_title|default:"TEKNİK GEZİLER" }}
+      </h1>
+      <p
+        class="lead opacity-75"
+        id="hero_subtitle"
+        data-editable="Hero Alt Başlık"
+      >
+        {{ page_data.hero_subtitle|default:"Üretimi yerinde inceliyor,
+        mühendisliği sahada öğreniyoruz." }}
+      </p>
+    </div>
+  </section>
+
+  <!-- Sıradaki Gezi & Sayaç -->
+  <section class="container mb-5">
+    <div class="tg-action-card shadow-lg" data-aos="fade-up">
+      <div class="row align-items-center">
+        <div class="col-lg-3 text-center text-lg-start mb-4 mb-lg-0">
+          <h5 class="fw-bold mb-1">SIRADAKİ GEZİ:</h5>
+          <p class="text-warning fw-bold mb-0" id="next_trip_name">
+            {{ active_tg.extra_data.next_trip|default:"Planlanıyor..." }}
+          </p>
         </div>
-    </section>
-
-    <section class="container mb-5">
-        <div class="tg-action-card" data-aos="fade-up">
-            <div class="row align-items-center">
-                <div class="col-lg-3 text-center text-lg-start mb-4 mb-lg-0">
-                    <h5 class="fw-bold mb-1">SIRADAKİ GEZİ:</h5>
-                    <p class="text-warning fw-bold mb-0">Ford Otosan Fabrikası</p>
-                </div>
-                <div class="col-lg-5 mb-4 mb-lg-0">
-                    <div class="d-flex justify-content-center gap-4 text-center">
-                        <div><span class="h2 fw-bold" id="tg-days">00</span><br><small class="text-muted">GÜN</small></div>
-                        <div class="h2 opacity-25">|</div>
-                        <div><span class="h2 fw-bold" id="tg-hours">00</span><br><small>SAAT</small></div>
-                        <div class="h2 opacity-25">|</div>
-                        <div><span class="h2 fw-bold" id="tg-mins">00</span><br><small>DK</small></div>
-                    </div>
-                </div>
-                <div class="col-lg-4 text-center text-lg-end">
-                    <a href="https://forms.gle/SENIN_FORM_LINKIN" target="_blank" class="btn btn-emk btn-lg px-5 py-3 rounded-pill fw-bold btn-pulse">
-                        <i class="fab fa-google me-2"></i>HEMEN BAŞVUR
-                    </a>
-                </div>
+        <div class="col-lg-5 mb-4 mb-lg-0">
+          <div class="d-flex justify-content-center gap-4 text-center">
+            <div>
+              <span class="h2 fw-bold" id="tg-days">00</span><br /><small
+                class="text-muted"
+                >GÜN</small
+              >
             </div>
+            <div class="h2 opacity-25">|</div>
+            <div>
+              <span class="h2 fw-bold" id="tg-hours">00</span><br /><small
+                >SAAT</small
+              >
+            </div>
+            <div class="h2 opacity-25">|</div>
+            <div>
+              <span class="h2 fw-bold" id="tg-mins">00</span><br /><small
+                >DK</small
+              >
+            </div>
+          </div>
         </div>
-    </section>
-
-    <section class="container py-5">
-        <div class="row g-5 align-items-center">
-            <div class="col-lg-6" data-aos="fade-right">
-                <h2 class="display-5 fw-bold mb-4">Teknik Gezi Koordinatörlüğü</h2>
-                <p class="text-muted lead">Bu koordinatörlük, EMK'nın operasyonel gücünü temsil eder. Amacımız, Endüstri Mühendisliği öğrencilerini sınıflardan çıkarıp; devasa üretim hatlarının, lojistik depoların ve karmaşık sistemlerin tam merkezine götürmektir.</p>
-                <div class="alert alert-warning border-0 rounded-4 p-4 mt-4">
-                    <h6 class="fw-bold"><i class="fas fa-info-circle me-2"></i>Neden Katılmalısın?</h6>
-                    <small>Sektördeki lider firmaların üretim süreçlerini yerinde görerek, teorik derslerin (Üretim Planlama, ERP, Simülasyon) pratikteki karşılığını anlama şansı yakalarsın.</small>
-                </div>
-            </div>
-            <div class="col-lg-6" data-aos="fade-left">
-                <img src="https://images.unsplash.com/photo-1565034946487-077786996e27?auto=format&fit=crop&w=800&q=80" class="img-fluid rounded-5 shadow-lg">
-            </div>
+        <div class="col-lg-4 text-center text-lg-end">
+          <a
+            href="{{ page_data.form_link|default:'#' }}"
+            target="_blank"
+            id="form_link"
+            data-editable="Başvuru Form Linki"
+            class="btn btn-emk btn-lg px-5 py-3 rounded-pill fw-bold btn-pulse"
+          >
+            <i class="fab fa-google me-2"></i>HEMEN BAŞVUR
+          </a>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <section class="container py-5">
-        <h2 class="fw-bold mb-5 text-center">GEZİ GÜNLÜKLERİ</h2>
-        <div class="row">
-            <div class="col-lg-3 tg-sidebar" data-aos="fade-right">
-                <div class="nav flex-column nav-pills" id="tg-tabs">
-                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tg2025">2024 - 2025 Dönemi</button>
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tg2024">2023 - 2024 Dönemi</button>
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tg2023">2022 - 2023 Dönemi</button>
-                </div>
-            </div>
+  <section class="container py-5">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6" data-aos="fade-right">
+        <h2
+          class="display-5 fw-bold mb-4"
+          id="coord_title"
+          data-editable="Koord. Başlığı"
+        >
+          {{ page_data.coord_title|default:"Teknik Gezi Koordinatörlüğü" }}
+        </h2>
+        <p
+          class="text-muted lead"
+          id="coord_text"
+          data-editable="Koord. Açıklama"
+        >
+          {{ page_data.coord_text|default:"Amacımız, Endüstri Mühendisliği
+          öğrencilerini sınıflardan çıkarıp sahanın merkezine götürmektir." }}
+        </p>
+      </div>
+      <div class="col-lg-6" data-aos="fade-left">
+        <img
+          src="{{ page_data.about_img|default:'https://images.unsplash.com/photo-1565034946487-077786996e27' }}"
+          id="about_img"
+          data-editable="Tanıtım Görseli"
+          class="img-fluid rounded-5 shadow-lg"
+        />
+      </div>
+    </div>
+  </section>
 
-            <div class="col-lg-9" data-aos="fade-left">
-                <div class="tab-content border-start ps-lg-5">
-                    
-                    <div class="tab-pane fade show active" id="tg2025">
-                        <h4 class="fw-bold mb-4">Bu Dönemin Durakları</h4>
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <div class="factory-card">
-                                    <img src="https://via.placeholder.com/400x200?text=HYUNDAI+ASSAN" class="factory-img">
-                                    <div class="p-3">
-                                        <h5 class="fw-bold">Hyundai Assan</h5>
-                                        <p class="small text-muted">Yalın üretim süreçleri ve JIT uygulamaları incelendi.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="factory-card">
-                                    <img src="https://via.placeholder.com/400x200?text=KORDSA" class="factory-img">
-                                    <div class="p-3">
-                                        <h5 class="fw-bold">Kordsa Global</h5>
-                                        <p class="small text-muted">Ar-Ge merkezi ve malzeme üretim hatları gezildi.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="tg2024">
-                        <h4 class="fw-bold">Geçen Dönem Neredeydik?</h4>
-                        <p class="text-muted">Bu döneme ait kayıtlar arşivlenmektedir.</p>
-                    </div>
-
-                </div>
-            </div>
+  <!-- Gezi Günlükleri (Arşiv) -->
+  <section class="container py-5">
+    <h2 class="fw-bold mb-5 text-center">GEZİ GÜNLÜKLERİ</h2>
+    <div class="row">
+      <div class="col-lg-3 tg-sidebar" data-aos="fade-right">
+        <div class="nav flex-column nav-pills" id="tg-tabs">
+          {% for ev in archives %}
+          <button
+            class="nav-link {% if forloop.first %}active{% endif %}"
+            data-bs-toggle="pill"
+            data-bs-target="#tg{{ ev.year }}"
+          >
+            {{ ev.year }} - {{ ev.year|add:1 }} Dönemi
+          </button>
+          {% endfor %}
         </div>
-    </section>
+      </div>
 
-    <section class="container py-5">
-        <div class="p-5 rounded-5 text-white shadow-lg" style="background: var(--tg-dark); border-right: 10px solid var(--tg-orange);" data-aos="flip-up">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <h2 class="fw-bold">Gezmek İstediğin Fabrikayı Söyle!</h2>
-                    <p class="lead opacity-75">Bir sonraki rotamızı senin isteklerine göre belirliyoruz. Hangi üretim bandının başında olmak istersin?</p>
+      <div class="col-lg-9" data-aos="fade-left">
+        <div class="tab-content border-start ps-lg-5">
+          {% for ev in archives %}
+          <div
+            class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+            id="tg{{ ev.year }}"
+            data-object-id="{{ ev.id }}"
+            data-model="OrganizationEvent"
+          >
+            <h4 class="fw-bold mb-4">Bu Dönemin Durakları</h4>
+            <div class="row g-4">
+              {% for factory in ev.extra_data.factories %}
+              <div class="col-md-6">
+                <div
+                  class="factory-card shadow-sm border rounded-4 overflow-hidden"
+                >
+                  <img
+                    src="{{ factory.img|default:'https://via.placeholder.com/400x200' }}"
+                    class="img-fluid"
+                  />
+                  <div class="p-3 bg-white">
+                    <h5 class="fw-bold">{{ factory.name }}</h5>
+                    <p class="small text-muted mb-0">{{ factory.desc }}</p>
+                  </div>
                 </div>
-                <div class="col-lg-4 text-lg-end">
-                    <a href="https://forms.gle/SENIN_ONERI_FORMU_LINKIN" target="_blank" class="btn btn-outline-warning btn-lg px-5 py-3 rounded-pill fw-bold">ROTAYI ÖNER</a>
-                </div>
+              </div>
+              {% endfor %}
             </div>
+          </div>
+          {% endfor %}
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
+  <!-- Öneri Kutusu -->
+  <section class="container py-5">
+    <div
+      class="p-5 rounded-5 text-white shadow-lg text-center"
+      style="background: #111; border-right: 10px solid var(--tg-orange)"
+      data-aos="flip-up"
+    >
+      <h2 class="fw-bold" id="suggest_title" data-editable="Öneri Başlığı">
+        {{ page_data.suggest_title|default:"Gezmek İstediğin Fabrikayı Söyle!"
+        }}
+      </h2>
+      <p class="lead opacity-75" id="suggest_text" data-editable="Öneri Metni">
+        {{ page_data.suggest_text|default:"Bir sonraki rotamızı senin
+        isteklerine göre belirliyoruz." }}
+      </p>
+      <a
+        href="{{ page_data.suggest_link|default:'#' }}"
+        target="_blank"
+        id="suggest_link"
+        data-editable="Öneri Form Linki"
+        class="btn btn-outline-warning btn-lg px-5 py-3 rounded-pill fw-bold"
+        >ROTAYI ÖNER</a
+      >
+    </div>
+  </section>
 </div>
 
 <script>
-    // Teknik Gezi Tarihi (Geri Sayım İçin)
-    const countDate = new Date("Mar 12, 2026 08:00:00").getTime();
+  // Sayaç Tarihi page_data'dan gelir
+  const tgTargetStr = "{{ page_data.tg_date|default:'Mar 12, 2026 08:00:00' }}";
+  const countDate = new Date(tgTargetStr).getTime();
 
-    function updateCounter() {
-        const now = new Date().getTime();
-        const gap = countDate - now;
+  function updateCounter() {
+    const now = new Date().getTime();
+    const gap = countDate - now;
+    if (gap < 0) return;
 
-        const d = Math.floor(gap / (1000 * 60 * 60 * 24));
-        const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
+    const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+    const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const m = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
 
-        document.getElementById('tg-days').innerText = d;
-        document.getElementById('tg-hours').innerText = h;
-        document.getElementById('tg-mins').innerText = m;
-    }
-    setInterval(updateCounter, 1000);
-    updateCounter();
+    document.getElementById("tg-days").innerText = String(d).padStart(2, "0");
+    document.getElementById("tg-hours").innerText = String(h).padStart(2, "0");
+    document.getElementById("tg-mins").innerText = String(m).padStart(2, "0");
+  }
+  setInterval(updateCounter, 1000);
+  updateCounter();
 </script>
 {% endblock %}
