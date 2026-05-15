@@ -5,3 +5,6 @@ db.sqlite3
 venv/
 .env
 staticfiles/
+mediafiles/
+*.log   
+media/
