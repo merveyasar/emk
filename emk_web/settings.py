@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url # pip install dj-database-url gerektirir
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -91,8 +92,7 @@ WSGI_APPLICATION = 'emk_web.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-import dj_database_url # pip install dj-database-url gerektirir
-import os
+
 
 DATABASES = {
     'default': dj_database_url.config(
