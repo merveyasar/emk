@@ -1,297 +1,444 @@
-{% extends 'base.html' %} {% load static %} {% block title %}SB | Sektöre
-Büyüteç - KOÜ EMK{% endblock %} {% block content %}
+<!--prettier-ignore-->
+{% extends 'base.html' %} {% load static %} {% block title %}{{ active_sb.event.name|default:"Sektöre Büyüteç" }} | KOÜ EMK{% endblock %} {% block content %}
+
 <style>
   :root {
-    --sb-orange: #f28c28;
-    --sb-dark: #121212;
+    --accent-color: #f28c28;
+    --glass: rgba(255, 255, 255, 0.03);
   }
 
-  /* 1. Video/Görsel Hero */
-  .sb-hero-wrap {
+  /* 1. Hero & Layout */
+  .hero-glass-section {
     position: relative;
-    height: 75vh;
-    width: 100%;
-    margin-top: -24px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .sb-hero-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.35);
-    transform: scale(1.1);
-    transition: 10s linear;
-  }
-  .sb-hero-wrap:hover .sb-hero-img {
-    transform: scale(1);
-  } /* Yavaşça uzaklaşma efekti */
-
-  .sb-hero-content {
-    position: relative;
-    z-index: 5;
-    text-align: center;
-  }
-  .sb-hero-title {
-    font-family: "Space Grotesk", sans-serif;
-    font-size: clamp(2.5rem, 8vw, 5.5rem);
-    font-weight: 800;
-    color: white;
-    line-height: 1;
-  }
-
-  /* 2. Sayaç Kartı */
-  .sb-timer-card {
-    background: white;
-    border-radius: 30px;
-    padding: 45px;
+    padding: 160px 0 100px;
+    background:
+      radial-gradient(
+        circle at top right,
+        rgba(242, 140, 40, 0.15),
+        transparent
+      ),
+      #0f1012;
+    border-radius: 0 0 80px 80px;
     margin-top: -100px;
-    position: relative;
-    z-index: 10;
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
-    border-bottom: 8px solid var(--sb-orange);
-  }
-  .timer-val {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 800;
-    color: var(--sb-dark);
-    line-height: 1;
-  }
-  .timer-lab {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--sb-orange);
-    letter-spacing: 3px;
-  }
-
-  /* 3. Resimli Nedir Bölümü */
-  .info-img-wrapper {
-    position: relative;
-    border-radius: 30px;
     overflow: hidden;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   }
-  .info-img-overlay {
+  .hero-glass-section::before {
+    content: "";
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 30px;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-    color: white;
+    inset: 0;
+    background: url("{{ page_data.hero_img|default:'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab' }}")
+      center/cover no-repeat;
+    opacity: 0.15;
+    filter: grayscale(1) blur(4px);
   }
 
-  /* 4. Sektör Badge Tasarımı */
-  .sector-pill {
-    background: white;
-    border: 1px solid #eee;
-    border-radius: 100px;
-    padding: 15px 35px;
-    margin: 10px;
-    display: inline-block;
-    font-weight: 700;
-    transition: 0.4s;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-  }
-  .sector-pill:hover {
-    background: var(--sb-orange);
-    color: white;
-    transform: translateY(-5px);
-  }
-
-  /* 5. Masonry Galeri */
-  .gallery-grid {
+  /* 2. Bento Stats */
+  .bento-stat-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    grid-auto-rows: 250px;
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
+    margin-top: 50px;
   }
-  .gallery-item {
-    border-radius: 20px;
+  .bento-stat-card {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 30px;
+    padding: 30px;
+    transition: 0.4s ease;
+  }
+
+  /* 3. INLINE DETAIL PANEL (Modal Yerine Gelen Bölüm) */
+  .detail-preview-panel {
+    display: none;
+    background: #161719;
+    border-radius: 40px;
+    margin-bottom: 50px;
+    border: 1px solid var(--accent-color);
     overflow: hidden;
-    position: relative;
+    animation: slideDown 0.6s cubic-bezier(0.2, 1, 0.2, 1);
   }
-  .gallery-item img {
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 4. Story Scroll */
+  .story-scroll-container {
+    display: flex;
+    gap: 30px;
+    overflow-x: auto;
+    padding: 20px 0 60px;
+    scrollbar-width: none;
+  }
+  .story-scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+  .story-card {
+    flex: 0 0 400px;
+    height: 500px;
+    position: relative;
+    border-radius: 40px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+  }
+  .story-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: 0.5s;
+    transition: 1s;
   }
-  .gallery-item:hover img {
+  .story-card:hover img {
     transform: scale(1.1);
-    filter: brightness(0.6);
   }
-  .tall {
-    grid-row: span 2;
+  .story-overlay {
+    position: absolute;
+    inset: 0;
+    padding: 40px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent 60%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
   }
-  .wide {
-    grid-column: span 2;
+  .year-tag {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: var(--accent-color);
+    color: #000;
+    font-weight: 800;
+    padding: 8px 20px;
+    border-radius: 100px;
   }
 </style>
 
 <div
-  class="sb-page-wrapper"
-  style="overflow-x: hidden"
-  data-model="OrganizationEvent"
+  class="org-page-wrapper"
+  data-model="PageContent,OrganizationArchive"
   data-sub-model="SB"
   data-path="{{ request.path }}"
 >
-  <section class="sb-hero-wrap">
-    <img
-      src="{{ page_data.hero_img|default:'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab' }}"
-      id="hero_img"
-      data-editable="Hero Arkaplan"
-      class="sb-hero-img"
-    />
-    <div class="sb-hero-content" data-aos="zoom-out">
-      <h1 class="sb-hero-title" id="hero_title" data-editable="Hero Başlığı">
-        {{ page_data.hero_title|safe|default:"SEKTÖRE <br /><span
-          style="color: var(--sb-orange)"
-          >BÜYÜTEÇ</span
-        >" }}
+  <section class="hero-glass-section">
+    <div class="container position-relative z-index-10 text-center">
+      <h1
+        class="display-2 fw-bold text-white mb-3"
+        data-id="hero_title"
+        data-editable="Ana Başlık"
+      >
+        {{ page_data.hero_title|default:"SEKTÖRE BÜYÜTEÇ" }}
       </h1>
-      <p
-        class="lead text-light opacity-75 fs-4 mt-3"
-        id="hero_subtitle"
-        data-editable="Hero Alt Başlık"
-      >
-        {{ page_data.hero_subtitle|default:"Geleceğin Sektörlerine Yakından
-        Bakın" }}
-      </p>
-    </div>
-  </section>
 
-  <!-- Sayaç Bölümü -->
-  <section class="container mb-5">
-    <div class="sb-timer-card" data-aos="fade-up">
       <div
-        class="d-flex justify-content-center align-items-center flex-wrap gap-4"
+        class="d-flex justify-content-center gap-4 text-white-50 mb-5 fw-bold ls-2"
       >
-        <div class="text-center">
-          <span class="timer-val" id="days">00</span
-          ><span class="timer-lab">GÜN</span>
-        </div>
-        <div class="h1 text-muted opacity-25">:</div>
-        <div class="text-center">
-          <span class="timer-val" id="hours">00</span
-          ><span class="timer-lab">SAAT</span>
-        </div>
-        <div class="h1 text-muted opacity-25">:</div>
-        <div class="text-center">
-          <span class="timer-val" id="minutes">00</span
-          ><span class="timer-lab">DAKİKA</span>
-        </div>
-        <div class="h1 text-muted opacity-25">:</div>
-        <div class="text-center">
-          <span class="timer-val" id="seconds" style="color: var(--sb-orange)"
-            >00</span
+        <span id="k-days">00</span>D : <span id="k-hours">00</span>H :
+        <span id="k-mins">00</span>M
+      </div>
+
+      <div class="bento-stat-grid">
+        <div class="bento-stat-card">
+          <h2
+            class="text-white fw-bold"
+            data-id="stat_1"
+            data-editable="Stat 1"
           >
-          <span class="timer-lab">SANİYE</span>
+            {{ page_data.stat_1|default:"15+" }}
+          </h2>
+          <p class="text-white-50 small uppercase ls-1">Tecrübe Yılı</p>
+        </div>
+
+        <div class="bento-stat-card" style="grid-column: span 2">
+          <h2
+            style="color: var(--accent-color)"
+            data-id="stat_2"
+            data-editable="Stat 2"
+          >
+            {{ page_data.stat_2|default:"200+" }}
+          </h2>
+          <p class="text-white-50 small uppercase ls-1">
+            Global Partner & Şirket
+          </p>
+        </div>
+
+        <div class="bento-stat-card">
+          <h2
+            class="text-white fw-bold"
+            data-id="stat_3"
+            data-editable="Stat 3"
+          >
+            {{ page_data.stat_3|default:"5K" }}
+          </h2>
+          <p class="text-white-50 small uppercase ls-1">Katılımcı</p>
+        </div>
+      </div>
+
+      <div class="row justify-content-center mt-4">
+        <div class="col-lg-12">
+          <div
+            class="bento-stat-card text-start border-0"
+            style="background: rgba(255, 255, 255, 0.02)"
+          >
+            <div class="row g-4 align-items-center">
+              <div class="col-md-7 border-end border-white-10">
+                <h6
+                  class="fw-bold uppercase ls-2 mb-3"
+                  style="color: var(--accent-color)"
+                >
+                  NEDİR?
+                </h6>
+                <h2
+                  class="text-white fw-bold mb-3"
+                  data-id="p_about_title"
+                  data-editable="Hakkında Başlık"
+                >
+                  <!--prettier-ignore-->
+                  {{ page_data.p_about_title|default:"Geleceğe Tutulan Profesyonel Bir Mercek" }}
+                </h2>
+                <p
+                  class="text-white-50 lh-lg mb-0"
+                  data-id="p_about_desc"
+                  data-editable="Hakkında Açıklama"
+                >
+                  <!--prettier-ignore-->
+                  {{ page_data.p_about_desc|default:"Sektöre Büyüteç (SB), üniversite-sanayi iş birliğinin en somut örneğidir. Her yıl belirlenen odak sektörler üzerinden, profesyonelleri öğrencilerle buluşturarak teorik bilgiyi sektörün mutfağına taşır." }}
+                </p>
+              </div>
+
+              <div class="col-md-5 ps-md-5">
+                <h6 class="text-white-50 fw-bold uppercase ls-2 mb-3 small">
+                  VİZYONUMUZ
+                </h6>
+
+                <div class="d-flex gap-3 mb-4">
+                  <div style="color: var(--accent-color)">
+                    <i class="fas fa-bullseye fa-lg"></i>
+                  </div>
+                  <p
+                    class="text-white-50 small mb-0"
+                    data-id="p_vision_1"
+                    data-editable="Vizyon 1"
+                  >
+                    <!--prettier-ignore-->
+                    {{ page_data.p_vision_1|default:"Endüstri mühendisliği disiplinini sektörün dinamikleriyle optimize etmek." }}
+                  </p>
+                </div>
+
+                <div class="d-flex gap-3">
+                  <div style="color: var(--accent-color)">
+                    <i class="fas fa-rocket fa-lg"></i>
+                  </div>
+                  <p
+                    class="text-white-50 small mb-0"
+                    data-id="p_vision_2"
+                    data-editable="Vizyon 2"
+                  >
+                    <!--prettier-ignore-->
+                    {{ page_data.p_vision_2|default:"Genç mühendis adaylarını liderlik ve inovasyon odaklı bir ekosisteme hazırlamak." }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
-
-  <!-- Bilgi Bölümü -->
-  <section class="container py-5 mt-5">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-6" data-aos="fade-right">
-        <div class="info-img-wrapper">
-          <img
-            src="{{ page_data.about_img|default:'https://images.unsplash.com/photo-1552664730-d307ca884978' }}"
-            id="about_img"
-            data-editable="Hakkında Görsel"
-            class="img-fluid"
-          />
+  <section class="py-5">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-end mb-4 px-2">
+        <h2 class="text-white fw-bold display-5">Etkinlik Arşivi</h2>
+        <div class="archive-pills d-flex gap-2">
+          <button
+            class="btn btn-outline-warning rounded-pill px-4 active"
+            data-filter="all"
+          >
+            Tümü
+          </button>
+          {% for year in years %}
+          <button
+            class="btn btn-outline-warning rounded-pill px-4"
+            data-filter="{{ year }}"
+          >
+            {{ year }}
+          </button>
+          {% endfor %}
         </div>
       </div>
-      <div class="col-lg-6" data-aos="fade-left">
-        <h2 class="display-4 fw-bold mb-4">
-          Sektöre Büyüteç <span class="text-warning">Nedir?</span>
-        </h2>
-        <p
-          class="text-muted fs-5"
-          id="about_text"
-          data-editable="Nedir Açıklaması"
+
+      <div class="story-scroll-container">
+        {% for archive in all_archives %}
+        <div
+          class="story-card archive-item"
+          data-year="{{ archive.year }}"
+          onclick="showInlineDetail({{ archive.id }})"
+          role="button"
+          aria-label="{{ archive.year }} detaylarını gör"
         >
-          {{ page_data.about_text|default:"Sektöre Büyüteç (SB),
-          üniversite-sanayi iş birliğinin en somut örneğidir..." }}
-        </p>
-        <div class="d-flex gap-4 mt-4">
-          <div class="p-3 bg-light rounded-4 text-center w-100 border">
-            <h3 class="fw-bold mb-0" id="stat_1" data-editable="Stat 1">
-              {{ page_data.stat_1|default:"15+" }}
-            </h3>
-            <small class="text-muted fw-bold">YILLIK TECRÜBE</small>
-          </div>
-          <div class="p-3 bg-light rounded-4 text-center w-100 border">
-            <h3 class="fw-bold mb-0" id="stat_2" data-editable="Stat 2">
-              {{ page_data.stat_2|default:"100+" }}
-            </h3>
-            <small class="text-muted fw-bold">KONUK ŞİRKET</small>
+          <div class="year-tag">{{ archive.year }}</div>
+
+          <img
+            src="{{ archive.cover_image.url }}"
+            alt="{{ archive.motto }}"
+            loading="lazy"
+          />
+
+          <div class="story-overlay">
+            <h3 class="text-white fw-bold mb-1">{{ archive.motto }}</h3>
+            <p class="text-white-50 small mb-0">
+              {{ archive.description|truncatewords:10 }}
+            </p>
+
+            <div class="text-warning mt-2 small fw-bold opacity-75">
+              <i class="fas fa-search-plus me-1"></i> İNCELE
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sektör Pill'leri (Aktif Etkinlikten Gelir) -->
-  <section class="py-5 bg-white border-top border-bottom">
-    <div class="container text-center py-4" data-aos="fade-up">
-      <h2 class="fw-bold mb-5">MERCEK ALTINA ALINAN SEKTÖRLER</h2>
-      <div class="d-flex flex-wrap justify-content-center">
-        {% for sector in active_sb.extra_data.sectors %}
-        <div class="sector-pill">{{ sector }}</div>
-        {% empty %}
-        <p class="text-muted">Sektör listesi henüz girilmemiş.</p>
         {% endfor %}
       </div>
-    </div>
-  </section>
 
-  <!-- Galeri Izgarası (Arşivden Gelir) -->
-  <section class="container py-5 mt-5">
-    <h2 class="display-5 fw-bold text-center mb-5" data-aos="fade-up">
-      ETKİNLİK ARŞİVİ
-    </h2>
-    <div class="gallery-grid" data-aos="fade-up">
-      {% for ev in archives %} {% for img in ev.extra_data.gallery %}
-      <div
-        class="gallery-item {% if forloop.counter|divisibleby:3 %}wide{% elif forloop.counter|divisibleby:5 %}tall{% endif %}"
-      >
-        <img src="{{ img }}" alt="SB Anı" />
+      <div id="inlineDetail" class="detail-preview-panel">
+        <div id="detailContent"></div>
       </div>
-      {% endfor %} {% endfor %}
     </div>
   </section>
 </div>
 
 <script>
-  const sbTargetStr =
-    "{{ page_data.sb_target_date|default:'Feb 15, 2026 09:00:00' }}";
-  const sbTargetDate = new Date(sbTargetStr).getTime();
+  async function showInlineDetail(id) {
+    const panel = document.getElementById("inlineDetail");
+    const content = document.getElementById("detailContent");
 
-  function updateSBTimer() {
-    const now = new Date().getTime();
-    const diff = sbTargetDate - now;
-    if (diff < 0) return;
+    // 1. Paneli Görünür Yap ve Oraya Odaklan
+    panel.style.display = "block";
+    panel.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const s = Math.floor((diff % (1000 * 60)) / 1000);
+    // Loading Durumu
+    content.innerHTML = `
+    <div class="p-5 text-center text-white my-5">
+      <i class="fas fa-circle-notch fa-spin fa-3x text-warning"></i>
+      <p class="mt-3 opacity-50 small ls-2">VERİLER GETİRİLİYOR...</p>
+    </div>`;
 
-    document.getElementById("days").innerText = String(d).padStart(2, "0");
-    document.getElementById("hours").innerText = String(h).padStart(2, "0");
-    document.getElementById("minutes").innerText = String(m).padStart(2, "0");
-    document.getElementById("seconds").innerText = String(s).padStart(2, "0");
+    try {
+      const res = await fetch(`/editor/get-archive/${id}/`);
+      const data = await res.json();
+
+      // 2. Odak Sektörleri Hazırla (arc-extra-sectors'den gelen veri)
+      let sectorsHTML = "";
+      if (data.extra_data?.sectors && data.extra_data.sectors.length > 0) {
+        sectorsHTML = `
+        <div class="mb-4">
+          <h6 class="extra-small fw-bold ls-2 text-warning mb-2 uppercase">ODAK SEKTÖRLER</h6>
+          <div class="d-flex flex-wrap gap-2">
+            ${data.extra_data.sectors
+              .map(
+                (s) => `
+              <span class="badge border border-secondary rounded-pill fw-normal px-3 py-2" style="background: rgba(255,255,255,0.05)">
+                ${s}
+              </span>
+            `,
+              )
+              .join("")}
+          </div>
+        </div>`;
+      }
+
+      // 3. Galeri Fotoğraflarını Hazırla
+      let galleryHTML =
+        data.extra_data?.images
+          ?.map(
+            (img) => `
+      <div class="col-4 p-1">
+        <div class="ratio ratio-1x1 rounded-3 overflow-hidden border border-secondary shadow-sm">
+          <img src="${img}" class="w-100 h-100 object-fit-cover" style="cursor:zoom-in" onclick="window.open('${img}', '_blank')">
+        </div>
+      </div>
+    `,
+          )
+          .join("") || "";
+
+      // 4. İçeriği Panele Bas (Apple Bento Düzeni)
+      content.innerHTML = `
+      <div class="row g-0">
+        <div class="col-md-5" style="background:url('${data.cover_url}') center/cover no-repeat; min-height:450px;">
+        </div>
+
+        <div class="col-md-7 p-4 p-md-5 text-white position-relative d-flex flex-column justify-content-center">
+          <button onclick="closeDetail()" class="btn btn-link text-white position-absolute top-0 end-0 m-4 opacity-50 hover-opacity-100">
+            <i class="fas fa-times fa-lg"></i>
+          </button>
+
+          <div class="mb-2">
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold mb-3">${data.year}</span>
+            <h2 class="display-6 fw-bold mb-3">${data.motto}</h2>
+          </div>
+
+          <p class="text-white-50 lh-lg mb-4" style="font-size: 1.05rem;">
+            ${data.description || "Bu dönem için henüz bir açıklama metni girilmemiş."}
+          </p>
+
+          ${sectorsHTML}
+
+          <h6 class="extra-small fw-bold ls-2 text-white-50 mb-3 uppercase">ETKİNLİK GALERİSİ</h6>
+          <div class="row g-1">
+            ${galleryHTML || '<p class="text-warning small">Görsel bulunamadı.</p>'}
+          </div>
+        </div>
+      </div>
+    `;
+    } catch (e) {
+      content.innerHTML = `
+      <div class="p-5 text-center text-danger">
+        <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+        <p>Veri çekilirken bir hata oluştu kanka. Backend URL'ini kontrol et!</p>
+      </div>`;
+    }
   }
-  setInterval(updateSBTimer, 1000);
-  updateSBTimer();
+
+  function closeDetail() {
+    document.getElementById("inlineDetail").style.display = "none";
+  }
+
+  // Filtreleme ve Timer (Mevcut kodların)
+  document.querySelectorAll("[data-filter]").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const year = this.getAttribute("data-filter");
+      document.querySelectorAll(".archive-item").forEach((item) => {
+        item.style.display =
+          year === "all" || item.getAttribute("data-year") === year
+            ? "block"
+            : "none";
+      });
+      document
+        .querySelectorAll("[data-filter]")
+        .forEach((b) => b.classList.remove("active"));
+      this.classList.add("active");
+    });
+  });
+
+  const targetDate = new Date(
+    "{{ page_data.target_date|default:'May 13, 2026 09:00:00' }}",
+  ).getTime();
+  setInterval(() => {
+    const diff = targetDate - new Date().getTime();
+    if (diff < 0) return;
+    document.getElementById("k-days").innerText = String(
+      Math.floor(diff / 86400000),
+    ).padStart(2, "0");
+    document.getElementById("k-hours").innerText = String(
+      Math.floor((diff % 86400000) / 3600000),
+    ).padStart(2, "0");
+    document.getElementById("k-mins").innerText = String(
+      Math.floor((diff % 3600000) / 60000),
+    ).padStart(2, "0");
+  }, 1000);
 </script>
+
 {% endblock %}

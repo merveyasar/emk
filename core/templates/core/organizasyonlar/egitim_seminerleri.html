@@ -1,281 +1,229 @@
-{% extends 'base.html' %} {% load static %} {% block title %}Eğitim Seminerleri
-| Kendini Geliştir - KOÜ EMK{% endblock %} {% block content %}
+{% extends 'base.html' %} {% load static %} {% block title %}Eğitim ve
+Seminerler | Gelişim Merkezi - KOÜ EMK{% endblock %} {% block content %}
 <style>
   :root {
-    --edu-blue: #0d6efd;
-    --edu-orange: #f28c28;
-    --edu-success: #198754;
+    --edu-accent: #f28c28;
+    --edu-glass: rgba(255, 255, 255, 0.03);
+    --edu-border: rgba(255, 255, 255, 0.08);
   }
 
-  /* Hero: Akademik ve Modern */
-  .edu-hero {
-    background:
-      linear-gradient(rgba(13, 110, 253, 0.8), rgba(18, 18, 18, 0.9)),
-      url("https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1350&q=80")
-        center/cover;
-    height: 45vh;
-    display: flex;
-    align-items: center;
-    border-radius: 0 0 50px 50px;
-    margin-top: -24px;
-  }
-
-  /* Eğitim Kartları */
-  .edu-card {
-    background: white;
-    border-radius: 20px;
-    border: none;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    transition: 0.3s;
-    height: 100%;
-    overflow: hidden;
+  /* 1. Education Hero Section */
+  .edu-bento-hero {
     position: relative;
+    padding: 180px 0 100px;
+    background:
+      radial-gradient(
+        circle at top right,
+        rgba(242, 140, 40, 0.1),
+        transparent
+      ),
+      #0f1012;
+    border-radius: 0 0 100px 100px;
+    margin-top: -100px;
+    overflow: hidden;
+  }
+  .hero-bg-layer {
+    position: absolute;
+    inset: 0;
+    background: url("{{ page_data.hero_img|default:'https://images.unsplash.com/photo-1524178232363-1fb2b075b655' }}")
+      center/cover no-repeat;
+    opacity: 0.15;
+    filter: grayscale(1) brightness(0.7);
+  }
+
+  /* 2. Education Cards (Duyuru Tarzı) */
+  .edu-card {
+    background: var(--edu-glass);
+    backdrop-filter: blur(25px);
+    border: 1px solid var(--edu-border);
+    border-radius: 40px;
+    padding: 35px;
+    transition: 0.4s ease;
+    height: 100%;
   }
   .edu-card:hover {
-    transform: translateY(-10px);
+    border-color: var(--edu-accent);
+    transform: translateY(-5px);
   }
 
-  /* Durum Rozetleri */
-  .status-badge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    padding: 8px 15px;
-    border-radius: 50px;
-    font-weight: 800;
+  .edu-tag {
+    background: rgba(242, 140, 40, 0.1);
+    color: var(--edu-accent);
+    padding: 6px 15px;
+    border-radius: 100px;
     font-size: 0.75rem;
-    z-index: 5;
-  }
-  .status-open {
-    background: var(--edu-success);
-    color: white;
-    box-shadow: 0 0 15px rgba(25, 135, 84, 0.4);
-  }
-  .status-closed {
-    background: #dc3545;
-    color: white;
-  }
-
-  /* Tip Rozetleri (Online/Yüz Yüze) */
-  .type-badge {
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--emk-dark);
-    padding: 5px 12px;
-    border-radius: 8px;
-    font-size: 0.8rem;
     font-weight: 700;
   }
 
-  .edu-img-wrapper {
-    height: 200px;
-    overflow: hidden;
-    position: relative;
-  }
-  .edu-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* Galeri */
-  .gallery-img {
-    border-radius: 15px;
-    cursor: pointer;
-    transition: 0.3s;
-    height: 200px;
-    object-fit: cover;
-    width: 100%;
-  }
-  .gallery-img:hover {
-    filter: brightness(0.7);
+  /* 3. Empty State (Eğitim Yoksa) */
+  .empty-edu {
+    padding: 60px;
+    text-align: center;
+    background: var(--edu-glass);
+    border: 1px dashed var(--edu-border);
+    border-radius: 40px;
   }
 </style>
 
-<!-- Stil bloğun aynen kalabilir kanka -->
-
 <div
-  class="edu-wrapper mb-5"
-  data-model="OrganizationEvent"
-  data-sub-model="Training"
+  class="edu-master-wrapper"
+  data-model="PageContent,Announcement"
   data-path="{{ request.path }}"
 >
-  <section class="edu-hero text-center text-white">
-    <div class="container" data-aos="zoom-in">
+  <section class="edu-bento-hero">
+    <div class="hero-bg-layer"></div>
+    <div class="container position-relative z-index-10 text-center">
       <h1
-        class="display-3 fw-bold"
-        id="hero_title"
+        class="display-3 fw-bold text-white mb-3"
+        data-id="hero_title"
         data-editable="Hero Başlığı"
       >
-        {{ page_data.hero_title|default:"EĞİTİM SEMİNERLERİ" }}
+        {{ page_data.hero_title|default:"EĞİTİM VE SEMİNERLER" }}
       </h1>
       <p
-        class="lead opacity-75"
-        id="hero_subtitle"
+        class="text-white-50 fs-5 mx-auto mb-5"
+        style="max-width: 700px"
+        data-id="hero_subtitle"
         data-editable="Hero Alt Başlık"
       >
-        {{ page_data.hero_subtitle|default:"Sertifikalı eğitimler ve uzmanından
-        seminerlerle vizyonunu genişlet." }}
+        Sektörün ihtiyaç duyduğu yetkinlikleri, profesyonel eğitimler ve
+        sertifika programlarıyla kazanıyoruz.
       </p>
-    </div>
-  </section>
 
-  <section class="container py-5 mt-4">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-6" data-aos="fade-right">
-        <h2
-          class="display-5 fw-bold mb-4"
-          id="about_title"
-          data-editable="Gelişim Merkezi Başlığı"
-        >
-          {{ page_data.about_title|default:"Akademik Gelişim Merkezi" }}
-        </h2>
-        <p
-          class="text-muted fs-5"
-          id="about_text"
-          data-editable="Gelişim Merkezi Metni"
-        >
-          {{ page_data.about_text|default:"Excel'den Yalın Üretim'e kadar geniş
-          bir yelpazede eğitimler organize ediyoruz." }}
-        </p>
-        <ul class="list-unstyled mt-4">
-          <li class="mb-3">
-            <i class="fas fa-check-circle text-primary me-2"></i> Sertifikalı
-            Eğitim Programları
-          </li>
-          <li class="mb-3">
-            <i class="fas fa-check-circle text-primary me-2"></i> Online & Yüz
-            Yüze Hibrit İmkanlar
-          </li>
-          <li class="mb-3">
-            <i class="fas fa-check-circle text-primary me-2"></i> Sektör
-            Profesyoneli Eğitmenler
-          </li>
-        </ul>
-      </div>
-      <div class="col-lg-6" data-aos="fade-left">
-        <div class="row g-3">
-          <div class="col-6">
-            <img
-              src="{{ page_data.img_1|default:'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4' }}"
-              id="img_1"
-              data-editable="Yan Görsel 1"
-              class="img-fluid rounded-4 shadow"
-            />
-          </div>
-          <div class="col-6 mt-4">
-            <img
-              src="{{ page_data.img_2|default:'https://images.unsplash.com/photo-1531482615713-2afd69097998' }}"
-              id="img_2"
-              data-editable="Yan Görsel 2"
-              class="img-fluid rounded-4 shadow"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Dinamik Eğitim Takvimi -->
-  <section class="container py-5 bg-light rounded-5">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold">GÜNCEL EĞİTİM TAKVİMİ</h2>
-      <p class="text-muted">
-        Kayıt yaptırmak için "Başvur" butonuna tıklayarak formu doldurabilirsin.
-      </p>
-    </div>
-
-    <div class="row g-4">
-      {% for edu in trainings %}
-      <div
-        class="col-lg-4 col-md-6"
-        data-aos="fade-up"
-        data-index="{{ forloop.counter0 }}"
-      >
-        <div
-          class="edu-card {% if not edu.is_active %}opacity-75{% endif %}"
-          data-object-id="{{ edu.id }}"
-          data-model="OrganizationEvent"
-        >
-          {% if edu.is_active %}
-          <span class="status-badge status-open">KAYITLAR AÇIK</span>
-          {% else %}
-          <span class="status-badge status-closed">KAYITLAR KAPANDI</span>
-          {% endif %}
-
-          <div class="edu-img-wrapper">
-            <img
-              src="{{ edu.extra_data.img_url|default:'https://via.placeholder.com/400x200' }}"
-              class="edu-img"
-            />
-            <div class="position-absolute bottom-0 start-0 m-3">
-              <span class="type-badge">
-                <i
-                  class="fas {% if edu.extra_data.is_online %}fa-laptop{% else %}fa-users{% endif %} me-1"
-                ></i>
-                {% if edu.extra_data.is_online %}Online{% else %}Yüz Yüze
-                {%endif %}
-              </span>
-            </div>
-          </div>
-          <div class="p-4">
-            <h4 class="fw-bold">{{ edu.title }}</h4>
-            <p class="small text-muted mb-4">
-              {{ edu.extra_data.summary|default:"Eğitmen: " }}{{
-              edu.extra_data.instructor }}
+      <div class="row g-4 justify-content-center mb-5">
+        <div class="col-md-3">
+          <div
+            class="edu-card border-0"
+            style="background: rgba(255, 255, 255, 0.02)"
+          >
+            <h2
+              class="text-white fw-bold mb-1"
+              data-id="stat_1"
+              data-editable="Stat 1"
+            >
+              {{ page_data.stat_1|default:"40+" }}
+            </h2>
+            <p class="text-white-50 uppercase small ls-1">
+              Yıllık Eğitim Seansı
             </p>
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="text-primary fw-bold small"
-                ><i class="far fa-calendar-alt me-1"></i> {{ edu.year }}</span
-              >
-              {% if edu.is_active %}
-              <a
-                href="{{ edu.extra_data.form_url|default:'#' }}"
-                target="_blank"
-                class="btn btn-primary rounded-pill px-4 btn-sm fw-bold"
-                >BAŞVUR</a
-              >
-              {% else %}
-              <span class="text-muted small"
-                ><i class="fas fa-check me-1"></i> Tamamlandı</span
-              >
-              {% endif %}
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div
+            class="edu-card border-0"
+            style="background: rgba(242, 140, 40, 0.05)"
+          >
+            <h2
+              class="fw-bold mb-1"
+              style="color: var(--edu-accent)"
+              data-id="stat_2"
+              data-editable="Stat 2"
+            >
+              {{ page_data.stat_2|default:"15+" }}
+            </h2>
+            <p class="text-white-50 uppercase small ls-1">Sektörel Sertifika</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center mt-5 text-start">
+        <div class="col-lg-10">
+          <div
+            class="edu-card border-0"
+            style="background: rgba(255, 255, 255, 0.02)"
+          >
+            <div class="row g-4 align-items-center">
+              <div class="col-md-7 border-end border-white-10">
+                <h6
+                  class="text-accent fw-bold uppercase ls-2 mb-3"
+                  style="color: var(--edu-accent)"
+                >
+                  EĞİTİM VİZYONUMUZ
+                </h6>
+                <!--prettier-ignore-->
+                <h2 class="text-white fw-bold mb-3" data-id="about_title" data-editable="Nedir Başlık">{{ page_data.about_title|default:"Sürekli Gelişim, Sürekli Başarı" }}</h2>
+
+                <!--prettier-ignore-->
+                <p class="text-white-50 lh-lg" data-id="about_desc" data-editable="Nedir Açıklama">{{ page_data.about_desc|default:"EMK Akademi çatısı altında düzenlediğimiz seminerler; teknik analizden yazılıma, kişisel gelişimden proje yönetimine kadar geniş bir müfredatla öğrencilerimizi geleceğe hazırlar." }}</p>
+              </div>
+              <div class="col-md-5 ps-md-5">
+                <h6 class="text-white-50 fw-bold uppercase ls-2 mb-3 small">
+                  TEMEL ODAKLAR
+                </h6>
+                <div class="d-flex gap-3 mb-4">
+                  <i class="fas fa-terminal text-warning"></i>
+                  <p class="text-white-50 small mb-0">
+                    Teknik araçlar ve mühendislik yazılımları (ERP, SQL,
+                    Python).
+                  </p>
+                </div>
+                <div class="d-flex gap-3">
+                  <i class="fas fa-microphone-alt text-warning"></i>
+                  <p class="text-white-50 small mb-0">
+                    Liderlik, etkili iletişim ve kariyer yönetimi seminerleri.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      {% empty %}
-      <p class="text-center text-muted">Planlanmış bir eğitim bulunmuyor.</p>
-      {% endfor %}
     </div>
   </section>
 
-  <!-- Galeri ve Öneri Bölümü (Sidebar'dan Yönetilebilir) -->
-  <section class="container py-5">
-    <div
-      class="bg-dark p-5 rounded-5 text-white text-center shadow-lg"
-      data-aos="flip-up"
-    >
-      <h2 class="fw-bold mb-3" id="cta_title" data-editable="CTA Başlığı">
-        {{ page_data.cta_title|default:"Hangi Eğitimi Almak İstersin?" }}
-      </h2>
-      <p
-        class="opacity-75 mb-4 mx-auto"
-        style="max-width: 700px"
-        id="cta_text"
-        data-editable="CTA Metni"
-      >
-        {{ page_data.cta_text|default:"Geliştirmek istediğin bir yeteneğin mi
-        var? Formu doldur, eğitmeni getirelim!" }}
-      </p>
-      <div class="d-flex justify-content-center">
-        <a
-          href="{{ page_data.cta_link|default:'#' }}"
-          target="_blank"
-          id="cta_link"
-          data-editable="Öneri Formu Linki"
-          class="btn btn-outline-warning btn-lg px-5 py-3 rounded-pill fw-bold"
-          >EĞİTİM ÖNER</a
-        >
+  <section class="py-5 mt-5">
+    <div class="container py-5">
+      <div class="d-flex justify-content-between align-items-end mb-5 px-3">
+        <div>
+          <h2 class="text-white fw-bold display-5">Güncel Eğitimler</h2>
+          <p class="text-white-50">
+            Kariyerini bir üst seviyeye taşıyacak fırsatları kaçırma.
+          </p>
+        </div>
+      </div>
+
+      <div class="row g-4 px-3">
+        {% for edu in egitimler %}
+        <div class="col-lg-4 col-md-6">
+          <div
+            class="edu-card d-flex flex-column"
+            data-object-id="{{ edu.id }}"
+          >
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <span class="edu-tag text-uppercase">Seminer</span>
+              <small class="text-white-50"
+                >{{ edu.created_at|date:"d M Y" }}</small
+              >
+            </div>
+            <h4 class="text-white fw-bold mb-3">{{ edu.title }}</h4>
+            <p class="text-white-50 small flex-grow-1">
+              {{ edu.text|truncatewords:25 }}
+            </p>
+
+            {% if edu.link %}
+            <a
+              href="{{ edu.link }}"
+              target="_blank"
+              class="btn btn-outline-warning w-100 rounded-pill mt-4 fw-bold"
+            >
+              KAYIT OL / İNCELE <i class="fas fa-external-link-alt ms-2"></i>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+          <div class="empty-edu">
+            <i class="fas fa-calendar-minus text-white-50 display-4 mb-3"></i>
+            <h5 class="text-white-50">
+              Şu an aktif bir eğitim veya seminer bulunmuyor.
+            </h5>
+            <p class="text-muted small">
+              Yeni duyurular için portalı ve sosyal ağlarımızı takipte kal!
+            </p>
+          </div>
+        </div>
+        {% endfor %}
       </div>
     </div>
   </section>

@@ -1,116 +1,143 @@
-{% extends 'base.html' %} {% load static %} {% block title %}E-Dergi |
-Endüstriyel Perspektif - KOÜ EMK{% endblock %} {% block content %}
+{% extends 'base.html' %} {% load static %} {% block title %} E-Dergi | KOÜ
+EMK{% endblock %} {% block content %}
 <style>
   :root {
     --dergi-orange: #f28c28;
     --dergi-dark: #0f1012;
   }
 
-  /* 1. Hero: Modern & Immersive */
+  /* Hero Section */
   .dergi-hero {
     background:
       linear-gradient(rgba(15, 16, 18, 0.75), rgba(15, 16, 18, 0.9)),
       url("https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1350&q=80")
         center/cover fixed;
-    height: 60vh;
+    height: 50vh;
     display: flex;
     align-items: center;
-    border-radius: 0 0 80px 80px;
+    border-radius: 0 0 60px 60px;
     margin-top: -100px;
     padding-top: 100px;
     color: white;
   }
 
-  /* 2. Dergi Kartı - Pinterest & 3D Mix */
+  /* Magazine Card Modernization */
   .magazine-card {
     background: white;
-    border-radius: 30px;
-    padding: 20px;
-    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border-radius: 24px;
+    padding: 18px;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     border: 1px solid rgba(0, 0, 0, 0.05);
     height: 100%;
-    perspective: 1500px;
+    display: flex;
+    flex-direction: column;
   }
-
   .magazine-card:hover {
-    transform: translateY(-15px) rotateX(5deg) rotateY(-5deg);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
     border-color: var(--dergi-orange);
   }
 
   .magazine-cover-box {
     width: 100%;
-    height: 380px;
-    border-radius: 20px;
+    height: 320px;
+    border-radius: 16px;
     overflow: hidden;
-    margin-bottom: 20px;
-    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.1);
-    transition: 0.5s;
+    margin-bottom: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
   }
-
-  .magazine-card:hover .magazine-cover-box {
-    box-shadow: 15px 15px 40px rgba(242, 140, 40, 0.2);
-  }
-
   .magazine-cover-box img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  /* 3. Tipografi ve Butonlar */
-  .magazine-issue {
-    font-size: 0.7rem;
-    font-weight: 800;
-    color: var(--dergi-orange);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 10px;
-  }
-
-  .btn-read-mag {
-    background: var(--dergi-dark);
-    color: white;
-    border-radius: 14px;
-    padding: 12px;
-    font-weight: 700;
-    width: 100%;
-    transition: 0.3s;
-    border: none;
-    margin-top: 15px;
-  }
-
-  .magazine-card:hover .btn-read-mag {
-    background: var(--dergi-orange);
-    transform: scale(1.02);
-  }
-
-  /* 4. Arşiv Filtresi */
+  /* Archive Filters */
   .archive-pills .nav-link {
-    color: #888;
-    font-weight: 600;
-    border-radius: 15px;
-    padding: 10px 25px;
-    margin: 5px;
-    background: white;
-    border: 1px solid #eee;
-    transition: 0.3s;
+    color: #86868b;
+    font-weight: 500;
+    border-radius: 12px;
+    padding: 8px 20px;
+    margin: 0 5px;
+    background: #f5f5f7;
+    border: 1px solid transparent;
+    cursor: pointer;
   }
-
   .archive-pills .nav-link.active {
     background: var(--dergi-orange) !important;
     color: white !important;
-    border-color: var(--dergi-orange);
-    box-shadow: 0 10px 20px rgba(242, 140, 40, 0.2);
   }
 
-  /* Call to Action Box */
-  .cta-box {
+  /* Action Buttons */
+  .btn-mag-action {
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 10px;
+    transition: 0.3s;
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+  }
+  .btn-read {
     background: var(--dergi-dark);
-    border-radius: 40px;
-    border-right: 15px solid var(--dergi-orange);
-    padding: 60px;
+    color: white;
+  }
+  .btn-pdf {
+    background: #f5f5f7;
+    color: var(--dergi-dark);
+  }
+  .btn-read:hover {
+    background: var(--dergi-orange);
+    color: white;
+  }
+  .btn-pdf:hover {
+    background: #e8e8ed;
+  }
+
+  /* Filter Animation */
+  .mag-item {
+    transition: all 0.5s ease;
+  }
+  .mag-item.hidden {
+    opacity: 0;
+    transform: scale(0.8);
+    display: none;
+  }
+
+  /* Arşiv Kartı Butonları */
+  .btn-mag-action {
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 10px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    text-decoration: none;
+  }
+
+  .btn-read {
+    background: #1d1d1f; /* Apple Siyahı */
+    color: white;
+  }
+
+  .btn-pdf {
+    background: #f5f5f7; /* Apple Grisi */
+    color: #1d1d1f;
+    width: 45px; /* Kare formunda ikon butonu */
+  }
+
+  .btn-read:hover {
+    background: var(--dergi-orange);
+    color: white;
+  }
+
+  .btn-pdf:hover {
+    background: #e8e8ed;
+    color: #ff3b30; /* PDF vurgusu için hafif kırmızımsı bir ton veya turuncu */
   }
 </style>
 
@@ -122,15 +149,32 @@ Endüstriyel Perspektif - KOÜ EMK{% endblock %} {% block content %}
   <!-- Hero Section -->
   <section class="dergi-hero text-center">
     <div class="container" data-aos="fade-down">
-      <h1 class="display-3 fw-bold mb-3">E-DERGİ</h1>
-      <p class="lead opacity-75 fs-4">
-        Endüstriyel Dünyaya Dijital Bir Pencere
+      <!-- Ana Başlık -->
+      <h1
+        class="display-4 fw-bold mb-2"
+        id="dergi_hero_title"
+        data-editable="Hero Ana Başlık"
+      >
+        {{ page_data.dergi_hero_title|default:"E-DERGİ" }}
+      </h1>
+
+      <!-- Alt Başlık / Açıklama -->
+      <p
+        class="lead opacity-75 fs-4 mx-auto"
+        style="max-width: 600px"
+        id="dergi_hero_subtitle"
+        data-editable="Hero Alt Başlık"
+      >
+        <!--prettier-ignore-->
+        {{ page_data.dergi_hero_subtitle|default:"Endüstriyel Perspektif:Geleceğin Teknolojilerine Dijital Bir Bakış" }}
       </p>
+
+      <!-- Apple Tarzı Minimal Ayraç (İstersen bunu da gizleyip açabilirsin) -->
       <div
         class="mx-auto mt-4"
         style="
-          width: 60px;
-          height: 4px;
+          width: 50px;
+          height: 3px;
           background: var(--dergi-orange);
           border-radius: 10px;
         "
@@ -138,40 +182,46 @@ Endüstriyel Perspektif - KOÜ EMK{% endblock %} {% block content %}
     </div>
   </section>
 
-  <!-- Latest Issue (Featured) -->
+  <!-- Öne Çıkan: Son Sayı (Sabit Alan) -->
   {% if latest %}
-  <section class="container py-5 my-5">
+  <section class="container py-5">
     <div class="row align-items-center g-5">
       <div class="col-lg-5" data-aos="fade-right">
         <div
           class="magazine-card p-4"
-          style="border-top: 10px solid var(--dergi-orange)"
+          style="border-top: 8px solid var(--dergi-orange)"
           data-object-id="{{ latest.id }}"
         >
-          <div class="magazine-cover-box shadow-lg">
+          <div class="magazine-cover-box shadow-lg" style="height: 450px">
             <img src="{{ latest.cover_image.url }}" alt="{{ latest.title }}" />
           </div>
         </div>
       </div>
       <div class="col-lg-7" data-aos="fade-left">
-        <span class="magazine-issue"
-          >SON SAYI • {{ latest.release_date|date:"F Y"|upper }}</span
+        <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill"
+          >YENİ SAYI YAYINDA</span
         >
-        <h2 class="display-4 fw-bold my-3">{{ latest.title }}</h2>
-        <p class="text-muted fs-5 mb-5 lh-lg">{{ latest.description }}</p>
-        <div class="d-flex flex-wrap gap-3">
+        <h2 class="display-5 fw-bold mb-3">{{ latest.title }}</h2>
+        <p class="text-muted fs-5 mb-4">{{ latest.description }}</p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          <!-- Online Oku Butonu (Ana Aksiyon) -->
           <a
             href="{{ latest.read_link }}"
             target="_blank"
-            class="btn btn-emk btn-lg px-5 py-3 shadow-lg"
-            >ŞİMDİ OKU</a
+            class="btn btn-dark btn-lg px-5 rounded-pill shadow-sm"
           >
+            <i class="fas fa-book-open me-2"></i>ŞİMDİ OKU
+          </a>
+
+          <!-- PDF İndir Butonu (İkincil Aksiyon) -->
           {% if latest.pdf_file %}
           <a
             href="{{ latest.pdf_file.url }}"
-            class="btn btn-outline-dark btn-lg px-5 py-3 rounded-4 fw-bold"
-            >PDF İNDİR</a
+            class="btn btn-outline-dark btn-lg px-4 rounded-pill"
+            download
           >
+            <i class="fas fa-file-pdf me-2"></i>PDF İNDİR
+          </a>
           {% endif %}
         </div>
       </div>
@@ -179,85 +229,115 @@ Endüstriyel Perspektif - KOÜ EMK{% endblock %} {% block content %}
   </section>
   {% endif %}
 
-  <!-- Archive Section -->
+  <!-- Filtreli Arşiv Alanı -->
   <section class="bg-light py-5 mt-5" style="border-radius: 60px 60px 0 0">
     <div class="container py-5">
       <div class="text-center mb-5">
-        <h2 class="display-6 fw-bold">DERGİ ARŞİVİ</h2>
-        <nav class="nav archive-pills justify-content-center mt-4">
-          <a class="nav-link active" href="#">TÜMÜ</a>
+        <h3 class="fw-bold mb-4">Tüm Sayılarımız</h3>
+        <nav
+          class="nav archive-pills justify-content-center"
+          id="mag-filter-nav"
+        >
+          <a class="nav-link active" data-filter="all">TÜMÜ</a>
           {% for year in years %}
-          <a class="nav-link" href="#">{{ year }}</a>
+          <a class="nav-link" data-filter="{{ year }}">{{ year }}</a>
           {% endfor %}
         </nav>
       </div>
 
-      <div class="row g-4">
-        {% for mag in archive %}
+      <div class="row g-4" id="magazine-grid">
+        {% for mag in all_magazines %}
         <div
-          class="col-lg-3 col-md-6"
-          data-aos="fade-up"
-          data-aos-delay="{{ forloop.counter }}00"
+          class="col-lg-3 col-md-6 mag-item"
+          data-year="{{ mag.release_date|date:'Y' }}"
         >
           <div class="magazine-card" data-object-id="{{ mag.id }}">
             <div class="magazine-cover-box" style="height: 300px">
               <img src="{{ mag.cover_image.url }}" alt="{{ mag.title }}" />
             </div>
-            <span class="magazine-issue">Sayı: {{ mag.issue_number }}</span>
-            <h6 class="fw-bold text-truncate mb-3">{{ mag.title }}</h6>
-            <a
-              href="{{ mag.read_link }}"
-              target="_blank"
-              class="btn-read-mag text-center text-decoration-none d-block"
-              >OKU</a
-            >
+            <div class="flex-grow-1">
+              <span class="magazine-issue"
+                >Sayı:
+                <!--prettier-ignore-->{{ mag.issue_number }} • {{ mag.release_date|date:'Y'}}</span
+              >
+              <h6 class="fw-bold text-truncate">{{ mag.title }}</h6>
+            </div>
+            <div class="d-flex gap-2 mt-auto pt-3">
+              <!-- Oku Butonu -->
+              <a
+                href="{{ mag.read_link }}"
+                target="_blank"
+                class="btn-mag-action btn-read flex-grow-1"
+              >
+                OKU
+              </a>
+
+              <!-- PDF İndirme (Sadece dosya varsa görünür) -->
+              {% if mag.pdf_file %}
+              <a
+                href="{{ mag.pdf_file.url }}"
+                class="btn-mag-action btn-pdf"
+                title="PDF olarak indir"
+                download
+              >
+                <i class="fas fa-download"></i>
+              </a>
+              {% endif %}
+            </div>
           </div>
         </div>
         {% endfor %}
       </div>
     </div>
   </section>
-
-  <!-- Contribution CTA -->
-  <section class="container py-5 my-5">
-    <div class="cta-box text-white" data-aos="zoom-in">
-      <div class="row align-items-center g-4">
-        <div class="col-lg-8">
-          <h2 class="display-5 fw-bold mb-3">
-            Senin de Bir Yazın <br />Yayınlansın İster misin?
-          </h2>
-          <p class="lead opacity-75">
-            Endüstri Mühendisliği üzerine araştırmalarını veya deneyimlerini
-            binlerce okurla buluşturalım.
-          </p>
-        </div>
-        <div class="col-lg-4 text-lg-end">
-          <a
-            href="mailto:edergi@kouemk.org"
-            class="btn btn-emk btn-lg px-5 py-3 shadow-lg"
-            >BİZE ULAŞ</a
-          >
-        </div>
-      </div>
-    </div>
-  </section>
 </div>
 
 <script>
+  // 1. Dinamik Filtreleme Mantığı
+  document.addEventListener("DOMContentLoaded", function () {
+    const filters = document.querySelectorAll("#mag-filter-nav .nav-link");
+    const items = document.querySelectorAll(".mag-item");
+
+    filters.forEach((filter) => {
+      filter.addEventListener("click", function () {
+        // Aktif buton görseli
+        filters.forEach((f) => f.classList.remove("active"));
+        this.classList.add("active");
+
+        const selectedYear = this.getAttribute("data-filter");
+
+        items.forEach((item) => {
+          const itemYear = item.getAttribute("data-year");
+          if (selectedYear === "all" || selectedYear === itemYear) {
+            item.classList.remove("hidden");
+            setTimeout(() => (item.style.display = "block"), 10);
+          } else {
+            item.classList.add("hidden");
+            setTimeout(() => (item.style.display = "none"), 500);
+          }
+        });
+      });
+    });
+  });
+
+  // 2. Editör OBJECT_CLICKED Mesajı
   document.addEventListener("click", function (e) {
     if (window.self === window.top) return;
     const target = e.target.closest(".magazine-card");
     const objectId = target?.getAttribute("data-object-id");
     if (objectId) {
-      e.preventDefault();
-      window.parent.postMessage(
-        {
-          type: "OBJECT_CLICKED",
-          model: "Magazine",
-          object: objectId,
-        },
-        "*",
-      );
+      // Eğer tıklanan şey bir link butonu değilse (kartın geneline tıklandıysa) editörü aç
+      if (!e.target.closest(".btn-mag-action")) {
+        e.preventDefault();
+        window.parent.postMessage(
+          {
+            type: "OBJECT_CLICKED",
+            model: "Magazine",
+            object: objectId,
+          },
+          "*",
+        );
+      }
     }
   });
 </script>

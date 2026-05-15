@@ -1,295 +1,330 @@
-{% extends 'base.html' %} {% load static %} {% block title %}KALE | Kaliteni
-Göster, Araştır, Lider Ol, Etkile - KOÜ EMK{% endblock %} {% block content %}
+{% extends 'base.html' %} {% load static %} {% block title %}KALE | Liderlik
+Kampı - KOÜ EMK{% endblock %} {% block content %}
 <style>
   :root {
-    --kale-orange: #f28c28;
-    --kale-dark: #121212;
+    --kale-accent: #f28c28;
+    --kale-glass: rgba(255, 255, 255, 0.04);
+    --kale-border: rgba(255, 255, 255, 0.1);
   }
 
-  /* 1. Hero Bölümü */
-  .kale-hero {
-    background:
-      linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
-      url("https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1350&q=80")
-        center/cover;
-    height: 50vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 0 0 50px 50px;
-    margin-top: -24px;
-    text-align: center;
-    width: 100%;
-  }
-
-  /* 2. Canlı Sayaç */
-  .kale-timer-card {
-    background: white;
-    border-radius: 30px;
-    padding: 40px;
-    margin-top: -80px;
+  /* Hero & Bento Section */
+  .kale-bento-hero {
     position: relative;
-    z-index: 10;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-    border-bottom: 8px solid var(--kale-orange);
-  }
-  .timer-val {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 800;
-    color: var(--kale-dark);
-    line-height: 1;
-  }
-  .timer-lab {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--kale-orange);
-    letter-spacing: 2px;
-  }
-
-  /* 3. Motto İkonları */
-  .feature-icon-v2 {
-    width: 60px;
-    height: 60px;
-    background: rgba(242, 140, 40, 0.1);
-    color: var(--kale-orange);
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-    transition: 0.3s;
-  }
-  .feature-box:hover .feature-icon-v2 {
-    background: var(--kale-orange);
-    color: white;
-    transform: rotate(-10deg);
-  }
-
-  /* 4. Sol Menü (Tabs) */
-  .kale-sidebar .nav-link {
-    color: #555 !important;
-    background: #f8f9fa;
-    margin-bottom: 12px;
-    padding: 18px 25px;
-    border-radius: 15px;
-    font-weight: 700;
-    border: 1px solid #eee;
-    transition: 0.3s;
-    text-align: left;
-  }
-  .kale-sidebar .nav-link.active {
-    background: var(--kale-orange) !important;
-    color: white !important;
-    border-color: var(--kale-orange);
-    transform: translateX(10px);
-    box-shadow: 0 10px 20px rgba(242, 140, 40, 0.2);
-  }
-
-  /* 5. Slogan Alanı */
-  .slogan-box-v2 {
-    background: #fff;
-    border-left: 6px solid var(--kale-orange);
-    padding: 25px;
-    margin-bottom: 30px;
-    border-radius: 0 20px 20px 0;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  }
-
-  .member-img-wrapper {
-    border-radius: 20px;
+    padding: 180px 0 100px;
+    background:
+      radial-gradient(
+        circle at bottom left,
+        rgba(242, 140, 40, 0.1),
+        transparent
+      ),
+      #0f1012;
+    border-radius: 0 0 100px 100px;
+    margin-top: -100px;
     overflow: hidden;
-    height: 280px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-    transition: 0.3s;
   }
-  .member-img-wrapper:hover {
-    transform: translateY(-5px);
+
+  .hero-bg-layer {
+    position: absolute;
+    inset: 0;
+    background: url("{{ page_data.hero_img|default:'https://images.unsplash.com/photo-1517048676732-d65bc937f952' }}")
+      center/cover no-repeat;
+    opacity: 0.15;
+    filter: contrast(1.2) brightness(0.8);
   }
-  .member-img {
+
+  /* Bento Stat Grid */
+  .kale-stats-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin: 60px 0;
+  }
+
+  .kale-stat-box {
+    background: var(--kale-glass);
+    backdrop-filter: blur(30px);
+    border: 1px solid var(--kale-border);
+    border-radius: 40px;
+    padding: 40px;
+    transition: all 0.5s ease;
+  }
+
+  /* Horizontal Story Cards */
+  .kale-story-wrapper {
+    display: flex;
+    gap: 40px;
+    overflow-x: auto;
+    padding: 40px 0 80px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+  .kale-story-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  .kale-story-card {
+    flex: 0 0 480px;
+    height: 600px;
+    position: relative;
+    border-radius: 50px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+  }
+
+  .kale-story-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: 1.5s ease;
+  }
+  .kale-story-card:hover img {
+    transform: scale(1.1) rotate(-1deg);
+  }
+
+  .kale-story-content {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(15, 16, 18, 0.95) 5%,
+      transparent 50%
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 50px;
+  }
+
+  .ls-2 {
+    letter-spacing: 2px;
+  }
+  .uppercase {
+    text-transform: uppercase;
   }
 </style>
 
 <div
-  class="kale-page-wrapper"
-  style="overflow-x: hidden"
-  data-model="OrganizationEvent"
+  class="kale-master-wrapper"
+  data-model="PageContent,OrganizationArchive"
   data-path="{{ request.path }}"
 >
-  <section class="kale-hero">
-    <div class="container" data-aos="zoom-in">
-      <h1
-        class="display-2 fw-bold text-white mb-2"
-        id="hero_title"
-        data-editable="Hero Başlığı"
-      >
-        {{ page_data.hero_title|default:"KALE" }}
-      </h1>
-      <p
-        class="fw-bold ls-3 mb-0 text-uppercase"
-        style="
-          letter-spacing: 4px;
-          font-size: clamp(0.7rem, 2vw, 1rem);
-          color: var(--kale-orange);
-        "
-        id="hero_motto"
-        data-editable="Motto"
-      >
-        {{ page_data.hero_motto|default:"Kaliteni Göster • Araştır • Lider Ol •
-        Etkile" }}
-      </p>
-    </div>
-  </section>
-
-  <!-- Dinamik Sayaç -->
-  <section class="container mb-5">
-    <div class="kale-timer-card shadow-2xl" data-aos="fade-up">
-      <div
-        class="d-flex justify-content-center align-items-center flex-wrap gap-4"
-      >
-        <div class="text-center">
-          <span class="timer-val" id="k-days">00</span>
-          <span class="timer-lab">GÜN</span>
-        </div>
-        <div class="h2 text-muted opacity-25">:</div>
-        <div class="text-center">
-          <span class="timer-val" id="k-hours">00</span
-          ><span class="timer-lab">SAAT</span>
-        </div>
-        <div class="h2 text-muted opacity-25">:</div>
-        <div class="text-center">
-          <span class="timer-val" id="k-mins">00</span
-          ><span class="timer-lab">DAKİKA</span>
-        </div>
-        <div class="h2 text-muted opacity-25">:</div>
-        <div class="text-center">
-          <span class="timer-val" id="k-secs" style="color: var(--kale-orange)"
-            >00</span
-          >
-          <span class="timer-lab">SANİYE</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="container py-5 mt-5">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-6" data-aos="fade-right">
-        <h2 class="display-4 fw-bold mb-4">
-          KALE
-          <span
-            id="about_span"
-            data-editable="Soru Başlığı"
-            style="color: var(--kale-orange)"
-            >{{ page_data.about_span|default:"Nedir?" }}</span
-          >
-        </h2>
+  <!-- Hero & Bento Stats -->
+  <section class="kale-bento-hero">
+    <div class="hero-bg-layer"></div>
+    <div class="container position-relative z-index-10">
+      <div class="text-center mb-5">
+        <h1
+          class="display-1 fw-bold text-white mb-2"
+          data-id="hero_title"
+          data-editable="Hero Başlığı"
+        >
+          <!-- prettier-ignore -->
+          {{ page_data.hero_title|default:"KALE" }}
+        </h1>
         <p
-          class="text-muted fs-5 mb-4"
-          id="about_text"
-          data-editable="Nedir Açıklaması"
+          class="text-accent fw-bold ls-4 uppercase mb-4"
+          style="color: var(--kale-accent)"
+          data-id="hero_motto"
+          data-editable="Hero Motto"
         >
-          {{ page_data.about_text|default:"Üniversitemizin en köklü eğitim
-          organizasyonu olan KALE..." }}
+          <!-- prettier-ignore -->
+          {{ page_data.hero_motto|default:"Kaliteni Göster • Araştır • Lider Ol • Etkile" }}
         </p>
-        <div class="row g-4">
-          <!-- Statik ikonlar ve başlıklar page_data'dan gelebilir -->
-          <div class="col-6 feature-box">
-            <div class="feature-icon-v2"><i class="fas fa-gem"></i></div>
-            <h6 class="fw-bold">KALİTENİ GÖSTER</h6>
-          </div>
-          <!-- Diğer feature box'lar buraya... -->
-        </div>
-      </div>
-      <div class="col-lg-6" data-aos="fade-left">
+
+        <!-- Minimalist Countdown -->
         <div
-          class="position-relative p-2 border border-warning rounded-5 shadow-2xl"
+          class="d-flex justify-content-center gap-3 text-white opacity-50 small fw-bold"
+          id="kale-countdown-minimal"
         >
-          <img
-            src="{{ page_data.about_img|default:'https://images.unsplash.com/photo-1552664730-d307ca884978' }}"
-            id="about_img"
-            data-editable="Ana Görsel"
-            class="img-fluid rounded-5"
-          />
+          <span id="k-days">00</span> GÜN : <span id="k-hours">00</span> SAAT :
+          <span id="k-mins">00</span> DK
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- Dinamik Arşiv (Tab Yapısı) -->
-  <section class="container py-5">
-    <div class="row">
-      <div class="col-lg-3 kale-sidebar" data-aos="fade-right">
-        <h4 class="fw-bold mb-4 text-uppercase ls-2">KALE GÜNLÜKLERİ</h4>
-        <div class="nav flex-column nav-pills" id="kale-tabs">
-          {% for ev in archives %}
-          <button
-            class="nav-link {% if forloop.first %}active{% endif %}"
-            data-bs-toggle="pill"
-            data-bs-target="#kale{{ ev.year }}"
+      <!-- Bento Grid Stats -->
+      <div class="kale-stats-container">
+        <div class="kale-stat-box">
+          <h2
+            class="text-white display-4 fw-bold mb-1"
+            data-id="stat_1"
+            data-editable="Stat 1"
           >
-            KALE '{{ ev.year }} Dönemi
-          </button>
-          {% endfor %}
+            {{ page_data.stat_1|default:"10+" }}
+          </h2>
+          <p class="text-white-50 uppercase small ls-2 mb-0">Yıllık Gelişim</p>
+        </div>
+        <div
+          class="kale-stat-box"
+          style="
+            background: linear-gradient(
+              135deg,
+              rgba(242, 140, 40, 0.15),
+              transparent
+            );
+          "
+        >
+          <h2
+            class="fw-bold display-4 mb-1"
+            style="color: var(--kale-accent)"
+            data-id="stat_2"
+            data-editable="Stat 2"
+          >
+            {{ page_data.stat_2|default:"300+" }}
+          </h2>
+          <p class="text-white-50 uppercase small ls-2 mb-0">Mezun Liderimiz</p>
+        </div>
+        <div class="kale-stat-box">
+          <h2
+            class="text-white display-4 fw-bold mb-1"
+            data-id="stat_3"
+            data-editable="Stat 3"
+          >
+            {{ page_data.stat_3|default:"4" }}
+          </h2>
+          <p class="text-white-50 uppercase small ls-2 mb-0">Temel Disiplin</p>
         </div>
       </div>
 
-      <div class="col-lg-9" data-aos="fade-left">
-        <div class="tab-content border-start ps-lg-5">
-          {% for ev in archives %}
+      <!-- Hakkında & Vizyon Alanı (Bento Altı) -->
+      <div class="row justify-content-center mt-5">
+        <div class="col-lg-10">
           <div
-            class="tab-pane fade {% if forloop.first %}show active{% endif %}"
-            id="kale{{ ev.year }}"
-            data-object-id="{{ ev.id }}"
-            data-model="OrganizationEvent"
+            class="kale-stat-box text-start border-0"
+            style="background: rgba(255, 255, 255, 0.02)"
           >
-            <div class="slogan-box-v2 mb-4">
-              <h3 class="fw-bold mb-0 italic" style="color: var(--kale-dark)">
-                "{{ ev.extra_data.slogan|default:ev.title }}"
-              </h3>
-            </div>
-            <h5 class="fw-bold mb-4">Dönem Anıları</h5>
-            <div class="row g-3">
-              {% for img in ev.extra_data.images %}
-              <div class="col-md-4 col-6">
-                <div class="member-img-wrapper">
-                  <img src="{{ img }}" class="member-img" />
+            <div class="row g-4 align-items-center">
+              <div class="col-md-7 border-end border-white-10">
+                <h6
+                  class="text-accent fw-bold uppercase ls-2 mb-3"
+                  style="color: var(--kale-accent)"
+                >
+                  NEDİR?
+                </h6>
+                <h2
+                  class="text-white fw-bold mb-3"
+                  id="p_about_title"
+                  data-editable="Nedir Başlık"
+                >
+                  <!-- prettier-ignore -->
+                  {{ page_data.p_about_title|default:"Liderlik Kültürünün Dijital Kampı" }}
+                </h2>
+                <p
+                  class="text-white-50 lh-lg"
+                  id="p_about_desc"
+                  data-editable="Nedir Açıklama"
+                >
+                  <!-- prettier-ignore -->
+                  {{ page_data.p_about_desc|default:"KALE, üniversitemizin en köklü liderlik ve gelişim kampıdır. Katılımcılarına sadece teknik bilgi değil, aynı zamanda kriz yönetimi, takım çalışması ve vizyoner liderlik yetkinliklerini kazandıran bir ekosistemdir." }}
+                </p>
+              </div>
+              <div class="col-md-5 ps-md-5">
+                <h6 class="text-white-50 fw-bold uppercase ls-2 mb-3 small">
+                  VİZYONUMUZ
+                </h6>
+                <div class="d-flex gap-3 mb-4">
+                  <div class="text-accent" style="color: var(--kale-accent)">
+                    <i class="fas fa-crown"></i>
+                  </div>
+                  <p
+                    class="text-white-50 small mb-0"
+                    id="p_vision_1"
+                    data-editable="Vizyon 1"
+                  >
+                    Mühendis adaylarını yönetim kadrolarına hazırlayan bir
+                    basamak olmak.
+                  </p>
+                </div>
+                <div class="d-flex gap-3">
+                  <div class="text-accent" style="color: var(--kale-accent)">
+                    <i class="fas fa-users"></i>
+                  </div>
+                  <p
+                    class="text-white-50 small mb-0"
+                    id="p_vision_2"
+                    data-editable="Vizyon 2"
+                  >
+                    Güçlü bir mezun-öğrenci ağı oluşturarak profesyonel bağları
+                    optimize etmek.
+                  </p>
                 </div>
               </div>
-              {% endfor %}
             </div>
           </div>
-          {% endfor %}
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Story Archive Section -->
+  <section class="py-5 mt-5">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-end mb-4 px-3">
+        <div>
+          <h2 class="text-white fw-bold display-4">KALE Arşivi</h2>
+          <p class="text-white-50">Yıllara göre liderlik yolculuğumuz.</p>
+        </div>
+        <div class="d-flex gap-2">
+          <button
+            class="btn btn-outline-light rounded-circle"
+            onclick="scrollStory(-400)"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button
+            class="btn btn-outline-light rounded-circle"
+            onclick="scrollStory(400)"
+          >
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="kale-story-wrapper" id="kaleStoryContainer">
+        {% for archive in archives %}
+        <div
+          class="kale-story-card"
+          onclick="openSBArchiveModal({{ archive.id }})"
+        >
+          <div class="kale-year-badge">{{ archive.year }}</div>
+          <img src="{{ archive.cover_image.url }}" alt="{{ archive.motto }}" />
+          <div class="kale-story-content">
+            <h3 class="text-white fw-bold mb-3">{{ archive.motto }}</h3>
+            <p class="text-white-50 mb-0 small">
+              {{ archive.description|truncatewords:15 }}
+            </p>
+          </div>
+        </div>
+        {% endfor %}
       </div>
     </div>
   </section>
 </div>
 
 <script>
-  // Sayaç Hedefi page_data'dan dinamik gelir
-  const targetStr =
-    "{{ page_data.kale_target|default:'Apr 15, 2026 09:00:00' }}";
-  const kaleTargetDate = new Date(targetStr).getTime();
+  function scrollStory(distance) {
+    document
+      .getElementById("kaleStoryContainer")
+      .scrollBy({ left: distance, behavior: "smooth" });
+  }
 
+  /* Sayaç (KALE Hedefi) */
+  const kaleTargetDate = new Date(
+    "{{ page_data.kale_target|default:'May 13, 2026 09:00:00' }}",
+  ).getTime();
   function updateKaleTimer() {
     const now = new Date().getTime();
     const diff = kaleTargetDate - now;
     if (diff < 0) return;
-
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-    document.getElementById("k-days").innerText = String(d).padStart(2, "0");
-    document.getElementById("k-hours").innerText = String(h).padStart(2, "0");
-    document.getElementById("k-mins").innerText = String(m).padStart(2, "0");
-    document.getElementById("k-secs").innerText = String(s).padStart(2, "0");
+    document.getElementById("k-days").innerText = String(
+      Math.floor(diff / 86400000),
+    ).padStart(2, "0");
+    document.getElementById("k-hours").innerText = String(
+      Math.floor((diff % 86400000) / 3600000),
+    ).padStart(2, "0");
+    document.getElementById("k-mins").innerText = String(
+      Math.floor((diff % 3600000) / 60000),
+    ).padStart(2, "0");
   }
   setInterval(updateKaleTimer, 1000);
   updateKaleTimer();

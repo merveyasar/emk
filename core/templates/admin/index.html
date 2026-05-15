@@ -2,431 +2,1182 @@
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
-    <title>KOÜ EMK | Dinamik Canlı Editör</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EMK Studio | Minimal Editor</title>
+
+    <!-- Apple Tarzı Fontlar -->
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-
-    <style>
-      :root {
-        --emk-orange: #f28c28;
-        --emk-dark: #121212;
-        --sidebar-bg: #1e1e2d;
-      }
-      body {
-        font-family: "Inter", sans-serif;
-        height: 100vh;
-        margin: 0;
-        display: flex;
-        overflow: hidden;
-        background: #f4f7f6;
-      }
-      .sidebar {
-        width: 420px;
-        background: var(--sidebar-bg);
-        color: white;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
-        z-index: 100;
-      }
-      .sidebar-header {
-        padding: 25px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      .sidebar-header h2 {
-        font-family: "Space Grotesk";
-        color: var(--emk-orange);
-        font-size: 1.4rem;
-        margin: 0;
-      }
-      #editor-fields {
-        flex: 1;
-        overflow-y: auto;
-        padding: 20px;
-      }
-      .edit-card {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        padding: 15px;
-        margin-bottom: 20px;
-        border-left: 4px solid var(--emk-orange);
-        transition: 0.3s;
-      }
-      .form-label {
-        color: var(--emk-orange);
-        font-size: 0.75rem;
-        font-weight: bold;
-        text-transform: uppercase;
-        margin-bottom: 8px;
-        display: block;
-      }
-      .form-control {
-        background: #2b2b40;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: white;
-        border-radius: 8px;
-        font-size: 0.9rem;
-      }
-      .preview-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        background: #333;
-      }
-      .browser-mockup {
-        background: white;
-        padding: 10px 20px;
-        display: flex;
-        align-items: center;
-        border-bottom: 1px solid #ddd;
-      }
-      .url-bar {
-        background: #f1f1f1;
-        border-radius: 20px;
-        padding: 4px 20px;
-        flex: 1;
-        margin: 0 15px;
-        font-size: 0.8rem;
-        color: #666;
-        font-family: monospace;
-      }
-      iframe {
-        flex: 1;
-        border: none;
-        background: white;
-      }
-      .sidebar-footer {
-        padding: 20px;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(0, 0, 0, 0.2);
-      }
-      .btn-publish {
-        background: var(--emk-orange);
-        color: white;
-        font-weight: 700;
-        text-transform: uppercase;
-        border: none;
-        padding: 12px;
-        border-radius: 8px;
-        width: 100%;
-        transition: 0.3s;
-      }
-      .btn-add-member {
-        background: transparent;
-        border: 2px dashed var(--emk-orange);
-        color: var(--emk-orange);
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-        margin-top: 10px;
-        font-weight: 600;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="sidebar">
-      <div class="sidebar-header">
-        <h2><i class="fas fa-microchip me-2"></i>EMK ENGINE</h2>
-        <div id="page-indicator" class="small text-white-50 mt-2">
-          Sayfa bekleniyor...
-        </div>
-      </div>
-      <div id="editor-fields">
-        <div class="text-center mt-5 text-white-50">
-          <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
-          <p>Sağ taraftan bir sayfaya gidin...</p>
-        </div>
-      </div>
-      <div class="sidebar-footer">
-        <button class="btn btn-publish" onclick="publishChanges()">
-          <i class="fas fa-cloud-upload-alt me-2"></i>DEĞİŞİKLİKLERİ YAYINLA
-        </button>
-      </div>
-    </div>
-
-    <div class="preview-container">
-      <div class="browser-mockup">
-        <div class="d-flex gap-2">
-          <div
-            style="
-              width: 10px;
-              height: 10px;
-              border-radius: 50%;
-              background: #ff5f56;
-            "
-          ></div>
-          <div
-            style="
-              width: 10px;
-              height: 10px;
-              border-radius: 50%;
-              background: #ffbd2e;
-            "
-          ></div>
-          <div
-            style="
-              width: 10px;
-              height: 10px;
-              border-radius: 50%;
-              background: #27c93f;
-            "
-          ></div>
-        </div>
-        <div class="url-bar" id="url-display">http://localhost:8000/</div>
-        <button class="btn btn-sm" onclick="refreshFrame()">
-          <i class="fas fa-sync-alt"></i>
-        </button>
-      </div>
-      <iframe id="site-frame" src="/"></iframe>
-    </div>
-
-    <!-- Head içine CSS -->
     <link
       rel="stylesheet"
       type="text/css"
       href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
     />
 
-    <!-- Body sonuna JS -->
-    <script
-      type="text/javascript"
-      src="https://cdn.jsdelivr.net/npm/toastify-js"
-    ></script>
+    <style>
+      :root {
+        --apple-bg: #f5f5f7;
+        --apple-card: #ffffff;
+        --apple-text: #1d1d1f;
+        --apple-muted: #86868b;
+        --apple-blue: #0071e3;
+        --apple-orange: #ff8c00;
+        --border-light: rgba(0, 0, 0, 0.08);
+      }
 
+      * {
+        transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          sans-serif;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        background-color: var(--apple-bg);
+        color: var(--apple-text);
+        overflow: hidden;
+      }
+
+      /* Sidebar - Apple Glass Effect */
+      .sidebar {
+        width: 380px;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid var(--border-light);
+        z-index: 100;
+      }
+
+      .sidebar-header {
+        padding: 40px 30px 20px;
+      }
+
+      .sidebar-header h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .sidebar-header h2 i {
+        color: var(--apple-orange);
+        font-size: 0.9rem;
+      }
+
+      #editor-fields {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 30px 30px;
+      }
+
+      /* Minimal Cards */
+      .edit-card {
+        background: var(--apple-card);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 18px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      }
+
+      .edit-card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+        border-color: rgba(0, 0, 0, 0.12);
+      }
+
+      .form-label {
+        color: var(--apple-muted);
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      .form-control {
+        border: none;
+        background: #fbfbfd;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 0.9rem;
+        color: var(--apple-text);
+      }
+
+      .form-control:focus {
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+        border: none;
+      }
+
+      /* Preview Area */
+      .preview-container {
+        flex: 1;
+        background: #fff;
+        margin: 20px;
+        border-radius: 18px;
+        border: 1px solid var(--border-light);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .browser-mockup {
+        background: #fbfbfd;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        border-bottom: 1px solid var(--border-light);
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 8px;
+        opacity: 0.3;
+      }
+      /* URL Bar Konteynırı */
+      .url-bar-container {
+        display: flex;
+        align-items: center;
+        background: #eeeeef; /* Apple gri */
+        border-radius: 8px;
+        padding: 2px 8px;
+        margin: 0 auto;
+        min-width: 300px;
+        position: relative;
+      }
+
+      .url-bar {
+        flex: 1;
+        font-size: 0.75rem;
+        color: var(--apple-muted);
+        text-align: center;
+        padding: 4px 0;
+        margin-left: 24px; /* Butonla dengelenmesi için */
+      }
+
+      /* Apple Tarzı Reload Butonu */
+      .btn-reload {
+        background: transparent;
+        border: none;
+        color: var(--apple-muted);
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        cursor: pointer;
+        opacity: 0.5;
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .btn-reload:hover {
+        opacity: 1;
+        color: var(--apple-text);
+        transform: rotate(15deg);
+      }
+
+      .btn-reload:active {
+        transform: rotate(180deg);
+      }
+
+      iframe {
+        flex: 1;
+        border: none;
+      }
+
+      /* Bottom Action Bar */
+      .sidebar-footer {
+        padding: 20px 30px 40px;
+        background: transparent;
+      }
+
+      .btn-publish {
+        background: var(--apple-text);
+        color: #fff;
+        font-weight: 500;
+        font-size: 0.9rem;
+        border: none;
+        padding: 12px;
+        border-radius: 20px;
+        width: 100%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn-publish:hover {
+        background: #000;
+        transform: translateY(-1px);
+        color: #fff;
+      }
+
+      .btn-add-action {
+        background: #f5f5f7;
+        color: var(--apple-blue);
+        border: none;
+        border-radius: 10px;
+        width: 100%;
+        padding: 10px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        margin-top: 10px;
+      }
+
+      .btn-add-action:hover {
+        background: #ebebee;
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #d2d2d7;
+        border-radius: 10px;
+      }
+
+      /* SweetAlert2 Modernizasyonu */
+      .apple-radius {
+        border-radius: 24px !important;
+        padding: 20px !important;
+      }
+
+      .pill-button {
+        border-radius: 12px !important;
+        padding: 10px 24px !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        border: none !important;
+      }
+
+      .swal2-title {
+        font-size: 1.25rem !important;
+        color: #1d1d1f !important;
+      }
+
+      .swal2-html-container {
+        color: #86868b !important;
+        font-size: 0.9rem !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2><i class="fas fa-square"></i> Studio Engine</h2>
+        <div
+          id="page-indicator"
+          class="mt-2"
+          style="font-size: 0.75rem; color: var(--apple-muted)"
+        ></div>
+      </div>
+
+      <div id="editor-fields-button"></div>
+      <div id="editor-fields"></div>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-publish" onclick="publishChanges()">
+          Yayınla
+        </button>
+      </div>
+    </div>
+
+    <div class="preview-container">
+      <div class="browser-mockup">
+        <div class="d-flex">
+          <div class="dot" style="background: #000"></div>
+          <div class="dot" style="background: #000"></div>
+          <div class="dot" style="background: #000"></div>
+        </div>
+
+        <div class="url-bar-container">
+          <div id="url-bar" data-url="http://127.0.0.1:8000" class="url-bar">
+            kouemk.org
+          </div>
+          <button
+            class="btn-reload"
+            onclick="reloadFrame()"
+            title="Sayfayı Yenile"
+          >
+            <i class="fas fa-redo-alt"></i>
+          </button>
+        </div>
+
+        <div style="width: 50px"></div>
+        <!-- Dengelemek için -->
+      </div>
+      <iframe id="site-frame" src="http://127.0.0.1:8000"></iframe>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+      /**
+       * EMK ENGINE - Modernize Edilmiş Editör Scripti
+       * "Kanka, bu sürümle kodun hem okunabilir hem de genişletilebilir oldu."
+       */
+
       const frame = document.getElementById("site-frame");
       const fieldsContainer = document.getElementById("editor-fields");
+      const fieldsContainerButton = document.getElementById(
+        "editor-fields-button",
+      );
       const pageIndicator = document.getElementById("page-indicator");
-      const urlDisplay = document.getElementById("url-display");
+      const urlDisplay = document.getElementById("url-bar");
 
-      // Bu fonksiyonu eskisiyle değiştir kanka
+      // --- 1. ANA UI GÜNCELLEME (REPORTER) ---
       function updateEditorUI(pageData) {
-        urlDisplay.innerText = "http://localhost:8000" + pageData.path;
-        pageIndicator.innerHTML = `<i class="fas fa-file-code"></i> Model: <b>${pageData.model}</b>`;
-        fieldsContainer.innerHTML = ""; // Temizle
+        urlDisplay.innerText = "kouemk.org" + pageData.path;
+        urlDisplay.setAttribute(
+          "data-url",
+          "http://127.0.0.1:8000" + pageData.path,
+        );
+        pageIndicator.innerHTML = `<i class="fas fa-file-code"></i> <b>${pageData.path} sayfası düzenleniyor.</b>`;
+        fieldsContainer.innerHTML = "";
 
         if (!pageData.elements || pageData.elements.length === 0) {
           fieldsContainer.innerHTML =
-            '<div class="text-white-50 text-center p-4">Düzenlenebilir alan bulunamadı.</div>';
+            '<div class="text-center p-4 opacity-50 small">Düzenlenebilir alan bulunamadı.</div>';
+          renderModelActionButtons(pageData);
+          return;
         }
 
         pageData.elements.forEach((el) => {
           const card = document.createElement("div");
           card.className = "edit-card";
 
-          let inputElement = "";
+          let inputHTML = "";
+
+          // 1. Resim Düzenleme (Önizleme ile birlikte)
           if (el.type === "image") {
-            inputElement = `<input type="file" data-field-key="${el.id}" class="form-control" onchange="syncImage('${el.id}', '${el.id}', this)">`;
-          } else {
-            // data-field-key burada veritabanındaki JSON anahtarı olacak
-            inputElement = `<textarea data-field-key="${el.id}" class="form-control" rows="2" oninput="syncText('${el.id}', '${el.id}', this.value)">${el.value}</textarea>`;
+            inputHTML = `
+                <div class="mb-2 d-flex align-items-center gap-3">
+                    <img src="${el.value}" id="pre-${el.id}" class="rounded border" style="width: 50px; height: 50px; object-fit: cover;">
+                    <input type="file" data-field-key="${el.id}" data-is-image="true" class="form-control form-control-sm"
+                           onchange="previewAndSyncImage('${el.id}', this)">
+                </div>`;
+          }
+          // 2. Link veya Iframe (Harita vb.) Düzenleme
+          else if (el.type === "link") {
+            inputHTML = `<input type="url" data-field-key="${el.id}" class="form-control" value="${el.value}"
+                                oninput="syncText('${el.id}', '${el.id}', this.value)">`;
+          }
+          // 3. Metin Düzenleme (Başlıklar için tek satır, içerik için textarea)
+          else {
+            const isLongText = el.value.length > 50;
+            inputHTML = isLongText
+              ? `<textarea data-field-key="${el.id}" class="form-control" rows="3" oninput="syncText('${el.id}', '${el.id}', this.value)">${el.value}</textarea>`
+              : `<input type="text" data-field-key="${el.id}" class="form-control" value="${el.value}" oninput="syncText('${el.id}', '${el.id}', this.value)">`;
           }
 
-          card.innerHTML = `<label class="form-label">${el.label}</label>${inputElement}`;
+          card.innerHTML = `<label class="form-label">${el.label}</label>${inputHTML}`;
           fieldsContainer.appendChild(card);
         });
 
-        // Yeni Üye Ekleme Formu (Eğer Model TeamMember ise)
-        if (pageData.model === "TeamMember") {
-          const addBtn = document.createElement("button");
-          addBtn.className =
-            "btn-add-member btn btn-outline-warning w-100 mt-3";
-          addBtn.innerHTML =
-            '<i class="fas fa-plus me-2"></i>YENİ ÜYE EKLEME FORMUNU AÇ';
-          addBtn.onclick = () => {
-            /* Senin mevcut addNewMember form mantığın buraya gelebilir */
-          };
-          // İstersen senin mevcut addSection kodunu buraya direkt gömebilirsin.
-        }
+        renderModelActionButtons(pageData);
+      }
 
-        if (pageData.model === "Magazine") {
-          const addMagBtn = document.createElement("button");
-          addMagBtn.className = "btn btn-outline-success w-100 mt-3 fw-bold";
-          addMagBtn.innerHTML =
-            '<i class="fas fa-plus me-2"></i>YENİ SAYI EKLE';
-          addMagBtn.onclick = () => {
-            openNewMagazineForm();
-          };
-          fieldsContainer.appendChild(addMagBtn);
-        }
+      // Yardımcı Fonksiyon: Hem önizleme yapar hem iframe'e gönderir
+      function previewAndSyncImage(id, input) {
+        if (input.files && input.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            // Editördeki küçük resmi güncelle
+            const previewImg = document.getElementById(`pre-${id}`);
+            if (previewImg) previewImg.src = e.target.result;
 
-        // Sidebar updateEditorUI içine eklenecek kısım
-        if (
-          pageData.model === "OrganizationEvent" &&
-          pageData.sub_model === "CaseOfLegends"
-        ) {
-          const addColBtn = document.createElement("button");
-          addColBtn.className = "btn btn-outline-warning w-100 mt-3 fw-bold";
-          addColBtn.innerHTML =
-            '<i class="fas fa-trophy me-2"></i>YENİ ARŞİV YILI (COL) EKLE';
-          addColBtn.onclick = () => {
-            // Yeni OrganizationEvent formu açacak (type='COL' olarak set edilecek)
-            openNewOrgEventForm("COL");
+            // Iframe içindeki gerçek siteye gönder (Live Preview)
+            syncImage(id, id, input);
           };
-          fieldsContainer.appendChild(addColBtn);
-        }
-        if (
-          pageData.model === "OrganizationEvent" &&
-          pageData.sub_model === "Training"
-        ) {
-          const addTrainingBtn = document.createElement("button");
-          addTrainingBtn.className = "btn btn-outline-info w-100 mt-3 fw-bold";
-          addTrainingBtn.innerHTML =
-            '<i class="fas fa-graduation-cap me-2"></i>YENİ EĞİTİM EKLE';
-          addTrainingBtn.onclick = () => {
-            openNewOrgEventForm("Training");
-          };
-          fieldsContainer.appendChild(addTrainingBtn);
-        }
-
-        if (
-          pageData.model === "OrganizationEvent" &&
-          pageData.sub_model === "GDKG"
-        ) {
-          const addTrainingBtn = document.createElement("button");
-          addTrainingBtn.className = "btn btn-outline-info w-100 mt-3 fw-bold";
-          addTrainingBtn.innerHTML =
-            '<i class="fas fa-graduation-cap me-2"></i>YENİ YOLCULUK EKLE';
-          addTrainingBtn.onclick = () => {
-            openNewOrgEventForm("GDKG");
-          };
-          fieldsContainer.appendChild(addTrainingBtn);
-        }
-
-        if (
-          pageData.model === "OrganizationEvent" &&
-          pageData.sub_model === "KALE"
-        ) {
-          const addTrainingBtn = document.createElement("button");
-          addTrainingBtn.className = "btn btn-outline-info w-100 mt-3 fw-bold";
-          addTrainingBtn.innerHTML =
-            '<i class="fas fa-graduation-cap me-2"></i>YENİ KALE EKLE';
-          addTrainingBtn.onclick = () => {
-            openNewOrgEventForm("KALE");
-          };
-          fieldsContainer.appendChild(addTrainingBtn);
-        }
-
-        if (
-          pageData.model === "OrganizationEvent" &&
-          pageData.sub_model === "MentorshipProgram"
-        ) {
-          const addTrainingBtn = document.createElement("button");
-          addTrainingBtn.className = "btn btn-outline-info w-100 mt-3 fw-bold";
-          addTrainingBtn.innerHTML =
-            '<i class="fas fa-graduation-cap me-2"></i>YENİ MENTÖR EKLE';
-          addTrainingBtn.onclick = () => {
-            openNewOrgEventForm("MentorshipProgram");
-          };
-          fieldsContainer.appendChild(addTrainingBtn);
-        }
-
-        if (
-          pageData.model === "OrganizationEvent" &&
-          pageData.sub_model === "SB"
-        ) {
-          const addTrainingBtn = document.createElement("button");
-          addTrainingBtn.className = "btn btn-outline-info w-100 mt-3 fw-bold";
-          addTrainingBtn.innerHTML =
-            '<i class="fas fa-graduation-cap me-2"></i>YENİ SB EKLE';
-          addTrainingBtn.onclick = () => {
-            openNewOrgEventForm("SB");
-          };
-          fieldsContainer.appendChild(addTrainingBtn);
-        }
-
-        if (
-          pageData.model === "OrganizationEvent" &&
-          pageData.sub_model === "SG"
-        ) {
-          const addTrainingBtn = document.createElement("button");
-          addTrainingBtn.className = "btn btn-outline-info w-100 mt-3 fw-bold";
-          addTrainingBtn.innerHTML =
-            '<i class="fas fa-graduation-cap me-2"></i>YENİ SG EKLE';
-          addTrainingBtn.onclick = () => {
-            openNewOrgEventForm("SG");
-          };
-          fieldsContainer.appendChild(addTrainingBtn);
-        }
-
-        if (
-          pageData.model === "OrganizationEvent" &&
-          pageData.sub_model === "TG"
-        ) {
-          const addTrainingBtn = document.createElement("button");
-          addTrainingBtn.className = "btn btn-outline-info w-100 mt-3 fw-bold";
-          addTrainingBtn.innerHTML =
-            '<i class="fas fa-graduation-cap me-2"></i>YENİ TG EKLE';
-          addTrainingBtn.onclick = () => {
-            openNewOrgEventForm("TG");
-          };
-          fieldsContainer.appendChild(addTrainingBtn);
+          reader.readAsDataURL(input.files[0]);
         }
       }
 
-      function openNewOrgEventForm(pk) {
-        fetch(`/editor/get-org-event/${pk}/`)
-          .then((res) => res.json())
-          .then((data) => {
-            fieldsContainer.innerHTML = `
-                  <div class="d-flex justify-content-between align-items-center mb-3">
-                      <h6 class="text-warning m-0">Etkinlik Düzenle (${data.type})</h6>
-                      <button class="btn btn-sm btn-outline-danger" onclick="deleteOrgEvent(${pk})"><i class="fas fa-trash"></i></button>
+      // --- 2. MODEL BAZLI AKSİYON BUTONLARI ---
+      function renderModelActionButtons(pageData) {
+        // Virgülle ayrılmış modelleri diziye çevir: "Announcement,Sponsor" -> ["Announcement", "Sponsor"]
+        const models = pageData.model.split(",").map((m) => m.trim());
+
+        const config = {
+          TeamMember: {
+            class: "btn-outline-warning",
+            icon: "plus",
+            text: "YENİ ÜYE EKLE",
+            action: () => openMemberForm(),
+          },
+          Magazine: {
+            class: "btn-outline-success",
+            icon: "plus",
+            text: "YENİ SAYI EKLE",
+            action: () => openMagazineForm(),
+          },
+          Announcement: {
+            class: "btn-outline-danger",
+            icon: "bullhorn",
+            text: "DUYURU YÖNETİMİ",
+            action: () => openAnnouncementForm(), // Portal'da genelde 1 tane olur, o yüzden id'siz açıyoruz
+          },
+          Sponsor: {
+            class: "btn-outline-primary",
+            icon: "handshake",
+            text: "SPONSOR YÖNETİMİ",
+            action: () => openSponsorForm(),
+          },
+          OrganizationArchive: {
+            class: "btn-outline-warning",
+            icon: "archive",
+            text: "ARŞİV YÖNETİMİ",
+            action: () => openArchiveManager(pageData),
+          },
+        };
+
+        fieldsContainerButton.innerHTML = "";
+
+        // Her bir model için buton oluştur
+        models.forEach((modelName) => {
+          const btnConfig = config[modelName];
+          if (btnConfig) {
+            const btn = document.createElement("button");
+            btn.className = `btn ${btnConfig.class} w-100 mt-2 fw-bold py-2`;
+            btn.innerHTML = `<i class="fas fa-${btnConfig.icon} me-2"></i>${btnConfig.text}`;
+            btn.onclick = btnConfig.action;
+            fieldsContainerButton.appendChild(btn);
+          }
+        });
+      }
+
+      // --- 3. FORM GENERATORS (Dinamik Form Oluşturucular) ---
+      function openMemberForm(id = null) {
+        const isEdit = id !== null;
+        const url = isEdit ? `/editor/get-member/${id}/` : null;
+
+        const render = (data = {}) => {
+          fieldsContainer.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="text-warning m-0">
+                    <i class="fas fa-user-edit me-2"></i>${isEdit ? "Üye Düzenle" : "Yeni Üye Ekle"}
+                </h6>
+                ${
+                  isEdit
+                    ? `
+                    <button class="btn btn-sm btn-outline-danger border-0" onclick="deleteObject('member', ${id})">
+                        <i class="fas fa-trash"></i>
+                    </button>`
+                    : ""
+                }
+            </div>
+
+            <div class="edit-card">
+                ${
+                  data.image_url
+                    ? `
+                    <div class="text-center mb-3">
+                        <img src="${data.image_url}" class="rounded-circle border" style="width:70px; height:70px; object-fit:cover; border-color: var(--apple-orange) !important;">
+                    </div>`
+                    : ""
+                }
+
+                <label class="form-label">Profil Fotoğrafı</label>
+                <input type="file" id="m-image" class="form-control mb-3" accept="image/*">
+
+                <label class="form-label">İsim Soyisim</label>
+                <input type="text" id="m-name" class="form-control mb-2" value="${data.name || ""}" placeholder="Örn: Merve Yaşar">
+
+                <label class="form-label">Ünvan</label>
+                <input type="text" id="m-title" class="form-control mb-3" value="${data.title || ""}" placeholder="Örn: Computer Engineer">
+
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label">Rütbe</label>
+                        <select id="m-rank" class="form-control">
+                            <option value="ALFA" ${data.rank === "ALFA" ? "selected" : ""}>ALFA</option>
+                            <option value="BETA" ${data.rank === "BETA" ? "selected" : ""}>BETA</option>
+                            <option value="GAMA" ${data.rank === "GAMA" ? "selected" : ""}>GAMA</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Ekip</label>
+                        <select id="m-team" class="form-control">
+                            <option value="DIS" ${data.team === "DIS" ? "selected" : ""}>Dış Org.</option>
+                            <option value="IC" ${data.team === "IC" ? "selected" : ""}>İç Org.</option>
+                            <option value="IK" ${data.team === "IK" ? "selected" : ""}>İK</option>
+                            <option value="FIN" ${data.team === "FIN" ? "selected" : ""}>Finans</option>
+                            <option value="GAMA" ${data.team === "GAMA" ? "selected" : ""}>Gama Kurulu</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label class="form-label">Sıralama (Order)</label>
+                <input type="number" id="m-order" class="form-control mb-4" value="${data.order || "0"}">
+
+                <button class="btn btn-publish" onclick="saveObject('member', ${id})">
+                    ${isEdit ? "DEĞİŞİKLİKLERİ KAYDET" : "ÜYEYİ SİSTEME EKLE"}
+                </button>
+
+              <button class="btn btn-link w-100 mt-2 text-muted btn-sm text-decoration-none" onclick="reloadFrame()">Vazgeç</button>
+            </div>`;
+        };
+
+        if (isEdit) {
+          fieldsContainer.innerHTML = `<div class="text-center p-5"><i class="fas fa-spinner fa-spin"></i></div>`;
+          fetch(url)
+            .then((r) => r.json())
+            .then(render);
+        } else {
+          render();
+        }
+      }
+
+      function openMagazineForm(id = null) {
+        const isEdit = id !== null;
+        const url = isEdit ? `/editor/get-magazine/${id}/` : null;
+
+        const render = (data = {}) => {
+          fieldsContainer.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="text-success m-0">
+                    <i class="fas fa-book-open me-2"></i>${isEdit ? "Dergi Düzenle" : "Yeni Sayı Ekle"}
+                </h6>
+                ${
+                  isEdit
+                    ? `
+                    <button class="btn btn-sm btn-outline-danger border-0" onclick="deleteObject('magazine', ${id})">
+                        <i class="fas fa-trash"></i>
+                    </button>`
+                    : ""
+                }
+            </div>
+
+            <div class="edit-card">
+                <!-- Kapak Önizleme -->
+                ${
+                  data.cover_image_url
+                    ? `
+                    <div class="text-center mb-3">
+                        <img src="${data.cover_image_url}" class="rounded shadow-sm" style="width:80px; height:110px; object-fit:cover; border: 2px solid #28a745;">
+                    </div>`
+                    : ""
+                }
+
+                <label class="form-label">Kapak Fotoğrafı</label>
+                <input type="file" id="mag-cover" class="form-control mb-3" accept="image/*">
+
+                <label class="form-label">Dergi Başlığı</label>
+                <input type="text" id="mag-title" class="form-control mb-2" value="${data.title || ""}" placeholder="Örn: Endüstride Gelecek">
+
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label">Sayı No</label>
+                        <input type="number" id="mag-issue" class="form-control" value="${data.issue_number || ""}">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Yayın Tarihi</label>
+                        <input type="date" id="mag-date" class="form-control" value="${data.release_date || ""}">
+                    </div>
+                </div>
+
+                <label class="form-label">Okuma Linki (Issuu, Drive vb.)</label>
+                <input type="url" id="mag-link" class="form-control mb-3" value="${data.read_link || ""}" placeholder="https://...">
+
+                <label class="form-label">PDF Dosyası (Opsiyonel)</label>
+                <input type="file" id="mag-pdf" class="form-control mb-3" accept="application/pdf">
+
+                <label class="form-label">Kısa Açıklama</label>
+                <textarea id="mag-desc" class="form-control mb-3" rows="3" placeholder="Bu sayıda neler var?">${data.description || ""}</textarea>
+
+                <div class="form-check form-switch mb-4">
+                    <input class="form-check-input" type="checkbox" id="mag-active" ${data.is_active !== false ? "checked" : ""}>
+                    <label class="form-check-label text-dark small" for="mag-active">Yayında mı?</label>
+                </div>
+
+                <button class="btn btn-success w-100 fw-bold rounded-pill shadow-sm py-2" onclick="saveObject('magazine', ${id})">
+                    ${isEdit ? "DEĞİŞİKLİKLERİ KAYDET" : "SAYIYI ARŞİVE EKLE"}
+                </button>
+
+                <button class="btn btn-link w-100 mt-2 text-muted btn-sm text-decoration-none" onclick="refreshFrame()">Vazgeç</button>
+            </div>`;
+        };
+
+        if (isEdit) {
+          fieldsContainer.innerHTML = `<div class="text-center p-5"><i class="fas fa-spinner fa-spin text-success"></i></div>`;
+          fetch(url)
+            .then((r) => r.json())
+            .then(render);
+        } else {
+          render();
+        }
+      }
+
+      async function openSponsorForm() {
+        // Önce mevcut sponsorları çekelim ki listede görelim
+        const response = await fetch("/editor/get-all-sponsors/");
+        const sponsors = await response.json();
+
+        const render = () => {
+          fieldsContainer.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="text-white m-0"><i class="fas fa-handshake me-2"></i>Sponsor Yönetimi</h6>
+            </div>
+
+            <!-- YENİ EKLEME FORMU -->
+            <div class="edit-card border-secondary mb-4">
+              <div class="mb-3">
+                <label class="form-label text-white-50 small fw-bold uppercase">Şirket Bilgileri</label>
+                <div class="mb-2">
+                  <label class="form-label extra-small opacity-50 mb-1" for="sp-name">Şirket Adı</label>
+                  <input type="text" data-id="sp-name" id="sp-name" class="form-control" placeholder="Örn: Google">
+                </div>
+
+                <div class="mb-2">
+                  <label class="form-label extra-small opacity-50 mb-1" for="sp-logo">Şirket Logosu (SVG/PNG)</label>
+                  <input type="file" data-id="sp-logo" id="sp-logo" class="form-control" accept="image/*">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label extra-small opacity-50 mb-1" for="sp-order">Görüntüleme Sırası</label>
+                  <input type="number" data-id="sp-order" id="sp-order" class="form-control" value="0">
+                </div>
+
+                <button class="btn btn-sm btn-publish w-100 py-2 fw-bold" onclick="saveObject('sponsor')">
+                  <i class="fas fa-plus me-1"></i> YENİ SPONSOR EKLE
+                </button>
+              </div>
+            </div>
+
+            <!-- MEVCUT SPONSORLAR LİSTESİ -->
+            <div class="d-flex align-items-center justify-content-between mb-3 px-1">
+              <h6 class="small text-white-50 m-0 fw-bold uppercase">Mevcut Sponsorlar</h6>
+              <span class="badge bg-dark text-white-50">${sponsors.length}</span>
+            </div>
+
+            <div class="sponsor-list custom-scrollbar" style="max-height: 300px; overflow-y: auto;">
+              ${
+                sponsors.length > 0
+                  ? sponsors
+                      .map(
+                        (sp) => `
+                <div class="edit-card d-flex align-items-center gap-3 mb-2 p-2" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                  <div class="bg-white rounded p-1 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                    <img src="${sp.logo_url}" style="width: 100%; height: 100%; object-fit: contain;">
                   </div>
+                  <div class="flex-grow-1">
+                    <div class="small fw-bold text-dark text-truncate" style="max-width: 120px;">${sp.name}</div>
+                    <div class="text-dark-50" style="font-size: 0.7rem;">Sıralama: ${sp.order}</div>
+                  </div>
+                  <div class="d-flex gap-1">
+                    <button class="btn btn-sm btn-outline-danger border-0 p-2" onclick="deleteObject('sponsor', ${sp.id})" title="Sil">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </div>
+              `,
+                      )
+                      .join("")
+                  : `<div class="text-center text-dark-50 py-4 small">Henüz sponsor eklenmemiş.</div>`
+              }
+            </div>
 
-                  <div class="edit-card">
-                      <label class="form-label">Etkinlik Başlığı</label>
-                      <input type="text" id="edit-org-title" class="form-control mb-2" value="${data.title}">
+            <button class="btn btn-link w-100 mt-2 text-muted btn-sm text-decoration-none" onclick="refreshFrame()">
+              <i class="fas fa-times me-1"></i> Paneli Kapat
+            </button>
+        `;
+        };
 
-                      <label class="form-label">Yıl</label>
-                      <input type="number" id="edit-org-year" class="form-control mb-2" value="${data.year}">
+        render();
+      }
 
-                      <label class="form-label">Şampiyon Takım (Extra Data)</label>
-                      <input type="text" id="edit-org-winner" class="form-control mb-2" value="${data.extra_data.winner || ""}">
+      async function openAnnouncementForm() {
+        const response = await fetch("/editor/get-all-announcements/");
+        const announcements = await response.json();
 
-                      <label class="form-label">Kısa Özet (Extra Data)</label>
-                      <textarea id="edit-org-summary" class="form-control mb-3" rows="3">${data.extra_data.summary || ""}</textarea>
+        const render = () => {
+          fieldsContainer.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="text-white m-0"><i class="fas fa-bullhorn me-2"></i>Duyuru Yönetimi</h6>
+            </div>
 
-                      <div class="form-check form-switch mb-3">
-                          <input class="form-check-input" type="checkbox" id="edit-org-active" ${data.is_active ? "checked" : ""}>
-                          <label class="form-check-label text-white">Aktif Etkinlik</label>
+            <!-- YENİ DUYURU EKLEME BUTONU -->
+            <button class="btn btn-sm btn-publish w-100 mb-4 py-2 fw-bold" onclick="renderDuyuruForm()">
+              <i class="fas fa-plus me-1"></i> YENİ DUYURU OLUŞTUR
+            </button>
+
+            <!-- MEVCUT DUYURULAR LİSTESİ -->
+            <h6 class="small text-white-50 mb-3 fw-bold uppercase">Yayınlanmış Duyurular</h6>
+            <div class="announcement-list custom-scrollbar" style="max-height: 400px; overflow-y: auto;">
+              ${
+                announcements.length > 0
+                  ? announcements
+                      .map(
+                        (a) => `
+                <div class="edit-card mb-2 p-2" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1 cursor-pointer" onclick="renderDuyuruForm(${a.id})">
+                      <div class="extra-small text-warning mb-1">${a.category}</div>
+                      <div class="small fw-bold text-dark text-truncate" style="max-width: 150px;">${a.title}</div>
+                      <div class="extra-small ${a.is_active ? "text-success" : "text-danger"}">
+                        ${a.is_active ? "● Yayında" : "○ Pasif"}
                       </div>
-
-                      <button class="btn btn-success btn-sm w-100" onclick="updateOrgEvent(${pk}, '${data.type}')">KAYDET</button>
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger border-0 p-1" onclick="deleteObject('announcement', ${a.id})">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
                   </div>
-              `;
-          });
+                </div>
+              `,
+                      )
+                      .join("")
+                  : `<div class="text-center text-dark-50 py-4 small">Duyuru bulunamadı.</div>`
+              }
+            </div>
+
+            <button class="btn btn-link w-100 mt-2 text-muted btn-sm text-decoration-none" onclick="refreshFrame()">Kapat</button>
+          `;
+        };
+
+        render();
+      }
+      async function renderDuyuruForm(id = null) {
+        const isEdit = id !== null;
+        let data = {};
+        if (isEdit) {
+          const res = await fetch(`/editor/get-announcement/${id}/`);
+          data = await res.json();
+        }
+
+        fieldsContainer.innerHTML = `
+          <h6 class="text-white mb-3 small fw-bold">
+            <i class="fas fa-edit me-1"></i> ${isEdit ? "Duyuruyu Güncelle" : "Yeni Duyuru"}
+          </h6>
+
+          <div class="edit-card">
+            <label class="form-label extra-small opacity-50 mb-1">Kategori</label>
+            <select data-id="ann-category" class="form-control mb-2">
+              <option value="ANLIK" ${data.category === "ANLIK" ? "selected" : ""}>Anlık Duyuru</option>
+              <option value="KULUP" ${data.category === "KULUP" ? "selected" : ""}>Kulüpsel Gelişmeler</option>
+              <option value="ETKINLIK" ${data.category === "ETKINLIK" ? "selected" : ""}>Etkinlik Haberi</option>
+            </select>
+
+            <label class="form-label extra-small opacity-50 mb-1">Başlık</label>
+            <input type="text" data-id="ann-title" class="form-control mb-2" value="${data.title || ""}">
+
+            <label class="form-label extra-small opacity-50 mb-1">İçerik</label>
+            <textarea data-id="ann-text" class="form-control mb-2" rows="4">${data.text || ""}</textarea>
+
+            <label class="form-label extra-small opacity-50 mb-1">Detay Linki</label>
+            <input type="url" data-id="ann-link" class="form-control mb-3" value="${data.link || ""}">
+
+            <div class="form-check form-switch mb-4">
+              <input class="form-check-input" type="checkbox" data-id="ann-active" ${data.is_active !== false ? "checked" : ""}>
+              <label class="form-check-label text-white-50 small">Aktif mi?</label>
+            </div>
+
+            <button class="btn btn-publish w-100 py-2" onclick="saveObject('announcement', ${id})">
+              ${isEdit ? "DEĞİŞİKLİKLERİ KAYDET" : "DUYURUYU YAYINLA"}
+            </button>
+            <button class="btn btn-link w-100 mt-2 text-muted btn-sm" onclick="openAnnouncementForm()">Vazgeç</button>
+          </div>
+        `;
+      }
+      // 0. Global Değişken (Hata almamak için pageData'yı burada tutuyoruz)
+      let activePageData = null;
+
+      async function openArchiveManager(pageData) {
+        // Eğer pageData gelmişse globale kaydet, gelmemişse eskini kullan
+        if (pageData) activePageData = pageData;
+
+        if (!activePageData || !activePageData.subModel) {
+          console.error("Hata: subModel bulunamadı!");
+          return;
+        }
+
+        const slug = activePageData.subModel.toLowerCase();
+        console.log(`Arşiv listesi çekiliyor: ${slug}`);
+
+        const response = await fetch(`/editor/get-all-archives/${slug}/`);
+        const archives = await response.json();
+
+        fieldsContainer.innerHTML = `
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="text-white m-0 uppercase small ls-1">
+                      <i class="fas fa-history me-2"></i>${slug.toUpperCase()} ARŞİVİ
+                  </h6>
+              </div>
+
+              <button class="btn btn-sm btn-publish w-100 mb-4 py-2 fw-bold" onclick="renderArchiveForm(null, '${slug}')">
+                  <i class="fas fa-plus me-1"></i> YENİ YIL EKLE
+              </button>
+
+              <div class="archive-list custom-scrollbar" style="max-height: 400px; overflow-y: auto;">
+                  ${archives
+                    .map(
+                      (a) => `
+                      <div class="edit-card mb-2 p-2 d-flex align-items-center gap-2" style="background: rgba(255,255,255,0.03);">
+                          <img src="${a.cover_url || "/static/img/no-image.png"}" class="rounded" style="width: 40px; height: 40px; object-fit: cover;">
+                          <div class="flex-grow-1 cursor-pointer" onclick="renderArchiveForm(${a.id}, '${slug}')">
+                              <div class="small fw-bold text-dark">${a.year} - ${a.motto}</div>
+                          </div>
+                          <button class="btn btn-sm text-danger" onclick="deleteObject('archive', ${a.id})">
+                              <i class="fas fa-trash"></i>
+                          </button>
+                      </div>
+                  `,
+                    )
+                    .join("")}
+              </div>
+          `;
       }
 
-      // YAYINLA BUTONU - TAM DÜZELTİLMİŞ HALİ
+      async function renderArchiveForm(id = null, slug) {
+        const isEdit = id !== null;
+        let data = { extra_data: { sectors: [], winners: [], mentors: [] } };
+
+        console.log(`Form Hazırlanıyor: ${slug} | ID: ${id}`);
+
+        if (isEdit) {
+          const res = await fetch(`/editor/get-archive/${id}/`);
+          data = await res.json();
+        }
+
+        fieldsContainer.innerHTML = `
+              <h6 class="text-white mb-3 small fw-bold">${isEdit ? "Dönemi Düzenle" : "Yeni Dönem Ekle"}</h6>
+              <div class="edit-card">
+                  <label class="form-label extra-small opacity-50 mb-1">Yıl</label>
+                  <input type="number" id="arc-year" class="form-control mb-2" value="${data.year || ""}">
+
+                  <label class="form-label extra-small opacity-50 mb-1">Motto / Başlık</label>
+                  <input type="text" id="arc-motto" class="form-control mb-2" value="${data.motto || ""}">
+
+                  <label class="form-label extra-small opacity-50 mb-1">Dönem Özeti</label>
+                  <textarea id="arc-desc" class="form-control mb-2" rows="3">${data.description || ""}</textarea>
+
+                  ${
+                    slug === "sb"
+                      ? `
+                      <label class="form-label extra-small opacity-50 mb-1">Sektörler (Virgülle ayır)</label>
+                      <input type="text" id="arc-extra-sectors" class="form-control mb-2" value="${data.extra_data.sectors?.join(", ") || ""}">
+                  `
+                      : ""
+                  }
+
+                  ${
+                    slug === "col"
+                      ? `
+                      <label class="form-label extra-small opacity-50 mb-1">Kazananlar JSON</label>
+                      <textarea id="arc-extra-json" class="form-control mb-2" rows="2">${JSON.stringify(data.extra_data.winners || [])}</textarea>
+                  `
+                      : ""
+                  }
+
+                  <div class="mt-3">
+                      <label class="form-label extra-small opacity-50 mb-1">Ana Kapak Görseli</label>
+                      <input type="file" id="arc-cover" class="form-control mb-2" accept="image/*">
+
+                      <label class="form-label extra-small opacity-50 mb-1">Galeri Fotoğrafları (Çoklu Seçim)</label>
+                      <input type="file" id="arc-gallery" class="form-control mb-4" multiple accept="image/*">
+                  </div>
+
+                  <button class="btn btn-publish w-100 py-2" onclick="saveArchiveObject(${id}, '${slug}')">
+                      <i class="fas fa-save me-1"></i> ${isEdit ? "GÜNCELLE" : "SİSTEME EKLE"}
+                  </button>
+                  <button class="btn btn-link w-100 mt-2 text-muted btn-sm" onclick="openArchiveManager()">İptal Et</button>
+              </div>
+          `;
+      }
+
+      async function saveArchiveObject(id = null, slug) {
+        const formData = new FormData();
+
+        formData.append("slug", slug);
+        formData.append("year", document.getElementById("arc-year").value);
+        formData.append("motto", document.getElementById("arc-motto").value);
+        formData.append(
+          "description",
+          document.getElementById("arc-desc").value,
+        );
+
+        // Extra Data (Sektör, Kazananlar vb.)
+        let extraData = {};
+        if (slug === "sb") {
+          const sectorVal = document.getElementById("arc-extra-sectors").value;
+          extraData.sectors = sectorVal
+            ? sectorVal.split(",").map((s) => s.trim())
+            : [];
+        } else if (slug === "col") {
+          try {
+            extraData.winners = JSON.parse(
+              document.getElementById("arc-extra-json").value || "[]",
+            );
+          } catch (e) {
+            showNotify("JSON formatı hatalı!", "error");
+            return;
+          }
+        }
+        formData.append("extra_data_raw", JSON.stringify(extraData));
+
+        // Ana Kapak
+        const cover = document.getElementById("arc-cover").files[0];
+        if (cover) formData.append("cover_image", cover);
+
+        // ÇOKLU GALERİ (Döngü ile append)
+        const galleryFiles = document.getElementById("arc-gallery").files;
+        for (let i = 0; i < galleryFiles.length; i++) {
+          formData.append("gallery_images", galleryFiles[i]);
+        }
+
+        const endpoint = id
+          ? `/editor/save-archive/${id}/`
+          : "/editor/save-archive/";
+
+        try {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            body: formData,
+            headers: { "X-CSRFToken": getCookie("csrftoken") },
+          });
+
+          const result = await res.json();
+          if (result.status === "success") {
+            showNotify("🚀 İşlem Başarılı!");
+            openArchiveManager(); // Listeye dön
+            refreshFrame(); // Iframe'i yenile
+          } else {
+            showNotify("Hata: " + result.message, "error");
+          }
+        } catch (err) {
+          showNotify("Bağlantı hatası!", "error");
+        }
+      }
+
+      // --- 4. MERKEZİ VERİ KAYDETME SİSTEMİ (UNIFIED) ---
+      async function saveObject(type, id = null) {
+        const formData = new FormData();
+        const isEdit = id !== null;
+        let endpoint = "";
+
+        if (type === "member") {
+          endpoint = isEdit
+            ? `/editor/update-member/${id}/`
+            : "/editor/add-member/";
+
+          // Element ID'lerinin openMemberForm içindeki ID'lerle eşleştiğinden emin ol
+          formData.append("name", document.getElementById("m-name").value);
+          formData.append("title", document.getElementById("m-title").value);
+          formData.append("rank", document.getElementById("m-rank").value);
+          formData.append("team", document.getElementById("m-team").value);
+
+          // KRİTİK: Backend 'order' bekliyor, buradaki ID 'm-order'
+          const orderVal = document.getElementById("m-order")
+            ? document.getElementById("m-order").value
+            : 0;
+          formData.append("order", orderVal);
+
+          const img = document.getElementById("m-image").files[0];
+          if (img) formData.append("image", img); // Backend 'image' bekliyor
+        } else if (type === "magazine") {
+          endpoint = isEdit
+            ? `/editor/update-magazine/${id}/`
+            : "/editor/add-magazine/";
+
+          formData.append("title", document.getElementById("mag-title").value);
+          formData.append(
+            "issue_number",
+            document.getElementById("mag-issue").value,
+          );
+          formData.append(
+            "release_date",
+            document.getElementById("mag-date").value,
+          ); // Yeni
+          formData.append(
+            "read_link",
+            document.getElementById("mag-link").value,
+          ); // Yeni
+          formData.append(
+            "description",
+            document.getElementById("mag-desc").value,
+          );
+          formData.append(
+            "is_active",
+            document.getElementById("mag-active").checked,
+          ); // Yeni (Boolean)
+
+          const cover = document.getElementById("mag-cover").files[0];
+          if (cover) formData.append("cover_image", cover);
+
+          const pdf = document.getElementById("mag-pdf").files[0]; // Yeni (PDF)
+          if (pdf) formData.append("pdf_file", pdf);
+        } else if (type === "sponsor") {
+          endpoint = "/editor/add-sponsor/"; // Sponsor ekleme endpoint'in
+          formData.append("name", document.getElementById("sp-name").value);
+          formData.append("order", document.getElementById("sp-order").value);
+          const logo = document.getElementById("sp-logo").files[0];
+          if (logo) formData.append("logo", logo);
+        } else if (type === "announcement") {
+          endpoint = id
+            ? `/editor/update-announcement/${id}/`
+            : "/editor/add-announcement/";
+          formData.append(
+            "category",
+            document.querySelector('[data-id="ann-category"]').value,
+          );
+          formData.append(
+            "title",
+            document.querySelector('[data-id="ann-title"]').value,
+          );
+          formData.append(
+            "text",
+            document.querySelector('[data-id="ann-text"]').value,
+          );
+          formData.append(
+            "link",
+            document.querySelector('[data-id="ann-link"]').value,
+          );
+          formData.append(
+            "is_active",
+            document.querySelector('[data-id="ann-active"]').checked,
+          );
+        }
+
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            body: formData,
+            headers: { "X-CSRFToken": getCookie("csrftoken") },
+          });
+          const result = await response.json();
+          if (result.status === "success") {
+            showNotify(`🚀 ${type.toUpperCase()} başarıyla güncellendi!`);
+            refreshFrame(); // iframe'i yenileyip değişikliği gör
+          } else {
+            showNotify("Hata: " + result.message, "error");
+          }
+        } catch (err) {
+          showNotify("Bağlantı hatası!", "error");
+        }
+      }
+
+      async function deleteObject(type, id) {
+        // 1. Apple Tarzı Zarif Onay Ekranı
+        const swalConfig = {
+          title: "Emin misiniz?",
+          text: "Bu öğe kalıcı olarak silinecek.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#ff3b30", // Apple Red
+          cancelButtonColor: "#f2f2f7",
+          confirmButtonText: "Sil",
+          cancelButtonText: "Vazgeç",
+          reverseButtons: true,
+          backdrop: `blur(4px)`,
+          customClass: {
+            popup: "apple-radius",
+            confirmButton: "pill-button",
+            cancelButton: "pill-button text-dark",
+          },
+        };
+
+        const confirmResult = await Swal.fire(swalConfig);
+
+        if (confirmResult.isConfirmed) {
+          // 2. Endpoint Belirleme
+          const endpoints = {
+            member: `/editor/delete-member/${id}/`,
+            magazine: `/editor/delete-magazine/${id}/`,
+            announcement: `/editor/delete-announcement/${id}/`,
+            sponsor: `/editor/delete-sponsor/${id}/`,
+          };
+
+          const endpoint = endpoints[type];
+
+          try {
+            // 3. API İsteği
+            const response = await fetch(endpoint, {
+              method: "POST",
+              headers: { "X-CSRFToken": getCookie("csrftoken") },
+            });
+
+            const data = await response.json(); // Backend'den gelen yanıt
+
+            // 4. Durum Kontrolü (data.status üzerinden)
+            if (data.status === "success") {
+              showNotify(`🗑️ Başarıyla silindi.`, "success");
+
+              // Sol paneli temizle (Apple tarzı boş durum mesajı)
+              fieldsContainer.innerHTML = `
+                    <div class="text-center p-5 opacity-50">
+                        <i class="fas fa-check-circle mb-3 d-block" style="font-size: 2rem;"></i>
+                        <span class="small">Öğe kaldırıldı.</span>
+                    </div>`;
+
+              // Sağdaki iframe'i güncelle
+              refreshFrame();
+            } else {
+              showNotify(data.message || "Silme işlemi başarısız.", "error");
+            }
+          } catch (err) {
+            console.error("Silme hatası:", err);
+            showNotify("Bağlantı hatası! Sunucuya ulaşılamadı.", "error");
+          }
+        }
+      }
+
+      // --- 5. MESAJ DİNLEYİCİ VE DİĞER YARDIMCILAR ---
+      window.addEventListener("message", (event) => {
+        const data = event.data;
+
+        console.log("Received message:", data);
+
+        if (data.type === "PAGE_REPORT") updateEditorUI(data);
+
+        if (data.type === "OBJECT_CLICKED") {
+          if (data.model === "TeamMember") openMemberForm(data.object);
+          if (data.model === "Magazine") openMagazineForm(data.object);
+        }
+      });
+
       function publishChanges() {
+        const formData = new FormData();
         const contentData = {};
         const inputs = fieldsContainer.querySelectorAll("[data-field-key]");
 
         inputs.forEach((el) => {
           const key = el.getAttribute("data-field-key");
-          const value = el.value.trim();
-          if (key) contentData[key] = value;
+          if (el.type === "file" && el.files[0]) {
+            formData.append(key, el.files[0]);
+          } else if (el.value !== undefined) {
+            contentData[key] = el.value.trim();
+          }
         });
 
-        if (Object.keys(contentData).length === 0) {
-          showNotify("⚠️ Kaydedilecek veri bulunamadı!", "error");
-          return;
-        }
-
-        const formData = new FormData();
+        // KRİTİK NOKTA: Backend 'json_data' anahtarını bekliyor
+        formData.append("json_data", JSON.stringify(contentData));
         formData.append("path", frame.contentWindow.location.pathname);
-        formData.append("data", JSON.stringify(contentData));
+
+        console.log("Publishing with data:", formData);
 
         fetch("/editor/universal-save/", {
           method: "POST",
@@ -436,419 +1187,91 @@
           .then((res) => res.json())
           .then((data) => {
             if (data.status === "success") {
-              showNotify("🚀 Değişiklikler başarıyla yayınlandı!");
-              frame.contentWindow.location.reload(); // Değişiklikleri tam görmek için yenile
+              showNotify("🚀 Değişiklikler işlendi!");
+              refreshFrame();
+            } else {
+              showNotify("Hata: " + data.message, "error");
             }
           });
       }
-      function syncText(id, field, value) {
+
+      // Yardımcı Fonksiyonlar
+      function refreshFrame() {
+        frame.contentWindow.location.reload();
+      }
+      function getCookie(n) {
+        let a = `; ${document.cookie}`.split(`; ${n}=`);
+        if (a.length === 2) return a.pop().split(";").shift();
+      }
+      function syncText(id, field, val) {
         frame.contentWindow.postMessage(
-          {
-            type: "LIVE_UPDATE",
-            id: id,
-            field: field,
-            val: value,
-            isImage: false,
-          },
+          { type: "LIVE_UPDATE", id, field, val, isImage: false },
           "*",
         );
       }
-
       function syncImage(id, field, input) {
         if (input.files && input.files[0]) {
           const reader = new FileReader();
-          reader.onload = (e) => {
+          reader.onload = (e) =>
             frame.contentWindow.postMessage(
               {
                 type: "LIVE_UPDATE",
-                id: id,
-                field: field,
+                id,
+                field,
                 val: e.target.result,
                 isImage: true,
               },
               "*",
             );
-          };
           reader.readAsDataURL(input.files[0]);
         }
       }
-
-      function refreshFrame() {
-        frame.contentWindow.location.reload();
-      }
-
       function showNotify(text, type = "success") {
         Toastify({
           text: text,
-          duration: 3000,
-          gravity: "top", // top veya bottom
-          position: "right", // left, center veya right
+          duration: 3500,
+          gravity: "bottom", // Apple bildirimleri genellikle alttan veya üst merkezden gelir, alt daha moderndir
+          position: "center", // Ekranın ortasında toplanması daha premium durur
           stopOnFocus: true,
           style: {
-            background: type === "success" ? "#27c93f" : "#ff5f56",
-            borderRadius: "10px",
-            fontFamily: "Inter",
-            fontWeight: "600",
-            boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
+            // Cam efekti (Glassmorphism)
+            background:
+              type === "success"
+                ? "rgba(29, 29, 31, 0.95)" // Koyu Apple teması
+                : "rgba(227, 0, 0, 0.9)", // Apple kırmızısı
+
+            color: "#ffffff",
+            borderRadius: "20px", // Tam yuvarlak köşeler
+            padding: "12px 28px",
+            fontSize: "14px",
+            fontWeight: "500",
+            letterSpacing: "-0.2px",
+
+            // İnce ve kaliteli gölge (Apple standardı)
+            boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
+            border: "1px solid rgba(255,255,255,0.1)",
+
+            backdropFilter: "blur(10px)",
+            webkitBackdropFilter: "blur(10px)",
+          },
+          offset: {
+            y: 40, // Alttan biraz yukarıda dursun
           },
         }).showToast();
       }
+      function reloadFrame() {
+        const frame = document.getElementById("site-frame");
 
-      function addNewMember() {
-        const formData = new FormData();
+        const bar = document.getElementById("url-bar");
+        const url = bar.getAttribute("data-url");
+        console.log("Reloading frame with URL:", url);
+        // Frame'i reload etmenin en temiz yolu src'yi tekrar atamaktır
+        frame.src = url;
 
-        // Alanları topla
-        formData.append("name", document.getElementById("new-name").value);
-        formData.append("title", document.getElementById("new-title").value);
-        formData.append("rank", document.getElementById("new-rank").value);
-        formData.append("team", document.getElementById("new-team").value);
-        formData.append("order", document.getElementById("new-order").value);
-
-        // Resim dosyasını al
-        const imageFile = document.getElementById("new-image").files[0];
-        if (imageFile) {
-          formData.append("image", imageFile);
-        }
-
-        // Basit doğrulama
-        if (!document.getElementById("new-name").value) {
-          showNotify("Lütfen isim giriniz!", "error");
-          return;
-        }
-
-        // Django Backend'e gönder
-        fetch("/editor/add-member/", {
-          // Bu URL'i urls.py'da tanımlamış olmalısın
-          method: "POST",
-          body: formData,
-          headers: {
-            "X-CSRFToken": getCookie("csrftoken"), // Güvenlik için şart
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.status === "success") {
-              showNotify("Üye başarıyla eklendi!");
-              refreshFrame(); // Sağdaki iframe'i yenile
-            } else {
-              showNotify("Hata: " + data.message, "error");
-            }
-          })
-          .catch((error) => console.error("Hata:", error));
-      }
-
-      // updateEditorUI içindeki butona tıklandığında çalışacak
-      function openNewMagazineForm() {
-        fieldsContainer.innerHTML = `
-          <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6 class="text-success m-0"><i class="fas fa-plus-circle me-2"></i>Yeni Dergi Sayısı Ekle</h6>
-              <button class="btn btn-sm btn-outline-light" onclick="refreshFrame()">İPTAL</button>
-          </div>
-
-          <div class="edit-card" style="border-left-color: #27c93f; background: rgba(39, 201, 63, 0.05);">
-              <label class="form-label">Dergi Başlığı (Örn: Lojistik 4.0)</label>
-              <input type="text" id="new-mag-title" class="form-control mb-2" placeholder="Başlık giriniz">
-
-              <label class="form-label">Sayı No</label>
-              <input type="number" id="new-mag-issue" class="form-control mb-2" placeholder="Örn: 42">
-
-              <label class="form-label">Yayın Tarihi</label>
-              <input type="date" id="new-mag-date" class="form-control mb-2">
-
-              <label class="form-label">Kısa Açıklama</label>
-              <textarea id="new-mag-desc" class="form-control mb-2" rows="3" placeholder="Bu sayıda neler var?"></textarea>
-
-              <label class="form-label">Okuma Linki (Drive/Issuu URL)</label>
-              <input type="url" id="new-mag-link" class="form-control mb-2" placeholder="https://drive.google.com/...">
-
-              <label class="form-label">Kapak Fotoğrafı</label>
-              <input type="file" id="new-mag-cover" class="form-control mb-3" accept="image/*">
-
-              <button class="btn btn-success btn-sm w-100 fw-bold" onclick="saveNewMagazine()">
-                  <i class="fas fa-save me-2"></i>VERİTABANINA KAYDET
-              </button>
-          </div>
-      `;
-      }
-
-      // Veriyi Django'ya gönderen fonksiyon
-      function saveNewMagazine() {
-        const formData = new FormData();
-        formData.append(
-          "title",
-          document.getElementById("new-mag-title").value,
-        );
-        formData.append(
-          "issue_number",
-          document.getElementById("new-mag-issue").value,
-        );
-        formData.append(
-          "release_date",
-          document.getElementById("new-mag-date").value,
-        );
-        formData.append(
-          "description",
-          document.getElementById("new-mag-desc").value,
-        );
-        formData.append(
-          "read_link",
-          document.getElementById("new-mag-link").value,
-        );
-
-        const coverFile = document.getElementById("new-mag-cover").files[0];
-        if (coverFile) formData.append("cover_image", coverFile);
-
-        if (!document.getElementById("new-mag-title").value || !coverFile) {
-          showNotify(
-            "Lütfen başlık ve kapak fotoğrafını eksik etmeyin!",
-            "error",
-          );
-          return;
-        }
-
-        fetch("/editor/add-magazine/", {
-          // URL'i urls.py'a ekleyeceğiz
-          method: "POST",
-          body: formData,
-          headers: { "X-CSRFToken": getCookie("csrftoken") },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.status === "success") {
-              showNotify("📚 Yeni sayı arşive eklendi!");
-              refreshFrame();
-            } else {
-              showNotify("Hata: " + data.message, "error");
-            }
-          });
-      }
-      window.addEventListener("message", (event) => {
-        const data = event.data;
-        console.log("📩 Editöre Mesaj Geldiiiiii:", data);
-
-        if (data.type === "PAGE_REPORT") {
-          updateEditorUI(data);
-        }
-
-        // Tıklanan nesneye göre doğru yükleme fonksiyonunu çağır
-        if (data.type === "OBJECT_CLICKED") {
-          if (data.model === "TeamMember") {
-            loadMemberIntoEditor(data.object);
-          } else if (data.model === "Magazine") {
-            loadMagazineIntoEditor(data.object);
-          }
-        }
-      });
-
-      function loadMagazineIntoEditor(id) {
-        fieldsContainer.innerHTML = `<div class="text-white-50 p-4"><i class="fas fa-spinner fa-spin me-2"></i>Dergi verileri çekiliyor...</div>`;
-
-        fetch(`/editor/get-magazine/${id}/`) // Bu URL'i urls.py'da tanımlamalıyız
-          .then((res) => res.json())
-          .then((data) => {
-            fieldsContainer.innerHTML = `
-                  <div class="d-flex justify-content-between align-items-center mb-3">
-                      <h6 class="text-warning m-0"><i class="fas fa-book-open me-2"></i>Dergi Düzenle</h6>
-                      <button class="btn btn-sm btn-outline-danger" onclick="deleteMagazine(${id})">
-                          <i class="fas fa-trash"></i>
-                      </button>
-                  </div>
-
-                  <div class="edit-card" style="border-left-color: #f28c28;">
-                      <div class="text-center mb-3">
-                          <img src="${data.cover_url}" style="width:80px; height:120px; border-radius:8px; object-fit:cover; border: 2px solid #f28c28;">
-                      </div>
-
-                      <label class="form-label">Kapak Resmini Değiştir</label>
-                      <input type="file" id="edit-mag-cover" class="form-control mb-3" accept="image/*">
-
-                      <label class="form-label">Dergi Başlığı</label>
-                      <input type="text" id="edit-mag-title" class="form-control mb-2" value="${data.title}">
-
-                      <label class="form-label">Sayı No</label>
-                      <input type="number" id="edit-mag-issue" class="form-control mb-2" value="${data.issue_number}">
-
-                      <label class="form-label">Açıklama</label>
-                      <textarea id="edit-mag-desc" class="form-control mb-2" rows="3">${data.description}</textarea>
-
-                      <label class="form-label">Okuma Linki (URL)</label>
-                      <input type="url" id="edit-mag-link" class="form-control mb-3" value="${data.read_link}">
-
-                      <button class="btn btn-warning btn-sm w-100 fw-bold" onclick="updateMagazine(${id})">
-                          DEĞİŞİKLİKLERİ KAYDET
-                      </button>
-                      <button class="btn btn-sm btn-link text-white-50 w-100 mt-2" onclick="refreshFrame()">Vazgeç</button>
-                  </div>
-              `;
-          });
-      }
-
-      function updateMagazine(id) {
-        const formData = new FormData();
-        formData.append(
-          "title",
-          document.getElementById("edit-mag-title").value,
-        );
-        formData.append(
-          "issue_number",
-          document.getElementById("edit-mag-issue").value,
-        );
-        formData.append(
-          "description",
-          document.getElementById("edit-mag-desc").value,
-        );
-        formData.append(
-          "read_link",
-          document.getElementById("edit-mag-link").value,
-        );
-
-        const coverInput = document.getElementById("edit-mag-cover");
-        if (coverInput.files[0]) {
-          formData.append("cover_image", coverInput.files[0]);
-        }
-
-        fetch(`/editor/update-magazine/${id}/`, {
-          method: "POST",
-          body: formData,
-          headers: { "X-CSRFToken": getCookie("csrftoken") },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.status === "success") {
-              showNotify("📚 Dergi başarıyla güncellendi!");
-              refreshFrame();
-            } else {
-              showNotify("Hata: " + data.message, "error");
-            }
-          });
-      }
-
-      function loadMemberIntoEditor(id) {
-        fieldsContainer.innerHTML = `<div class="text-white-50 p-4"><i class="fas fa-spinner fa-spin me-2"></i>Veriler çekiliyor...</div>`;
-
-        fetch(`/editor/get-member/${id}/`)
-          .then((res) => res.json())
-          .then((data) => {
-            fieldsContainer.innerHTML = `
-                  <div class="d-flex justify-content-between align-items-center mb-3">
-                      <h6 class="text-warning m-0"><i class="fas fa-edit me-2"></i>Üye Düzenle</h6>
-                      <button class="btn btn-sm btn-outline-danger" onclick="deleteMember(${id})">
-                          <i class="fas fa-trash"></i> SİL
-                      </button>
-                  </div>
-
-                  <div class="edit-card" style="border-left-color: var(--emk-orange);">
-                      <div class="text-center mb-3">
-                          <img src="${data.image_url}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; border: 2px solid var(--emk-orange);">
-                      </div>
-
-                      <label class="form-label">Profil Fotoğrafını Değiştir</label>
-                      <input type="file" id="edit-image" class="form-control mb-3" accept="image/*">
-
-                      <label class="form-label">İsim Soyisim</label>
-                      <input type="text" id="edit-name" class="form-control mb-2" value="${data.name}">
-
-                      <label class="form-label">Ünvan</label>
-                      <input type="text" id="edit-title" class="form-control mb-2" value="${data.title}">
-
-                      <div class="row g-2">
-                          <div class="col-6">
-                              <label class="form-label">Rütbe</label>
-                              <select id="edit-rank" class="form-control mb-2">
-                                  <option value="ALFA" ${data.rank === "ALFA" ? "selected" : ""}>ALFA</option>
-                                  <option value="BETA" ${data.rank === "BETA" ? "selected" : ""}>BETA</option>
-                                  <option value="GAMA" ${data.rank === "GAMA" ? "selected" : ""}>GAMA</option>
-                              </select>
-                          </div>
-                          <div class="col-6">
-                              <label class="form-label">Ekip</label>
-                              <select id="edit-team" class="form-control mb-2">
-                                  <option value="DIS" ${data.team === "DIS" ? "selected" : ""}>Dış Org.</option>
-                                  <option value="IC" ${data.team === "IC" ? "selected" : ""}>İç Org.</option>
-                                  <option value="IK" ${data.team === "IK" ? "selected" : ""}>İK</option>
-                                  <option value="FIN" ${data.team === "FIN" ? "selected" : ""}>Finans</option>
-                                  <option value="GAMA" ${data.team === "GAMA" ? "selected" : ""}>Gama Kurulu</option>
-                              </select>
-                          </div>
-                      </div>
-
-                      <label class="form-label">Sıralama</label>
-                      <input type="number" id="edit-order" class="form-control mb-3" value="${data.order}">
-
-                      <button class="btn btn-warning btn-sm w-100 fw-bold" onclick="updateMember(${id})">
-                          DEĞİŞİKLİKLERİ KAYDET
-                      </button>
-                      <button class="btn btn-sm btn-link text-white-50 w-100 mt-2" onclick="refreshFrame()">Vazgeç</button>
-                  </div>
-              `;
-          });
-      }
-
-      function deleteMember(id) {
-        if (confirm("Bu üyeyi silmek istediğinize emin misiniz?")) {
-          fetch(`/editor/delete-member/${id}/`, {
-            method: "POST",
-            headers: { "X-CSRFToken": getCookie("csrftoken") },
-          }).then(() => {
-            showNotify("Üye silindi.");
-            refreshFrame(); // Sayfayı yenile
-            fieldsContainer.innerHTML = "Üye silindi.";
-          });
-        }
-      }
-      function updateMember(id) {
-        const formData = new FormData();
-
-        // Form elemanlarını ID'lerine göre yakala
-        formData.append("name", document.getElementById("edit-name").value);
-        formData.append("title", document.getElementById("edit-title").value);
-        formData.append("rank", document.getElementById("edit-rank").value);
-        formData.append("team", document.getElementById("edit-team").value);
-        formData.append("order", document.getElementById("edit-order").value);
-
-        // Eğer yeni bir resim seçildiyse ekle
-        const imageInput = document.getElementById("edit-image");
-        if (imageInput && imageInput.files[0]) {
-          formData.append("image", imageInput.files[0]);
-        }
-
-        // Django'ya gönder
-        fetch(`/editor/update-member/${id}/`, {
-          method: "POST",
-          body: formData,
-          headers: {
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.status === "success") {
-              showNotify("Üye bilgileri başarıyla güncellendi!");
-              // Sağdaki iframe'i yenileyerek sonucu canlı gör
-              refreshFrame();
-            } else {
-              showNotify("Hata oluştu: " + data.message, "error");
-            }
-          })
-          .catch((error) => console.error("Hata:", error));
-      }
-
-      // CSRF Token almak için yardımcı fonksiyon
-      function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-          const cookies = document.cookie.split(";");
-          for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === name + "=") {
-              cookieValue = decodeURIComponent(
-                cookie.substring(name.length + 1),
-              );
-              break;
-            }
-          }
-        }
-        return cookieValue;
+        // Apple tarzı küçük bir feedback: Butonu döndürelim
+        const btn = document.querySelector(".btn-reload i");
+        btn.classList.add("fa-spin");
+        setTimeout(() => btn.classList.remove("fa-spin"), 500);
       }
     </script>
   </body>

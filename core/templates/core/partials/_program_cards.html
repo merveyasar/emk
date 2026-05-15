@@ -1,0 +1,180 @@
+<!-- partials/_program_cards.html -->
+<style>
+  /* Program Grid Düzeni - 4'lü Sütun */
+  .program-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    width: 100%;
+  }
+
+  /* Program Kartı Modernizasyonu */
+  .program-card {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    height: 240px;
+    display: block;
+    text-decoration: none;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .program-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+  }
+
+  .program-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(15, 16, 18, 0.9) 10%,
+      rgba(15, 16, 18, 0.4) 50%,
+      transparent 100%
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 24px;
+    color: white;
+  }
+
+  .program-overlay h6 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+
+  .program-overlay p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  /* Hover Efektleri */
+  .program-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(242, 140, 40, 0.2);
+  }
+
+  .program-card:hover img {
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 768px) {
+    .program-grid-layout {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<div class="program-grid-layout">
+  <!-- SB -->
+  <a href="{% url 'sb' %}" class="program-card">
+    <img
+      loading="lazy"
+      src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=600"
+      alt="SB"
+    />
+    <div class="program-overlay">
+      <h6>SB</h6>
+      <p>Sektör Buluşmaları</p>
+    </div>
+  </a>
+
+  <!-- KALE -->
+  <a href="{% url 'kale' %}" class="program-card">
+    <img
+      loading="lazy"
+      src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=600"
+      alt="KALE"
+    />
+    <div class="program-overlay">
+      <h6>KALE</h6>
+      <p>Liderlik Kampı</p>
+    </div>
+  </a>
+
+  <!-- Şirket Günleri -->
+  <a href="{% url 'sirket_gunleri' %}" class="program-card">
+    <img
+      loading="lazy"
+      src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600"
+      alt="Kariyer"
+    />
+    <div class="program-overlay">
+      <h6>Şirket Günleri</h6>
+      <p>Kariyer Odaklı Deneyim</p>
+    </div>
+  </a>
+
+  <!-- Teknik Gezi -->
+  <a href="{% url 'teknik_gezi' %}" class="program-card">
+    <img
+      loading="lazy"
+      src="https://images.unsplash.com/photo-1565034946487-077786996e27?q=80&w=600"
+      alt="Deneyim"
+    />
+    <div class="program-overlay">
+      <h6>Teknik Gezi</h6>
+      <p>Sektörel Yerinde İnceleme</p>
+    </div>
+  </a>
+
+  <!-- Eğitimler -->
+  <a href="{% url 'egitim_seminerleri' %}" class="program-card">
+    <img
+      loading="lazy"
+      src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=600"
+      alt="Sertifika"
+    />
+    <div class="program-overlay">
+      <h6>Eğitimler</h6>
+      <p>Gelişim ve Sertifika</p>
+    </div>
+  </a>
+
+  <!-- GDKG -->
+  <a href="{% url 'gdkg' %}" class="program-card">
+    <img
+      loading="lazy"
+      src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=600"
+      alt="Sosyal Sorumluluk"
+    />
+    <div class="program-overlay">
+      <h6>GDKG</h6>
+      <p>Gülümse Gelecek Gülümset</p>
+    </div>
+  </a>
+
+  <!-- COL -->
+  <a href="{% url 'col' %}" class="program-card">
+    <img
+      loading="lazy"
+      src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600"
+      alt="Vaka Analizi"
+    />
+    <div class="program-overlay">
+      <h6>COL</h6>
+      <p>Case of Leadership</p>
+    </div>
+  </a>
+
+  <!-- Mentorship -->
+  <a href="{% url 'mentorship' %}" class="program-card">
+    <img
+      loading="lazy"
+      src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600"
+      alt="Mezun Ağı"
+    />
+    <div class="program-overlay">
+      <h6>Mentorship</h6>
+      <p>Profesyonel Rehberlik</p>
+    </div>
+  </a>
+</div>

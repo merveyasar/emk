@@ -199,6 +199,94 @@ EMK{% endblock %} {% block content %}
     </div>
   </section>
 
+  <!-- Teams & Missions Section -->
+  <section class="container py-5 mt-5">
+    <div class="row g-4">
+      <div class="col-12 text-center mb-5" data-aos="fade-up">
+        <h4
+          class="fw-bold ls-3 text-uppercase text-muted"
+          style="font-size: 0.9rem"
+        >
+          DEPARTMANLARIMIZ
+        </h4>
+        <h2 class="display-6 fw-bold">Uzmanlık Alanlarımız</h2>
+      </div>
+
+      <!-- Departman Kartları -->
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+        <div
+          class="rank-info-card border-0"
+          style="background: rgba(242, 140, 40, 0.03)"
+        >
+          <h6 class="fw-bold text-dark mb-3">İnsan Kaynaklarır</h6>
+          <p
+            class="small text-muted"
+            id="team_desc_ik"
+            data-id="team_desc_ik"
+            data-editable="İK Ekibi Açıklaması"
+          >
+            <!--prettier-ignore-->
+            {{ page_data.team_desc_ik|default:"Üye bağlılığı, eğitim koordinasyonu ve kulüp içi motivasyon süreçlerini yönetir." }}
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+        <div
+          class="rank-info-card border-0"
+          style="background: rgba(0, 113, 227, 0.03)"
+        >
+          <h6 class="fw-bold text-dark mb-3">İç Organizasyon</h6>
+          <p
+            class="small text-muted"
+            id="team_desc_ic"
+            data-id="team_desc_ic"
+            data-editable="İç Org Ekibi Açıklaması"
+          >
+            <!--prettier-ignore-->
+            {{ page_data.team_desc_ic|default:"Kampüs içi etkinliklerin planlanması, lojistik süreçler ve operasyonel akışı sağlar." }}
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+        <div
+          class="rank-info-card border-0"
+          style="background: rgba(34, 197, 94, 0.03)"
+        >
+          <h6 class="fw-bold text-dark mb-3">Dış Organizasyon</h6>
+          <p
+            class="small text-muted"
+            id="team_desc_dis"
+            data-id="team_desc_dis"
+            data-editable="Dış Org Ekibi Açıklaması"
+          >
+            <!--prettier-ignore-->
+            {{ page_data.team_desc_dis|default:"Sektör paydaşları, sponsorlar ve diğer üniversitelerle olan stratejik ilişkileri yürütür." }}
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+        <div
+          class="rank-info-card border-0"
+          style="background: rgba(100, 116, 139, 0.03)"
+        >
+          <h6 class="fw-bold text-dark mb-3">Finans & Sponsorluk</h6>
+          <p
+            class="small text-muted"
+            id="team_desc_fin"
+            data-id="team_desc_fin"
+            data-editable="Finans Ekibi Açıklaması"
+          >
+            <!--prettier-ignore-->
+            {{ page_data.team_desc_fin|default:"Bütçe yönetimi, sponsorluk dosyalarının hazırlanması ve kaynak optimizasyonunu sağlar." }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Team Members List -->
   <div class="container py-5">
     <!--prettier-ignore-->
@@ -266,4 +354,31 @@ EMK{% endblock %} {% block content %}
     {% endfor %}
   </div>
 </div>
+<script>
+  document.querySelectorAll("[data-object-id]").forEach((el) => {
+    el.style.cursor = "pointer"; // Tıklanabilir olduğunu belli et kanka
+
+    el.addEventListener("click", (e) => {
+      // Eğer editör modundaysak (window.parent kontrolü)
+      if (window.self !== window.top) {
+        e.preventDefault(); // Sayfa linkine gitmesini engelle
+
+        const objectId = el.getAttribute("data-object-id");
+        const modelName = window.document.body
+          .querySelector("[data-model]")
+          .getAttribute("data-model");
+
+        // Editöre (Parent) mesaj gönder
+        window.parent.postMessage(
+          {
+            type: "OBJECT_CLICKED",
+            model: modelName, // "TeamMember" veya "Magazine"
+            object: objectId, // Veritabanındaki ID (PK)
+          },
+          "*",
+        );
+      }
+    });
+  });
+</script>
 {% endblock %}

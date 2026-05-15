@@ -108,7 +108,7 @@ Tüzüğü{% endblock %} {% block content %}
     <p
       class="lead opacity-75 mx-auto"
       style="max-width: 600px"
-      id="hero_subtitle"
+      data-id="hero_subtitle"
       data-editable="Hero Alt Başlık"
     >
       <!--prettier-ignore-->
@@ -122,39 +122,162 @@ Tüzüğü{% endblock %} {% block content %}
     <!-- Maddeler Sol -->
     <div class="col-lg-8" data-aos="fade-right">
       <div class="accordion" id="tuzukAccordion">
-        {% for article in articles %}
-        <div
-          class="accordion-item"
-          data-aos="fade-up"
-          data-aos-delay="{{ forloop.counter|add:0 }}00"
-        >
+        <!-- Madde 1 -->
+        <div class="accordion-item" data-aos="fade-up" data-aos-delay="100">
           <h2 class="accordion-header">
             <button
-              class="accordion-button {% if not forloop.first %}collapsed{% endif %}"
+              class="accordion-button"
               type="button"
               data-bs-toggle="collapse"
-              data-bs-target="#m{{ forloop.counter }}"
-              id="article_title_{{ forloop.counter }}"
-              data-editable="Madde {{ forloop.counter }} Başlığı"
+              data-bs-target="#m1"
+              data-id="article_title_1"
+              data-editable="Madde 1 Başlığı"
             >
-              {{ article.title }}
+              <i class="fas fa-fingerprint me-3 text-warning"></i>
+              {{ page_data.article_title_1|default:"Misyon ve Temel İlkeler" }}
             </button>
           </h2>
           <div
-            id="m{{ forloop.counter }}"
-            class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+            id="m1"
+            class="accordion-collapse collapse show"
             data-bs-parent="#tuzukAccordion"
           >
             <div
               class="accordion-body"
-              id="article_content_{{ forloop.counter }}"
-              data-editable="Madde {{ forloop.counter }} İçeriği"
+              data-id="article_content_1"
+              data-editable="Madde 1 İçeriği"
             >
-              {{ article.content }}
+              <!--prettier-ignore-->
+              {{ page_data.article_content_1|default:"KOÜ EMK, mühendislik disiplinlerini bir araya getirerek inovasyon odaklı bir ekosistem oluşturmayı amaçlar." }}
             </div>
           </div>
         </div>
-        {% endfor %}
+
+        <!-- Madde 2 -->
+        <div class="accordion-item" data-aos="fade-up" data-aos-delay="200">
+          <h2 class="accordion-header">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#m2"
+              data-id="article_title_2"
+              data-editable="Madde 2 Başlığı"
+            >
+              <i class="fas fa-users-gear me-3 text-warning"></i>
+              {{ page_data.article_title_2|default:"Organizasyon Yapısı" }}
+            </button>
+          </h2>
+          <div
+            id="m2"
+            class="accordion-collapse collapse"
+            data-bs-parent="#tuzukAccordion"
+          >
+            <div
+              class="accordion-body"
+              data-id="article_content_2"
+              data-editable="Madde 2 İçeriği"
+            >
+              <!--prettier-ignore-->
+              {{ page_data.article_content_2|default:"Kulübümüz; Alfa, Beta ve Gama kurullarından oluşur. Her kurul stratejik hedefler doğrultusunda koordineli çalışır." }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Madde 3 -->
+        <div class="accordion-item" data-aos="fade-up" data-aos-delay="300">
+          <h2 class="accordion-header">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#m3"
+              data-id="article_title_3"
+              data-editable="Madde 3 Başlığı"
+            >
+              <i class="fas fa-shield-halved me-3 text-warning"></i>
+              <!--prettier-ignore-->
+              {{ page_data.article_title_3|default:"Üyelik Hak ve Sorumlulukları" }}
+            </button>
+          </h2>
+          <div
+            id="m3"
+            class="accordion-collapse collapse"
+            data-bs-parent="#tuzukAccordion"
+          >
+            <div
+              class="accordion-body"
+              data-id="article_content_3"
+              data-editable="Madde 3 İçeriği"
+            >
+              <!--prettier-ignore-->
+              {{ page_data.article_content_3|default:"Her üye, kulüp etkinliklerine katılım sağlama ve projelerde aktif rol alma hakkına sahiptir." }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Madde 4 -->
+        <div class="accordion-item" data-aos="fade-up" data-aos-delay="400">
+          <h2 class="accordion-header">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#m4"
+              data-id="article_title_4"
+              data-editable="Madde 4 Başlığı"
+            >
+              <i class="fas fa-microchip me-3 text-warning"></i>
+              <!--prettier-ignore-->
+              {{ page_data.article_title_4|default:"Ar-Ge ve Proje Geliştirme"}}
+            </button>
+          </h2>
+          <div
+            id="m4"
+            class="accordion-collapse collapse"
+            data-bs-parent="#tuzukAccordion"
+          >
+            <div
+              class="accordion-body"
+              data-id="article_content_4"
+              data-editable="Madde 4 İçeriği"
+            >
+              <!--prettier-ignore-->
+              {{ page_data.article_content_4|default:"Teknolojik trendleri takip ederek yerel ve ulusal düzeyde mühendislik projeleri geliştirmek temel amacımızdır." }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Madde 5 -->
+        <div class="accordion-item" data-aos="fade-up" data-aos-delay="500">
+          <h2 class="accordion-header">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#m5"
+              data-id="article_title_5"
+              data-editable="Madde 5 Başlığı"
+            >
+              <i class="fas fa-gavel me-3 text-warning"></i>
+              {{ page_data.article_title_5|default:"Disiplin ve Yürürlük" }}
+            </button>
+          </h2>
+          <div
+            id="m5"
+            class="accordion-collapse collapse"
+            data-bs-parent="#tuzukAccordion"
+          >
+            <div
+              class="accordion-body"
+              data-id="article_content_5"
+              data-editable="Madde 5 İçeriği"
+            >
+              <!--prettier-ignore-->
+              {{ page_data.article_content_5|default:"Tüzük maddelerinin ihlali durumunda disiplin süreci başlatılır. Bu tüzük genel kurul onayı ile yürürlüğe girer." }}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -166,7 +289,7 @@ Tüzüğü{% endblock %} {% block content %}
           <h5 class="fw-bold mb-3">Bilgilendirme</h5>
           <p
             class="small text-muted mb-4 lh-lg"
-            id="sidebar_info"
+            data-id="sidebar_info"
             data-editable="Bilgilendirme Metni"
           >
             <!--prettier-ignore-->
@@ -184,11 +307,11 @@ Tüzüğü{% endblock %} {% block content %}
           </p>
           <a
             href="{{ page_data.pdf_link|default:'#' }}"
-            id="pdf_link"
+            data-id="pdf_link"
             class="btn btn-emk w-100 rounded-pill py-2"
             data-editable="PDF İndirme URL'si"
           >
-            <i class="fas fa-download me-2"></i> İndir
+            <i class="fas fa-download me-2"></i>
           </a>
         </div>
       </div>

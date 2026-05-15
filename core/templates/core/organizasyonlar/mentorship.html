@@ -1,250 +1,302 @@
-{% extends 'base.html' %} {% load static %} {% block title %}Mentorship Programı
-| Tecrübe Paylaşımı - KOÜ EMK{% endblock %} {% block content %}
+{% extends 'base.html' %} {% load static %} {% block title %}Menti-Mentör |
+Geleceğe Rehberlik - KOÜ EMK{% endblock %} {% block content %}
 <style>
   :root {
-    --ment-blue: #1e3a8a;
-    --ment-orange: #f28c28;
+    --mm-accent: #f28c28;
+    --mm-glass: rgba(255, 255, 255, 0.03);
+    --mm-border: rgba(255, 255, 255, 0.08);
   }
 
-  /* Hero: Güven ve Bağlantı */
-  .ment-hero {
-    background:
-      linear-gradient(rgba(30, 58, 138, 0.85), rgba(18, 18, 18, 0.9)),
-      url("https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&w=1350&q=80")
-        center/cover;
-    height: 50vh;
-    display: flex;
-    align-items: center;
-    border-radius: 0 0 50px 50px;
-    margin-top: -24px;
-    color: white;
-  }
-
-  /* Süreç Akış Şeması (Steps) */
-  .step-box {
-    text-align: center;
-    padding: 30px;
+  /* 1. Mentorship Hero */
+  .mm-hero {
     position: relative;
+    padding: 180px 0 100px;
+    background:
+      radial-gradient(
+        circle at top right,
+        rgba(242, 140, 40, 0.1),
+        transparent
+      ),
+      #0f1012;
+    border-radius: 0 0 100px 100px;
+    margin-top: -100px;
+    overflow: hidden;
   }
-  .step-icon {
-    width: 80px;
-    height: 80px;
-    background: var(--ment-orange);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    font-size: 2rem;
-    box-shadow: 0 10px 20px rgba(242, 140, 40, 0.3);
-  }
-  .step-line::after {
-    content: "";
+  .hero-bg-layer {
     position: absolute;
-    top: 70px;
-    left: 100%;
-    width: 100%;
-    height: 2px;
-    background: #dee2e6;
-    z-index: -1;
+    inset: 0;
+    background: url("{{ page_data.hero_img|default:'https://images.unsplash.com/photo-1521737711867-e3b97375f902' }}")
+      center/cover no-repeat;
+    opacity: 0.15;
+    filter: grayscale(1) brightness(0.8);
   }
 
-  /* Mentör Kartları */
+  /* 2. Bento Stat Cards */
+  .mm-stat-card {
+    background: var(--mm-glass);
+    backdrop-filter: blur(25px);
+    border: 1px solid var(--mm-border);
+    border-radius: 35px;
+    padding: 35px;
+    transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  .mm-stat-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--mm-accent);
+  }
+
+  /* 3. Mentor Card (Minimalist Apple Style) */
   .mentor-card {
     background: white;
-    border-radius: 20px;
+    border-radius: 30px;
     padding: 30px;
     text-align: center;
-    border: 1px solid #eee;
-    transition: 0.3s;
+    transition: 0.4s;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    height: 100%;
   }
   .mentor-card:hover {
     transform: translateY(-10px);
-    border-color: var(--ment-orange);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
   }
-  .mentor-img {
+
+  .mentor-avatar {
     width: 100px;
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 15px;
-    border: 3px solid #eee;
+    margin-bottom: 20px;
+    border: 3px solid var(--mm-accent);
+    padding: 3px;
   }
 
-  /* Başvuru Alanı */
-  .apply-box {
-    background: var(--emk-dark);
-    border-radius: 30px;
-    padding: 50px;
-    color: white;
+  /* 4. Story Scroll (Bizden Kareler) */
+  .mm-story-container {
+    display: flex;
+    gap: 25px;
+    overflow-x: auto;
+    padding: 20px 0 60px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .mm-story-container::-webkit-scrollbar {
+    display: none;
+  }
+  .mm-story-card {
+    flex: 0 0 320px;
+    height: 450px;
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+  .mm-story-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 1s;
+  }
+  .mm-story-card:hover img {
+    transform: scale(1.1);
   }
 </style>
 
 <div
-  class="ment-wrapper mb-5"
-  data-model="OrganizationEvent"
-  data-sub-model="MentorshipProgram"
+  class="mm-master-wrapper"
+  data-model="PageContent,OrganizationArchive"
   data-path="{{ request.path }}"
 >
-  <section class="ment-hero text-center">
-    <div class="container" data-aos="zoom-in">
+  <!-- Hero & Stats -->
+  <section class="mm-hero text-center">
+    <div class="hero-bg-layer"></div>
+    <div class="container position-relative z-index-10">
       <h1
-        class="display-3 fw-bold mb-3"
-        id="hero_title"
-        data-editable="Hero Başlığı"
+        class="display-3 fw-bold text-white mb-3"
+        data-id="hero_title"
+        data-editable="Hero Başlık"
       >
-        {{ page_data.hero_title|default:"MENTORSHIP PROGRAMI" }}
+        {{ page_data.hero_title|default:"MENTİ-MENTÖR" }}
       </h1>
       <p
-        class="lead opacity-75"
-        id="hero_subtitle"
+        class="text-white-50 fs-5 mx-auto mb-5"
+        style="max-width: 700px"
+        data-id="hero_subtitle"
         data-editable="Hero Alt Başlık"
       >
-        {{ page_data.hero_subtitle|default:"Mezunlarımızın tecrübesi,
-        öğrencilerimizin enerjisiyle buluşuyor." }}
+        <!--prettier-ignore-->
+        {{ page_data.hero_subtitle|default:"Tecrübenin genç vizyonla buluştuğu, mezun-öğrenci bağını optimize eden gelişim yolculuğu." }}
       </p>
-    </div>
-  </section>
 
-  <section class="container py-5 mt-4">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-6" data-aos="fade-right">
-        <h2
-          class="display-5 fw-bold mb-4"
-          id="about_title"
-          data-editable="Açıklama Başlığı"
-        >
-          {{ page_data.about_title|default:"Bir Mezun, Bir Öğrenci" }}
-        </h2>
-        <p
-          class="text-muted fs-5"
-          id="about_text"
-          data-editable="Açıklama Metni"
-        >
-          {{ page_data.about_text|default:"KOÜ EMK Mentorship Programı, kariyer
-          yolculuğuna yeni başlayan öğrencilerimizi..." }}
-        </p>
-        <div class="d-flex gap-4 mt-4">
-          <div class="text-center">
-            <h4
-              class="fw-bold text-primary mb-0"
-              id="stat_1"
-              data-editable="İstatistik 1"
+      <!-- Bento Stats -->
+      <div class="row g-4 justify-content-center mb-5">
+        <div class="col-md-3">
+          <div
+            class="mm-stat-card border-0"
+            style="background: rgba(255, 255, 255, 0.02)"
+          >
+            <h2
+              class="text-white fw-bold mb-1"
+              data-id="stat_1"
+              data-editable="Stat 1"
             >
-              {{ page_data.stat_1|default:"50+" }}
-            </h4>
-            <small class="text-muted">Aktif Mentör</small>
+              {{ page_data.stat_1|default:"100+" }}
+            </h2>
+            <p class="text-white-50 uppercase small ls-1">Aktif Eşleşme</p>
           </div>
-          <div class="vr"></div>
-          <div class="text-center">
-            <h4
-              class="fw-bold text-primary mb-0"
-              id="stat_2"
-              data-editable="İstatistik 2"
+        </div>
+        <div class="col-md-3">
+          <div
+            class="mm-stat-card border-0"
+            style="background: rgba(242, 140, 40, 0.05)"
+          >
+            <h2
+              class="fw-bold mb-1"
+              style="color: var(--mm-accent)"
+              data-id="stat_2"
+              data-editable="Stat 2"
             >
-              {{ page_data.stat_2|default:"120+" }}
-            </h4>
-            <small class="text-muted">Başarılı Eşleşme</small>
+              {{ page_data.stat_2|default:"60+" }}
+            </h2>
+            <p class="text-white-50 uppercase small ls-1">Gönüllü Mentör</p>
           </div>
         </div>
       </div>
-      <div class="col-lg-6" data-aos="fade-left">
-        <img
-          src="{{ page_data.img_main|default:'https://images.unsplash.com/photo-1521791136064-7986c2920216' }}"
-          id="img_main"
-          data-editable="Ana Görsel"
-          class="img-fluid rounded-5 shadow-lg"
-        />
+
+      <!-- Hakkında & Vizyon -->
+      <div class="row justify-content-center mt-5 text-start">
+        <div class="col-lg-10">
+          <div
+            class="mm-stat-card border-0"
+            style="background: rgba(255, 255, 255, 0.02)"
+          >
+            <div class="row g-4 align-items-center">
+              <div class="col-md-7 border-end border-white-10">
+                <h6
+                  class="text-accent fw-bold uppercase ls-2 mb-3"
+                  style="color: var(--mm-accent)"
+                >
+                  PROGRAM HAKKINDA
+                </h6>
+                <h2
+                  class="text-white fw-bold mb-3"
+                  data-id="about_title"
+                  data-editable="Nedir Başlık"
+                >
+                  <!--prettier-ignore-->
+                  {{ page_data.about_title|default:"Kariyer Yolculuğunda Rehberlik" }}
+                </h2>
+                <p
+                  class="text-white-50 lh-lg"
+                  data-id="about_desc"
+                  data-editable="Nedir Açıklama"
+                >
+                  <!--prettier-ignore-->
+                  {{ page_data.about_desc|default:"Menti-Mentör programı, mezunlarımızın profesyonel deneyimlerini henüz öğrenci olan üyelerimize aktardığı, EMK bağlarını güçlendiren bir rehberlik sistemidir." }}
+                </p>
+              </div>
+              <div class="col-md-5 ps-md-5">
+                <h6 class="text-white-50 fw-bold uppercase ls-2 mb-3 small">
+                  HEDEFLER
+                </h6>
+                <div class="d-flex gap-3 mb-4">
+                  <i class="fas fa-seedling text-warning"></i>
+                  <p class="text-white-50 small mb-0">
+                    Öğrencilerin kariyer farkındalığını artırmak.
+                  </p>
+                </div>
+                <div class="d-flex gap-3">
+                  <i class="fas fa-network-wired text-warning"></i>
+                  <p class="text-white-50 small mb-0">
+                    Güçlü bir mezun-öğrenci network'ü oluşturmak.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Mentör Portföyü (Aktif Dönemden Gelir) -->
-  <section class="container py-5">
-    <h2 class="fw-bold text-center mb-5">MENTÖR PORTFÖYÜMÜZDEN</h2>
+  <!-- Mentör Portföyü -->
+  <section class="container py-5 mt-5">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold text-dark display-5">Mentörlerimiz</h2>
+      <p class="text-muted">
+        Gönüllü rehberlikleriyle geleceğe ışık tutan mezunlarımız.
+      </p>
+    </div>
+
     <div class="row g-4">
-      {% for mentor in active_period.extra_data.mentors %}
+      {% for mentor in current_archive.extra_data.mentors %}
       <div
         class="col-lg-3 col-md-6"
-        data-aos="zoom-in"
-        data-index="{{ forloop.counter0 }}"
+        data-aos="fade-up"
+        data-aos-delay="{{ forloop.counter|add:'100' }}"
       >
-        <div
-          class="mentor-card"
-          data-object-id="{{ active_period.id }}"
-          data-model="OrganizationEvent"
-        >
+        <div class="mentor-card">
           <img
-            src="{{ mentor.img|default:'https://via.placeholder.com/150' }}"
-            class="mentor-img"
+            src="{{ mentor.image }}"
+            class="mentor-avatar"
+            alt="{{ mentor.name }}"
           />
-          <h6 class="fw-bold mb-1">{{ mentor.name }}</h6>
-          <p class="small text-warning fw-bold mb-2">{{ mentor.job }}</p>
-          <p class="small text-muted">{{ mentor.grad_year }}</p>
+          <h5 class="fw-bold text-dark mb-1">{{ mentor.name }}</h5>
+          <p class="text-warning small fw-bold mb-2 ls-1">
+            {{ mentor.company|upper }}
+          </p>
+          <small class="text-muted d-block">{{ mentor.title }}</small>
         </div>
       </div>
       {% empty %}
-      <p class="text-center text-muted">
-        Bu dönem için mentör listesi henüz girilmemiş.
-      </p>
+      <div class="col-12 text-center py-5 opacity-25">
+        Mentör listesi henüz yüklenmemiş.
+      </div>
       {% endfor %}
     </div>
   </section>
 
-  <!-- Başvuru Kutusu -->
-  <section class="container py-5">
-    <div
-      class="apply-box shadow-2xl"
-      data-aos="flip-up"
-      style="
-        background: #1a1a1a;
-        color: white;
-        padding: 50px;
-        border-radius: 30px;
-        border-left: 10px solid var(--emk-orange);
-      "
-    >
-      <div class="row align-items-center text-center text-lg-start">
-        <div class="col-lg-7">
-          <h2
-            class="fw-bold mb-3"
-            id="cta_title"
-            data-editable="Başvuru Başlığı"
-          >
-            {{ page_data.cta_title|default:"Bu Yolculukta Yerini Al!" }}
-          </h2>
-          <p
-            class="opacity-75 mb-0"
-            id="cta_text"
-            data-editable="Başvuru Alt Metni"
-          >
-            {{ page_data.cta_text|default:"İster tecrübelerini paylaşan bir
-            mentör ol, ister kariyerine yön veren bir öğrenci." }}
-          </p>
-        </div>
-        <div class="col-lg-5 text-lg-end mt-4 mt-lg-0">
+  <!-- Bizden Kareler (Horizontal Scroll) -->
+  <section class="py-5 mt-5">
+    <div class="container py-5">
+      <div class="d-flex justify-content-between align-items-end mb-4 px-2">
+        <h2 class="text-warning fw-bold display-5 m-0">Bizden Kareler</h2>
+        <small class="text-warning opacity-75"
+          >Sağa kaydır <i class="fas fa-chevron-right ms-1"></i
+        ></small>
+      </div>
+
+      <div class="mm-story-container">
+        {% for archive in archives %} {% for img in archive.extra_data.images %}
+        <div class="mm-story-card">
+          <img src="{{ img }}" alt="Program Anısı" loading="lazy" />
           <div
-            class="d-flex flex-wrap justify-content-center justify-content-lg-end gap-3"
+            class="position-absolute bottom-0 start-0 w-100 p-4"
+            style="background: linear-gradient(transparent, rgba(0, 0, 0, 0.7))"
           >
-            <a
-              href="{{ page_data.mentee_link|default:'#' }}"
-              id="mentee_link"
-              data-editable="Menti Form Linki"
-              class="btn btn-warning btn-lg px-4 py-3 fw-bold rounded-pill text-dark"
-              >MENTİ BAŞVURUSU</a
-            >
-            <a
-              href="{{ page_data.mentor_link|default:'#' }}"
-              id="mentor_link"
-              data-editable="Mentör Form Linki"
-              class="btn btn-outline-light btn-lg px-4 py-3 fw-bold rounded-pill"
-              >MENTÖR BAŞVURUSU</a
-            >
+            <span class="badge bg-warning text-dark">{{ archive.year }}</span>
           </div>
         </div>
+        {% endfor %} {% endfor %}
       </div>
     </div>
   </section>
 </div>
+
+<script>
+  // Editör Mesajlaşması
+  document.addEventListener("click", function (e) {
+    if (window.self === window.top) return;
+    const target = e.target.closest(".mentor-card");
+    if (target) {
+      window.parent.postMessage(
+        {
+          type: "OBJECT_CLICKED",
+          model: "OrganizationArchive",
+          object: "{{ current_archive.id }}",
+        },
+        "*",
+      );
+    }
+  });
+</script>
 {% endblock %}

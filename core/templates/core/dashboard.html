@@ -1,413 +1,1079 @@
-{% extends 'base.html' %} {% load static %} {% block title %}KOÜ EMK | Geleceği
-Optimize Etiyoruz{% endblock %} {% block content %}
+{% extends 'base.html' %} {% load static %} {% block title %}EMK Portal |
+Dashboard{% endblock %} {% block content %}
+
 <style>
   :root {
     --emk-orange: #f28c28;
-    --emk-dark: #0f1012;
-    --emk-body-bg: #f8f9fa;
+    --emk-dark: #0d0f12;
+    --emk-card: #181a1f;
+    --emk-border: rgba(255, 255, 255, 0.06);
+    --emk-text: #d7dbe3;
   }
 
-  /* --- 1. Gelişmiş Hero Bölümü --- */
-  .dash-hero {
-    background:
-      linear-gradient(rgba(15, 16, 18, 0.75), rgba(15, 16, 18, 0.9)),
-      url("https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2069")
-        center/cover fixed;
-    padding: 140px 0 160px;
-    border-radius: 0 0 80px 80px;
-    margin-top: -100px; /* Navbar ile bütünleşik */
-    color: white;
-    text-align: center;
+  html,
+  body {
+    overflow-x: hidden;
+    background: var(--emk-dark);
+    color: var(--emk-text);
+    font-family: "Inter", sans-serif;
   }
 
-  /* --- 2. Organizasyon Hub (Pinterest Card Style) --- */
-  .org-hub-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 25px;
-    margin-top: -80px; /* Hero üzerine bindirme */
+  .dashboard-wrapper {
+    margin-top: -80px;
+    padding-bottom: 100px;
     position: relative;
     z-index: 10;
   }
 
-  .org-card {
-    position: relative;
-    background: white;
-    border-radius: 30px;
-    padding: 45px 25px;
-    text-align: center;
-    border: 1px solid rgba(0, 0, 0, 0.03);
-    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-    overflow: hidden;
-    height: 100%;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-  }
+  /* HERO */
 
-  /* Kart Arkasındaki Gizli Resim Efekti */
-  .org-card::before {
+  .dashboard-hero {
+    background:
+      linear-gradient(rgba(10, 10, 10, 0.78), rgba(10, 10, 10, 0.9)),
+      url("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070")
+        center/cover;
+    padding: 120px 0 160px;
+    color: white;
+    border-radius: 0 0 60px 60px;
+    margin-top: -100px; /* Navbar ile bütünleşmesi için */
+    padding-top: 160px;
+    text-align: center;
+  }
+  .dashboard-hero::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    opacity: 0;
-    transition: all 0.6s ease;
-    z-index: 0;
-    filter: brightness(0.3) blur(1px);
-    transform: scale(1.1);
+    width: 520px;
+    height: 520px;
+    background: rgba(242, 140, 40, 0.16);
+    filter: blur(120px);
+    top: -180px;
+    right: -140px;
+    border-radius: 50%;
   }
 
-  .org-card:hover::before {
-    opacity: 1;
-    transform: scale(1);
+  .hero-title {
+    font-size: clamp(3rem, 6vw, 5rem);
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
   }
 
-  .org-card:hover {
-    transform: translateY(-15px);
+  .hero-title span {
+    color: var(--emk-orange);
   }
 
-  .org-card > * {
+  .hero-text {
+    max-width: 600px;
+    color: rgba(255, 255, 255, 0.74);
+    font-size: 1.1rem;
+    margin-top: 24px;
+    line-height: 1.7;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 35px;
+  }
+
+  /* ANNOUNCEMENT */
+
+  .side-announcement {
     position: relative;
-    z-index: 2;
-    transition: 0.4s;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(242, 140, 40, 0.22);
+    backdrop-filter: blur(18px);
+    border-radius: 30px;
+    padding: 28px;
+    animation: pulseBorder 2s infinite;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   }
 
-  .org-card:hover h5,
-  .org-card:hover p,
-  .org-card:hover i {
-    color: white !important;
-  }
-
-  .status-badge {
+  .ping-circle {
     position: absolute;
     top: 20px;
     right: 20px;
-    font-size: 0.6rem;
-    font-weight: 800;
-    padding: 5px 12px;
-    border-radius: 50px;
-    background: rgba(242, 140, 40, 0.1);
+    width: 10px;
+    height: 10px;
+    background: var(--emk-orange);
+    border-radius: 50%;
+    animation: ping 2s infinite;
+  }
+
+  @keyframes ping {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(242, 140, 40, 0.7);
+    }
+
+    70% {
+      transform: scale(1.2);
+      box-shadow: 0 0 0 14px rgba(242, 140, 40, 0);
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes pulseBorder {
+    0% {
+      border-color: rgba(242, 140, 40, 0.2);
+    }
+
+    50% {
+      border-color: rgba(242, 140, 40, 0.55);
+    }
+
+    100% {
+      border-color: rgba(242, 140, 40, 0.2);
+    }
+  }
+
+  /* STATS */
+
+  .stats-wrapper {
+    margin-top: -90px;
+    position: relative;
+    z-index: 5;
+    margin-bottom: 60px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+  }
+
+  .stat-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+      145deg,
+      rgba(24, 26, 31, 0.98),
+      rgba(16, 18, 22, 0.98)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 30px;
+    padding: 28px;
+    transition: 0.35s ease;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(242, 140, 40, 0.3);
+  }
+
+  .counter-value {
+    display: block;
+    font-size: 2.6rem;
+    font-weight: 900;
     color: var(--emk-orange);
-    letter-spacing: 1px;
-    z-index: 3;
-  }
-
-  /* --- 3. Widget & İçerik --- */
-  .dash-widget {
-    background: white;
-    border-radius: 32px;
-    padding: 35px;
-    border: 1px solid rgba(0, 0, 0, 0.03);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
-    height: 100%;
-  }
-
-  .event-row {
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    border-radius: 20px;
     margin-bottom: 10px;
-    transition: 0.3s;
-    background: #fcfcfc;
   }
 
-  .event-row:hover {
-    background: #fff5eb;
-    transform: translateX(5px);
+  .uppercase {
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
-  .date-box {
-    width: 55px;
+  /* MAIN GRID */
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 320px;
+    gap: 25px;
+    margin-bottom: 80px;
+  }
+
+  .dashboard-card {
+    background: var(--emk-card);
+    border: 1px solid var(--emk-border);
+    border-radius: 30px;
+    padding: 24px;
+  }
+
+  /* PROGRAMS */
+
+  .program-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .program-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
+    min-height: 240px;
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    transition: 0.35s ease;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  .program-card:hover {
+    transform: translateY(-8px);
+  }
+
+  .program-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.5s ease;
+    backface-visibility: hidden;
+  }
+
+  .program-card:hover img {
+    transform: scale(1.08);
+  }
+
+  .program-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.1));
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .program-overlay h6 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-bottom: 5px;
+  }
+
+  .program-overlay p {
+    margin: 0;
+    color: var(--emk-orange);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  /* EVENTS */
+
+  .mini-event-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    padding: 14px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 14px;
+    border: 1px solid transparent;
+    transition: 0.3s ease;
+  }
+
+  .mini-event-card:hover {
+    border-color: rgba(242, 140, 40, 0.25);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .event-day {
+    background: var(--emk-orange);
+    color: #fff;
+    min-width: 55px;
     height: 55px;
-    background: var(--emk-dark);
-    color: white;
-    border-radius: 15px;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     font-weight: 800;
-    margin-right: 15px;
   }
 
-  /* --- 4. Sponsor Akışı --- */
-  .sponsor-wrapper {
+  .event-day span {
+    line-height: 1;
+    font-size: 1rem;
+  }
+
+  .event-day small {
+    font-size: 0.65rem;
+  }
+  /* SPONSORS */
+
+  /* SPONSORS BAND */
+  .sponsors-band {
+    padding: 60px 0;
+    display: flex;
+    justify-content: center; /* İÇERİĞİ MERKEZLER */
     overflow: hidden;
-    white-space: nowrap;
-    background: white;
-    padding: 40px 0;
-    border-radius: 40px;
   }
 
-  .sponsor-track img {
-    height: 30px;
-    margin: 0 40px;
-    opacity: 0.3;
+  .marquee-mask {
+    position: relative;
+    width: 100%;
+    max-width: 1200px; /* Bandın yayılacağı maksimum alan (Apple standardı) */
+    display: flex;
+    justify-content: center; /* Tek logo varsa merkezde durmasını sağlar */
+
+    /* Yanlardaki yumuşak geçiş efektini merkeze göre ayarla */
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 20%,
+      black 80%,
+      transparent
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 20%,
+      black 80%,
+      transparent
+    );
+  }
+
+  .marquee {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Logoları kendi içinde merkezler */
+    gap: 80px;
+    min-width: 100%; /* Alanı doldurmasını sağlar */
+
+    /* Animasyon ayarı: Eğer tek logo varsa animasyonu durdurmak isteyebilirsin */
+    animation: marqueeMove 30s linear infinite;
+  }
+
+  .marquee img {
+    height: 42px;
+    width: auto;
+    opacity: 0.5;
     filter: grayscale(1);
-    transition: 0.3s;
+    transition: all 0.4s ease;
+    flex-shrink: 0; /* Resimlerin büzülmesini engeller */
   }
 
-  .sponsor-track img:hover {
+  /* Animasyon: -50% yerine, içeriğin tam ortalanmış kopyasıyla senkronize */
+  @keyframes marqueeMove {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      /* Döngü kopyalandığı için yarısı kadar kaydırıyoruz */
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Mobil için hız ve yükseklik ayarı */
+  @media (max-width: 768px) {
+    .marquee {
+      gap: 60px;
+      animation-duration: 20s;
+    }
+    .marquee img {
+      height: 28px;
+    }
+  }
+
+  /* SOCIAL */
+
+  .social-section {
+    padding-bottom: 100px;
+  }
+
+  .section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .mini-link {
+    color: var(--emk-orange);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .social-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+  }
+
+  .social-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 320px;
+    border-radius: 30px;
+    padding: 28px;
+    text-decoration: none;
+    color: #fff;
+    transition: 0.35s ease;
+    background: linear-gradient(
+      145deg,
+      rgba(24, 26, 31, 0.98),
+      rgba(16, 18, 22, 0.98)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .social-card:hover {
+    transform: translateY(-8px);
+    color: #fff;
+  }
+
+  .social-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: 0.35s ease;
+  }
+
+  .social-card:hover::before {
     opacity: 1;
-    filter: grayscale(0);
   }
 
-  /* Kart Resimleri */
-  .card-sb::before {
-    background-image: url("https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=500");
-  }
-  .card-kale::before {
-    background-image: url("https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=500");
-  }
-  .card-sirket::before {
-    background-image: url("https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=500");
-  }
-  .card-gezi::before {
-    background-image: url("https://images.unsplash.com/photo-1565034946487-077786996e27?q=80&w=500");
+  .instagram-card::before {
+    background: radial-gradient(
+      circle at top right,
+      rgba(255, 0, 128, 0.18),
+      transparent 45%
+    );
   }
 
-  @media (max-width: 991px) {
-    .org-hub-grid {
+  .linkedin-card::before {
+    background: radial-gradient(
+      circle at top right,
+      rgba(10, 102, 194, 0.18),
+      transparent 45%
+    );
+  }
+
+  .discord-card::before {
+    background: radial-gradient(
+      circle at top right,
+      rgba(88, 101, 242, 0.18),
+      transparent 45%
+    );
+  }
+
+  .youtube-card::before {
+    background: radial-gradient(
+      circle at top right,
+      rgba(255, 0, 0, 0.18),
+      transparent 45%
+    );
+  }
+
+  .social-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+
+  .social-top span {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+  }
+
+  .social-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .social-content h5 {
+    font-weight: 800;
+    margin-bottom: 14px;
+  }
+
+  .social-content p {
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.7;
+    font-size: 0.92rem;
+  }
+
+  .social-arrow {
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    transition: 0.3s ease;
+  }
+
+  .social-card:hover .social-arrow {
+    transform: translateX(5px);
+  }
+
+  /* BUTTONS */
+
+  .btn-warning {
+    background: var(--emk-orange) !important;
+    border-color: var(--emk-orange) !important;
+  }
+
+  .btn-warning:hover {
+    background: #ff9d3c !important;
+    border-color: #ff9d3c !important;
+  }
+
+  /* SCROLLBAR */
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #111315;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #2d3138;
+    border-radius: 20px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--emk-orange);
+  }
+
+  /* RESPONSIVE */
+
+  @media (max-width: 1200px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .social-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
-  @media (max-width: 576px) {
-    .org-hub-grid {
+
+  @media (max-width: 992px) {
+    .dashboard-grid {
       grid-template-columns: 1fr;
+    }
+
+    .dashboard-hero {
+      padding-top: 90px;
+      padding-bottom: 110px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .social-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .dashboard-hero {
+      border-radius: 0 0 35px 35px;
+    }
+
+    .stats-wrapper {
+      margin-top: -50px;
+    }
+
+    .social-card {
+      min-height: auto;
+    }
+
+    .marquee {
+      gap: 50px;
+    }
+
+    .marquee img {
+      height: 24px;
+    }
+  }
+
+  .announcement-feed {
+    max-height: 500px; /* Çok fazla olursa kaydırılabilir */
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  /* Custom Scrollbar for Apple-style look */
+  .announcement-feed::-webkit-scrollbar {
+    width: 4px;
+  }
+  .announcement-feed::-webkit-scrollbar-thumb {
+    background: rgba(242, 140, 40, 0.3);
+    border-radius: 10px;
+  }
+
+  .side-announcement:hover {
+    background: rgba(255, 255, 255, 0.07) !important;
+    transform: translateX(5px);
+  }
+
+  .uppercase {
+    text-transform: uppercase;
+  }
+  .ls-1 {
+    letter-spacing: 1px;
+  }
+
+  /* Kaydırma Konteynırı */
+  .announcement-scroll-container {
+    width: 100%;
+    overflow-x: auto; /* Yatay kaydırmayı açar */
+    overflow-y: hidden;
+    padding: 10px 0 30px 0;
+    -webkit-overflow-scrolling: touch; /* Mobilde pürüzsüz kaydırma */
+    scrollbar-width: none; /* Firefox için scrollbar gizle */
+  }
+
+  .announcement-scroll-container::-webkit-scrollbar {
+    display: none; /* Chrome/Safari için scrollbar gizle */
+  }
+
+  /* Kartların Yan Yana Dizildiği Wrapper */
+  .announcement-scroll-wrapper {
+    display: flex;
+    gap: 20px;
+    padding-left: 5px; /* İlk kartın kenara yapışmaması için */
+  }
+
+  /* Tekil Kart Tasarımı */
+  .announcement-scroll-card {
+    flex: 0 0 320px; /* Kart genişliği sabit kalmalı ki kayabilsin */
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 24px;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    cursor: pointer;
+  }
+
+  .announcement-scroll-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-5px);
+    border-color: rgba(242, 140, 40, 0.3);
+  }
+
+  /* Mobilde kartlar biraz daha daralabilir */
+  @media (max-width: 768px) {
+    .announcement-scroll-card {
+      flex: 0 0 280px;
     }
   }
 </style>
+<div
+  class="dashboard-wrapper"
+  data-model="Announcement,Sponsor"
+  data-path="{{ request.path }}"
+>
+  <!-- HERO: Merkezlenmiş ve HashTag Destekli -->
+  <section class="dashboard-hero text-center">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <!-- Hashtag Badge -->
+          <div class="d-inline-block mb-3">
+            <span
+              class="badge bg-warning text-dark rounded-pill px-3 py-2 fw-bold ls-1"
+              data-id="p_hero_hashtag"
+              data-editable="Hero Hashtag"
+            >
+              <!-- prettier-ignore -->
+              {{ page_data.p_hero_hashtag|default:"#gelecegioptimizeet" }}
+            </span>
+          </div>
 
-<div class="dashboard-wrapper">
-  <!-- HERO SECTION -->
-  <section class="dash-hero">
-    <div class="container" data-aos="fade-up">
-      <span
-        class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill fw-bold"
-        >#GELECEĞİOPTİMİZEET</span
-      >
-      <h1 class="display-2 fw-bold mb-4">
-        EMK <span style="color: var(--emk-orange)">PORTAL</span>
-      </h1>
-      <p class="lead opacity-75 mb-5 mx-auto" style="max-width: 600px">
-        Kocaeli Üniversitesi'nin lider topluluğuyla kariyerine yön ver,
-        vizyonunu geliştir.
-      </p>
+          <h1
+            class="hero-title display-3"
+            data-id="p_hero_title"
+            data-editable="Portal Ana Başlık"
+          >
+            <!-- prettier-ignore -->
+            {{ page_data.p_hero_title|default:"EMK <span>PORTAL</span>"|safe }}
+          </h1>
 
-      {% if announcement %}
-      <div
-        class="announcement-card mx-auto"
-        style="max-width: 500px"
-        data-aos="zoom-in"
-      >
-        <div class="d-flex align-items-center justify-content-center mb-2">
-          <div class="spinner-grow text-warning spinner-grow-sm me-2"></div>
-          <span class="small fw-bold">CANLI DUYURU</span>
+          <p
+            class="hero-text fs-4 mx-auto opacity-75"
+            style="max-width: 700px"
+            data-id="p_hero_desc"
+            data-editable="Portal Hero Açıklama"
+          >
+            <!-- prettier-ignore -->
+            {{ page_data.p_hero_desc|default:"Endüstri mühendisliği ekosisteminin dijital merkezi. Optimize etmeye hazır mısın?" }}
+          </p>
+
+          <!-- HERO ALTINDAKİ TEKİL ODAK -->
+          <div class="row justify-content-center mt-5">
+            <div class="col-md-7">
+              {% if latest_instant %}
+              <div
+                class="side-announcement text-start border-start-warning"
+                data-object-id="{{ latest_instant.id }}"
+                data-type="announcement"
+              >
+                <span class="ping-circle"></span>
+                <span class="badge bg-warning text-dark mb-3 small"
+                  >SON DAKİKA</span
+                >
+                <h4 class="text-white fw-bold">{{ latest_instant.title }}</h4>
+                <p class="opacity-75 small mb-3">{{ latest_instant.text }}</p>
+                {% if latest_instant.link %}<a
+                  href="{{ latest_instant.link }}"
+                  class="text-warning fw-bold text-decoration-none small"
+                  >İNCELE <i class="fas fa-arrow-right ms-1"></i></a
+                >{% endif %}
+              </div>
+              {% else %}
+              <!-- DUYURU YOKSA: TATLI BİR VİZYON KUTUSU (Aynı kalabilir) -->
+              <div
+                class="side-announcement text-center shadow-sm"
+                style="
+                  background: rgba(255, 255, 255, 0.03);
+                  border: 1px dashed rgba(255, 255, 255, 0.1);
+                  backdrop-filter: blur(10px);
+                "
+              >
+                <div class="py-2">
+                  <i
+                    class="fas fa-rocket text-warning mb-3"
+                    style="font-size: 1.2rem; opacity: 0.8"
+                  ></i>
+                  <h5
+                    class="text-white fw-bold mb-2"
+                    id="p_no_ann_title"
+                    data-editable="Duyuru Yokken Başlık"
+                  >
+                    {{ page_data.p_no_ann_title|default:"Optimize Etmeye Devam
+                    Ediyoruz" }}
+                  </h5>
+                  <p
+                    class="text-white-50 small mb-0 mx-auto"
+                    style="max-width: 400px"
+                    id="p_no_ann_desc"
+                    data-editable="Duyuru Yokken Açıklama"
+                  >
+                    {{ page_data.p_no_ann_desc|default:"Şu an aktif bir duyuru
+                    bulunmuyor." }}
+                  </p>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
         </div>
-        <h6 class="fw-bold">{{ announcement.title }}</h6>
-        <a
-          href="{{ announcement.link|default:'#' }}"
-          class="btn btn-sm btn-light rounded-pill mt-2 px-4"
-          >İncele</a
-        >
       </div>
-      {% endif %}
     </div>
   </section>
 
-  <!-- ORGANİZASYONLAR GRID -->
-  <div class="container">
-    <div class="org-hub-grid">
-      <!-- SB -->
-      <a
-        href="{% url 'sb' %}"
-        class="text-decoration-none"
-        data-aos="fade-up"
-        data-aos-delay="100"
-      >
-        <div class="org-card card-sb">
-          <span class="status-badge">AKTİF</span>
-          <i class="fas fa-magnifying-glass-chart fa-3x mb-3 text-warning"></i>
-          <h5 class="fw-bold text-dark">SB</h5>
-        </div>
-      </a>
-      <!-- KALE -->
-      <a
-        href="{% url 'kale' %}"
-        class="text-decoration-none"
-        data-aos="fade-up"
-        data-aos-delay="200"
-      >
-        <div class="org-card card-kale">
-          <span class="status-badge">YAKINDA</span>
-          <i class="fas fa-chess-castle fa-3x mb-3 text-warning"></i>
-          <h5 class="fw-bold text-dark">KALE</h5>
-        </div>
-      </a>
-      <!-- ŞİRKET GÜNLERİ -->
-      <a
-        href="{% url 'sirket_gunleri' %}"
-        class="text-decoration-none"
-        data-aos="fade-up"
-        data-aos-delay="300"
-      >
-        <div class="org-card card-sirket">
-          <span class="status-badge">NİSAN</span>
-          <i class="fas fa-building-user fa-3x mb-3 text-warning"></i>
-          <h5 class="fw-bold text-dark">ŞİRKET GÜNLERİ</h5>
-        </div>
-      </a>
-      <!-- TEKNİK GEZİ -->
-      <a
-        href="{% url 'teknik_gezi' %}"
-        class="text-decoration-none"
-        data-aos="fade-up"
-        data-aos-delay="400"
-      >
-        <div class="org-card card-gezi">
-          <span class="status-badge bg-info text-white border-0">SÜREKLİ</span>
-          <i class="fas fa-bus-alt fa-3x mb-3 text-warning"></i>
-          <h5 class="fw-bold text-dark">TEKNİK GEZİ</h5>
-        </div>
-      </a>
+  <!-- STATS -->
+  <div class="container stats-wrapper">
+    <div class="stats-grid">
+      {% with stats=page_data.stats|default_if_none:"{}" %}
+      <div class="stat-card">
+        <span
+          class="counter-value"
+          data-id="stat_active_member"
+          data-editable="Aktif Üye Sayısı"
+          data-target="{{ page_data.stat_active_member|default:'420' }}"
+          >0</span
+        >
+        <div class="small fw-bold opacity-50 uppercase">Aktif Üye</div>
+      </div>
+      <div class="stat-card">
+        <span
+          class="counter-value"
+          data-id="stat_event_count"
+          data-editable="Etkinlik Sayısı"
+          data-target="{{ page_data.stat_event_count|default:'58' }}"
+          >0</span
+        >
+        <div class="small fw-bold opacity-50 uppercase">Etkinlik</div>
+      </div>
+      <div class="stat-card">
+        <span
+          class="counter-value"
+          data-id="stat_partner_count"
+          data-editable="Partner Sayısı"
+          data-target="{{ page_data.stat_partner_count|default:'23' }}"
+          >0</span
+        >
+        <div class="small fw-bold opacity-50 uppercase">Partner</div>
+      </div>
+      <div class="stat-card">
+        <span
+          class="counter-value"
+          data-id="stat_trip_count"
+          data-editable="Teknik Gezi Sayısı"
+          data-target="{{ page_data.stat_trip_count|default:'12' }}"
+          >0</span
+        >
+        <div class="small fw-bold opacity-50 uppercase">Teknik Gezi</div>
+      </div>
+      {% endwith %}
     </div>
   </div>
 
-  <!-- BİZ KİMİZ & DERGİ -->
+  <!-- YENİ SECTION: DUYURU ARŞİVİ & HABERLER -->
+  <!-- YENİ SECTION: YATAY KAYDIRILABİLİR DUYURU AKIŞI -->
   <section class="container py-5 mt-5">
-    <div class="row g-4">
-      <div class="col-lg-7" data-aos="fade-right">
-        <div class="dash-widget">
-          <h2 class="fw-bold mb-4">
-            Biz <span class="text-warning">Kimiz?</span>
-          </h2>
-          <p class="text-muted fs-5 lh-lg">
-            Kocaeli Üniversitesi'nin en köklü oluşumu olarak, mühendislik
-            vizyonunu sosyal ve teknik etkinliklerle harmanlıyoruz. 1994'ten
-            beri geleceği optimize ediyoruz.
-          </p>
-          <a
-            href="{% url 'hakkimizda' %}"
-            class="btn btn-dark rounded-pill px-4 mt-3"
-            >Hikayemizi Keşfet</a
-          >
-        </div>
+    <div class="d-flex justify-content-between align-items-end mb-4 px-2">
+      <div>
+        <h3 class="text-white fw-bold m-0">Topluluktan Haberler</h3>
+        <p class="text-white-50 small m-0">
+          EMK ekosistemindeki tüm gelişmeler
+        </p>
       </div>
-      <div class="col-lg-5" data-aos="fade-left">
+      <!-- Sayfa olmadığı için buraya kaydır hatırlatması koyabiliriz -->
+      <small class="text-warning opacity-75 d-none d-md-block"
+        >Sağa kaydır <i class="fas fa-chevron-right ms-1"></i
+      ></small>
+    </div>
+
+    <!-- Yatay Kaydırma Alanı -->
+    <div class="announcement-scroll-container">
+      <div class="announcement-scroll-wrapper">
+        {% for ann in other_announcements %}
         <div
-          class="h-100 p-5 text-white bg-dark rounded-5 shadow-lg position-relative overflow-hidden"
-          style="border-left: 10px solid var(--emk-orange)"
+          class="announcement-scroll-card"
+          data-object-id="{{ ann.id }}"
+          data-type="announcement"
         >
-          <i
-            class="fas fa-book-open fa-8x position-absolute"
-            style="right: -20px; bottom: -20px; opacity: 0.1"
-          ></i>
-          <h3 class="fw-bold mb-3">Endüstriyel Perspektif</h3>
-          <p class="opacity-75 mb-4">
-            Dergimizin yeni sayısı yayında! Sektörel analizler ve röportajlar
-            seni bekliyor.
-          </p>
-          <a
-            href="{% url 'edergi' %}"
-            class="btn btn-warning fw-bold px-4 rounded-pill"
-            >OKUMAYA BAŞLA</a
-          >
+          <div class="card-content h-100 d-flex flex-column">
+            <div class="mb-3">
+              <span
+                class="badge {% if ann.category == 'ETKINLIK' %}bg-info{% else %}bg-secondary{% endif %} text-dark extra-small"
+              >
+                {{ ann.get_category_display }}
+              </span>
+            </div>
+            <h5 class="text-white fw-bold mb-2">{{ ann.title }}</h5>
+            <p class="text-white-50 small flex-grow-1">
+              <!-- prettier-ignore -->
+              {{ ann.text|truncatewords:15 }}
+            </p>
+            <div
+              class="mt-3 pt-3 border-top border-white-10 d-flex justify-content-between align-items-center"
+            >
+              <small class="text-white-50"
+                >{{ ann.created_at|date:"d M" }}</small
+              >
+              {% if ann.link %}
+              <a
+                href="{{ ann.link }}"
+                class="text-warning text-decoration-none small fw-bold"
+                >Oku <i class="fas fa-chevron-right ms-1"></i
+              ></a>
+              {% endif %}
+            </div>
+          </div>
         </div>
+        {% empty %}
+        <div class="text-white-50 py-4 w-100 text-center opacity-25">
+          Henüz başka duyuru yok.
+        </div>
+        {% endfor %}
       </div>
     </div>
   </section>
 
-  <!-- TAKVİM & GALERİ -->
-  <section class="container py-5 mb-5">
-    <div class="row g-4">
-      <div class="col-lg-5" data-aos="fade-up">
-        <div class="dash-widget">
-          <h4 class="fw-bold mb-4 border-bottom pb-3">Etkinlik Takvimi</h4>
-          <div class="event-row">
-            <div class="date-box"><span>24</span><small>MAY</small></div>
-            <div>
-              <h6 class="fw-bold mb-0">Genel Kurul Toplantısı</h6>
-              <small class="text-muted"
-                ><i class="fas fa-clock me-1"></i> 17:30 • Kulüp Odası</small
-              >
-            </div>
-          </div>
-          <div class="event-row">
-            <div class="date-box" style="background: var(--emk-orange)">
-              <span>28</span><small>MAY</small>
-            </div>
-            <div>
-              <h6 class="fw-bold mb-0">Teknik Gezi: Ford Otosan</h6>
-              <small class="text-muted"
-                ><i class="fas fa-clock me-1"></i> 09:00 • Kampüs Çıkış</small
-              >
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-7" data-aos="fade-up" data-aos-delay="200">
-        <div class="dash-widget">
-          <h4 class="fw-bold mb-4 border-bottom pb-3">Galeri</h4>
-          <div class="row g-3">
-            <div class="col-4">
-              <img
-                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=300"
-                class="galeri-thumb img-fluid shadow-sm"
-                style="border-radius: 20px"
-              />
-            </div>
-            <div class="col-4">
-              <img
-                src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=300"
-                class="galeri-thumb img-fluid shadow-sm"
-                style="border-radius: 20px"
-              />
-            </div>
-            <div class="col-4">
-              <img
-                src="https://images.unsplash.com/photo-1523240715639-9a671054324f?q=80&w=300"
-                class="galeri-thumb img-fluid shadow-sm"
-                style="border-radius: 20px"
-              />
-            </div>
-          </div>
-        </div>
+  <!-- MAIN PROGRAMS: Tam Genişlik (12 Sütun) -->
+  <section class="container py-5">
+    <h4 class="fw-bold text-white mb-4 text-center">
+      Programlar & Topluluklar
+    </h4>
+    <div class="program-grid-full">
+      <!-- Grid yapısı CSS'de grid-template-columns: repeat(4, 1fr) olarak güncellenmeli -->
+      <div class="row g-4">
+        {% include 'core/partials/_program_cards.html' %}
+        <!-- Veya mevcut 8'li kart yapın -->
       </div>
     </div>
   </section>
 
-  <!-- SPONSORLAR -->
-  <section class="container mb-5">
-    <div class="sponsor-wrapper shadow-sm border" data-aos="fade-up">
-      <div class="sponsor-track">
-        <!-- Logolar (Dinamikleştirilebilir) -->
+  <!-- SPONSORS BAND -->
+  <section class="sponsors-band">
+    <!-- Yanlardaki fade efekti için maske -->
+    <div class="marquee-mask">
+      <div class="marquee">
+        <!-- Birinci Grup -->
+        {% for sponsor in sponsors %}
         <img
-          src="https://via.placeholder.com/150x50?text=SPONSOR1"
-          alt="Sponsor"
+          loading="lazy"
+          src="{{ sponsor.logo.url }}"
+          alt="{{ sponsor.name }}"
+          data-object-id="{{ sponsor.id }}"
         />
+        {% endfor %}
+
+        <!-- İkinci Grup (Sonsuz döngü için kopya) -->
+        {% for sponsor in sponsors %}
         <img
-          src="https://via.placeholder.com/150x50?text=SPONSOR2"
-          alt="Sponsor"
+          loading="lazy"
+          src="{{ sponsor.logo.url }}"
+          alt="{{ sponsor.name }}"
+          data-object-id="{{ sponsor.id }}"
         />
-        <img
-          src="https://via.placeholder.com/150x50?text=SPONSOR3"
-          alt="Sponsor"
-        />
-        <img
-          src="https://via.placeholder.com/150x50?text=SPONSOR4"
-          alt="Sponsor"
-        />
-        <!-- Döngü için tekrar -->
-        <img
-          src="https://via.placeholder.com/150x50?text=SPONSOR1"
-          alt="Sponsor"
-        />
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIAL: Tamamen Editable Linkler -->
+  <section class="social-section">
+    <div class="container">
+      <div class="section-title text-center mb-5">
+        <h3 class="text-white fw-bold display-6">Sosyal Ağlarımız</h3>
+        <p class="text-white-50">
+          Bizi tüm platformlardan takip ederek ekosisteme dahil ol.
+        </p>
+      </div>
+
+      <div class="social-grid">
+        <!-- Instagram -->
+        <a
+          href="{{ page_data.social_ig_url|default:'#' }}"
+          data-id="social_ig_url"
+          data-editable="Instagram Linki"
+          class="social-card instagram-card"
+        >
+          <div class="social-top">
+            <div class="social-icon"><i class="fab fa-instagram"></i></div>
+            <span>@emkportal</span>
+          </div>
+          <div class="social-content">
+            <h5>Instagram</h5>
+            <p data-id="social_ig_desc" data-editable="Instagram Açıklama">
+              <!-- prettier-ignore -->
+              {{ page_data.social_ig_desc|default:"Etkinlik duyuruları ve kampüs içerikleri." }}
+            </p>
+          </div>
+        </a>
+
+        <!-- LinkedIn -->
+        <a
+          href="{{ page_data.social_li_url|default:'#' }}"
+          id="social_li_url"
+          data-editable="LinkedIn Linki"
+          class="social-card linkedin-card"
+        >
+          <div class="social-top">
+            <div class="social-icon"><i class="fab fa-linkedin-in"></i></div>
+            <span>EMK Network</span>
+          </div>
+          <div class="social-content">
+            <h5>LinkedIn</h5>
+            <p data-id="social_li_desc" data-editable="LinkedIn Açıklama">
+              <!-- prettier-ignore -->
+              {{ page_data.social_li_desc|default:"Kariyer fırsatları ve profesyonel ağ." }}
+            </p>
+          </div>
+        </a>
+
+        <!-- Discord -->
+        <a
+          href="{{ page_data.social_ds_url|default:'#' }}"
+          data-id="social_ds_url"
+          data-editable="Discord Linki"
+          class="social-card discord-card"
+        >
+          <div class="social-top">
+            <div class="social-icon"><i class="fab fa-discord"></i></div>
+            <span>EMK Community</span>
+          </div>
+          <div class="social-content">
+            <h5>Discord</h5>
+            <p data-id="social_ds_desc" data-editable="Discord Açıklama">
+              <!-- prettier-ignore -->
+              {{ page_data.social_ds_desc|default:"Canlı sohbetler ve ekip iletişimi." }}
+            </p>
+          </div>
+        </a>
+
+        <!-- YouTube -->
+        <a
+          href="{{ page_data.social_yt_url|default:'#' }}"
+          data-id="social_yt_url"
+          data-editable="YouTube Linki"
+          class="social-card youtube-card"
+        >
+          <div class="social-top">
+            <div class="social-icon"><i class="fab fa-youtube"></i></div>
+            <span>EMK Media</span>
+          </div>
+          <div class="social-content">
+            <h5>YouTube</h5>
+            <p data-id="social_yt_desc" data-editable="YouTube Açıklama">
+              <!-- prettier-ignore -->
+              {{ page_data.social_yt_desc|default:"Eğitim içerikleri ve summit kayıtları." }}
+            </p>
+          </div>
+        </a>
       </div>
     </div>
   </section>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const counters = document.querySelectorAll(".counter-value");
+    let started = false;
+
+    const startCounters = () => {
+      if (started) return;
+      started = true;
+
+      counters.forEach((counter) => {
+        const target = +counter.dataset.target;
+        let count = 0;
+
+        const updateCounter = () => {
+          const increment = Math.ceil(target / 60);
+
+          if (count < target) {
+            count += increment;
+
+            if (count > target) {
+              count = target;
+            }
+
+            counter.innerText = count;
+            requestAnimationFrame(updateCounter);
+          } else {
+            counter.innerText = target + "+";
+          }
+        };
+
+        updateCounter();
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            startCounters();
+          }
+        });
+      },
+      {
+        threshold: 0.4,
+      },
+    );
+
+    observer.observe(document.querySelector(".stats-grid"));
+  });
+</script>
+
 {% endblock %}

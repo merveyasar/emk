@@ -1,9 +1,7 @@
 from django.db import models
 
 class PageContent(models.Model):
-    # Sayfanın URL'i (Örn: '/ekibimiz/', '/hakkimizda/')
     path = models.CharField(max_length=255, unique=True)
-    # Sayfadaki tüm metinleri JSON olarak tutalım (Başlık, Alt Başlık, Buton Yazısı vb.)
     data = models.JSONField(default=dict) 
 
     def __str__(self):
@@ -29,8 +27,6 @@ class TeamMember(models.Model):
         return self.name
     
     
-from django.db import models
-
 class Magazine(models.Model):
     title = models.CharField(max_length=255, verbose_name="Dergi Başlığı")
     issue_number = models.PositiveIntegerField(verbose_name="Sayı No")
@@ -44,45 +40,11 @@ class Magazine(models.Model):
     class Meta:
         verbose_name = "Dergi"
         verbose_name_plural = "Dergiler"
-        ordering = ['-release_date'] # En yeni sayı en üstte
+        ordering = ['-release_date']
 
     def __str__(self):
         return f"Sayı {self.issue_number}: {self.title}"
     
-    
-from django.db import models
-
-class OrganizationEvent(models.Model):
-    ORG_TYPES = [
-        ('KALE', 'KALE'),
-        ('SB', 'Sektör Günleri'),
-        ('SG', 'Şirket Günleri'),
-        ('TG', 'Teknik Gezi'),
-        ('ES', 'Eğitim Seminerleri'),
-        ('GDKG', 'GDKG'),
-        ('COL', 'COL'),
-        ('MENT', 'Mentorship'),
-    ]
-
-    type = models.CharField(max_length=10, choices=ORG_TYPES, verbose_name="Organizasyon Tipi")
-    year = models.IntegerField(verbose_name="Yıl")
-    title = models.CharField(max_length=255, verbose_name="Etkinlik Başlığı")
-    
-    # Tüm dinamik verileri (Konuşmacı listesi, Sponsorlar, Galeri Linkleri) burada tutacağız
-    # Örn: {"speakers": [{"name": "X", "title": "CEO"}], "sponsors": ["logo1.jpg"]}
-    extra_data = models.JSONField(default=dict, blank=True, verbose_name="Dinamik İçerik (JSON)")
-    
-    is_active = models.BooleanField(default=False, verbose_name="Şu anki Aktif Sayfa mı?")
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-year']
-        unique_together = ('type', 'year') # Bir yıl için aynı org'dan iki tane olmasın
-
-    def __str__(self):
-        return f"{self.type} - {self.year} - {self.title}"
-    
-from django.db import models
 
 class Announcement(models.Model):
     CATEGORY_CHOICES = [
@@ -105,3 +67,31 @@ class Announcement(models.Model):
 
     def __str__(self):
         return f"[{self.category}] {self.title}"
+    
+    
+class Sponsor(models.Model):
+    name = models.CharField(max_length=100)
+    logo = models.FileField(upload_to='sponsors/')
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+          
+
+class OrganizationEvent(models.Model):
+    name = models.CharField(max_length=100, unique=True) 
+    slug = models.SlugField(unique=True) 
+    description = models.TextField()
+
+class OrganizationArchive(models.Model):
+    event = models.ForeignKey(OrganizationEvent, on_delete=models.CASCADE, related_name='archives')
+    year = models.PositiveIntegerField()
+    motto = models.CharField(max_length=255, verbose_name="Dönem Mottosu / Sloganı")
+    description = models.TextField(verbose_name="Dönem Özeti")
+    cover_image = models.ImageField(upload_to='org/covers/')
+    
+    extra_data = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        ordering = ['-year']
+        verbose_name = "Organizasyon Arşivi"

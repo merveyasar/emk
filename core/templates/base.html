@@ -220,7 +220,8 @@
 
     <!-- Ana İçerik -->
     <main class="main-content">
-      <div class="container" data-aos="fade-up">
+      <!-- container-fluid yanlardaki o büyük boşluğu öldürür, tam genişlik sağlar -->
+      <div class="container-fluid px-0" data-aos="fade-up">
         {% block content %}{% endblock %}
       </div>
     </main>
@@ -336,28 +337,58 @@
       document.addEventListener("DOMContentLoaded", function () {
         // 1. Sayfa Şemasını Hazırla ve Editöre Gönder
         function sendReport() {
+          const modelEl = document.body.querySelector("[data-model]");
+
           const pageSchema = {
             type: "PAGE_REPORT",
             path: window.location.pathname,
-            // Ekibimiz sayfasındaki div'de data-model="TeamMember" olmalı
-            model: document.body.querySelector("[data-model]")
-              ? document.body
-                  .querySelector("[data-model]")
-                  .getAttribute("data-model")
-              : null,
+            model: modelEl ? modelEl.getAttribute("data-model") : null,
+            subModel: modelEl ? modelEl.getAttribute("data-sub-model") : null,
+
             elements: Array.from(
               document.querySelectorAll("[data-editable]"),
-            ).map((el) => ({
-              id: el.getAttribute("data-id"),
-              fieldName: el.getAttribute("data-field"),
-              label: el.getAttribute("data-editable"),
-              value: el.tagName === "IMG" ? el.src : el.innerText.trim(),
-              type: el.tagName === "IMG" ? "image" : "text",
-            })),
+            ).map((el) => {
+              const tagName = el.tagName.toUpperCase();
+              let type = "text";
+              let value = el.innerText.trim();
+
+              // 1. Iframe Kontrolü (Haritalar, Youtube vb.)
+              if (tagName === "IFRAME") {
+                type = "link"; // Editörde URL inputu açması için
+                value = el.src;
+              }
+              // 2. Resim Kontrolü
+              else if (tagName === "IMG") {
+                type = "image";
+                value = el.src;
+              }
+              // 3. Link/Buton Kontrolü
+              else if (tagName === "A") {
+                type = "link";
+                value = el.getAttribute("href");
+              }
+              // 4. Arka Plan Resmi (Inline Style)
+              else if (el.style.backgroundImage) {
+                type = "image";
+                value = el.style.backgroundImage.slice(4, -1).replace(/"/g, "");
+              }
+
+              return {
+                id:
+                  el.getAttribute("data-id") ||
+                  el.id ||
+                  `gen-${Math.random().toString(36).substr(2, 5)}`,
+                fieldName: el.getAttribute("data-field"),
+                label: el.getAttribute("data-editable"),
+                value: value,
+                type: type,
+                tagName: tagName, // Parent tarafta hangi element olduğunu bilmek işe yarar
+              };
+            }),
           };
+
           window.parent.postMessage(pageSchema, "*");
         }
-
         sendReport();
 
         // 2. Editörden Gelen "LIVE_UPDATE" Mesajlarını Uygula
