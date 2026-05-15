@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-(%$5ig*2xz4*a6kdk_@^_5kuoc@#tsh0b4!ds6=yw$%7is_*zp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -85,13 +85,21 @@ WSGI_APPLICATION = 'emk_web.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+import dj_database_url # pip install dj-database-url gerektirir
+import os
 
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ.get('postgresql://emk_user:AzYJHxHj6CvBJFa0aL7zaIikbCc3T4Kb@dpg-d83l49eq1p3s738tdmu0-a/emk'),
+        conn_max_age=600
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
