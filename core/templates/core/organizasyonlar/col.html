@@ -1,17 +1,16 @@
 {% extends 'base.html' %} {% load static %} {% block title %}CaseOfLegends |
 Efsaneler Kürsüsü - KOÜ EMK{% endblock %} {% block content %}
+
 <style>
   :root {
-    --col-gold: #f2c94c;
-    --col-accent: #f28c28;
-    --col-glass: rgba(255, 255, 255, 0.03);
-    --col-border: rgba(255, 255, 255, 0.08);
+    --accent-color: #f2c94c; /* CoL Altın Sarısı */
+    --glass: rgba(255, 255, 255, 0.03);
   }
 
-  /* 1. Hero Section */
-  .col-hero {
+  /* 1. Hero & Layout */
+  .hero-glass-section {
     position: relative;
-    padding: 180px 0 80px;
+    padding: 160px 0 100px;
     background:
       radial-gradient(
         circle at top right,
@@ -19,32 +18,40 @@ Efsaneler Kürsüsü - KOÜ EMK{% endblock %} {% block content %}
         transparent
       ),
       #0f1012;
-    border-radius: 0 0 100px 100px;
+    border-radius: 0 0 80px 80px;
     margin-top: -100px;
     overflow: hidden;
   }
-  .hero-bg-layer {
+  .hero-glass-section::before {
+    content: "";
     position: absolute;
     inset: 0;
     background: url("{{ page_data.hero_img|default:'https://images.unsplash.com/photo-1551836022-d5d88e9218df' }}")
       center/cover no-repeat;
     opacity: 0.15;
-    filter: grayscale(1);
+    filter: grayscale(1) blur(3px);
   }
 
-  /* 2. Bento Stat Box */
-  .col-stat-card {
-    background: var(--col-glass);
-    backdrop-filter: blur(25px);
-    border: 1px solid var(--col-border);
-    border-radius: 40px;
-    padding: 40px;
+  /* 2. Bento Stats */
+  .bento-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 50px;
+  }
+  .bento-stat-card {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 30px;
+    padding: 30px;
+    transition: 0.4s ease;
   }
 
-  /* 3. Live Leaderboard (Nedir'in Yanındaki Kısım) */
+  /* 3. Live Leaderboard */
   .live-leaderboard {
     background: rgba(242, 201, 76, 0.05);
-    border: 1px solid var(--col-gold);
+    border: 1px solid var(--accent-color);
     border-radius: 35px;
     padding: 30px;
   }
@@ -52,20 +59,20 @@ Efsaneler Kürsüsü - KOÜ EMK{% endblock %} {% block content %}
     display: flex;
     align-items: center;
     gap: 15px;
-    padding: 15px;
+    padding: 12px;
     border-radius: 20px;
     background: rgba(255, 255, 255, 0.03);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     transition: 0.3s;
   }
   .winner-row:hover {
-    transform: scale(1.02);
+    transform: translateX(10px);
     background: rgba(255, 255, 255, 0.06);
   }
 
   .rank-pill {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -73,163 +80,207 @@ Efsaneler Kürsüsü - KOÜ EMK{% endblock %} {% block content %}
     font-weight: 900;
     background: #333;
     color: white;
+    font-size: 0.8rem;
   }
   .rank-1 {
-    background: var(--col-gold) !important;
+    background: var(--accent-color) !important;
     color: #000 !important;
-    box-shadow: 0 0 20px rgba(242, 201, 76, 0.3);
+    box-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
   }
 
-  /* 4. Story Cards Archive */
-  .col-story-wrapper {
+  /* 4. INLINE DETAIL PANEL (Büyüteç Bölümü) */
+  .detail-preview-panel {
+    display: none;
+    background: #161719;
+    border-radius: 40px;
+    margin-bottom: 50px;
+    border: 1px solid var(--accent-color);
+    overflow: hidden;
+    animation: slideDown 0.6s cubic-bezier(0.2, 1, 0.2, 1);
+  }
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 5. Story Scroll */
+  .story-scroll-container {
     display: flex;
     gap: 30px;
     overflow-x: auto;
-    padding: 40px 0 80px;
+    padding: 20px 0 60px;
     scrollbar-width: none;
   }
-  .col-story-wrapper::-webkit-scrollbar {
+  .story-scroll-container::-webkit-scrollbar {
     display: none;
   }
-  .col-story-card {
+
+  .story-card {
     flex: 0 0 400px;
     height: 500px;
     position: relative;
-    border-radius: 45px;
+    border-radius: 40px;
     overflow: hidden;
     cursor: pointer;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
   }
-  .col-story-card img {
+  .story-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: 1s;
+    transition: 1.2s;
   }
-  .col-story-card:hover img {
+  .story-card:hover img {
     transform: scale(1.1);
+  }
+
+  .story-overlay {
+    position: absolute;
+    inset: 0;
+    padding: 40px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent 60%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .year-tag {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: var(--accent-color);
+    color: #000;
+    font-weight: 800;
+    padding: 8px 20px;
+    border-radius: 100px;
   }
 </style>
 
 <div
+  id="target_date_storage"
+  data-id="target_date"
+  data-editable="Büyük Final Tarihi"
+  style="display: none"
+>
+  {{ page_data.target_date|default:"2026-05-13 09:00:00" }}
+</div>
+
+<div
   class="col-master-wrapper"
   data-model="PageContent,OrganizationArchive"
+  data-sub-model="COL"
   data-path="{{ request.path }}"
 >
-  <section class="col-hero">
-    <div class="hero-bg-layer"></div>
-    <div class="container position-relative z-index-10">
-      <div class="text-center mb-5">
-        <h1
-          class="display-2 fw-bold text-white mb-2"
-          data-id="hero_title"
-          data-editable="Hero Başlığı"
-        >
-          CASE OF <span style="color: var(--col-gold)">LEGENDS</span>
-        </h1>
-        <p
-          class="text-accent fw-bold ls-4 uppercase"
-          style="color: var(--col-gold)"
-        >
-          STRATEJİ • ANALİZ • ZAFER
-        </p>
+  <section class="hero-glass-section">
+    <div class="container position-relative z-index-10 text-center">
+      <h1
+        class="display-1 fw-bold text-white mb-2"
+        data-id="hero_title"
+        data-editable="Hero Başlığı"
+      >
+        CASE OF <span style="color: var(--accent-color)">LEGENDS</span>
+      </h1>
+
+      <div
+        class="d-flex justify-content-center gap-4 text-white-50 mb-5 fw-bold ls-2"
+      >
+        <span id="k-days">00</span> GÜN : <span id="k-hours">00</span> SAAT :
+        <span id="k-mins">00</span> DK
       </div>
 
-      <div class="row g-4 mb-5">
-        <div class="col-md-4">
-          <div class="col-stat-card text-center">
-            <h2
-              class="text-white fw-bold mb-1"
-              data-id="stat_1"
-              data-editable="Stat 1"
-            >
-              {{ page_data.stat_1|default:"8" }}
-            </h2>
-            <p class="text-white-50 uppercase small ls-2 mb-0">Efsane Sezon</p>
-          </div>
-        </div>
-        <div class="col-md-8">
-          <div
-            class="col-stat-card text-center"
-            style="
-              background: linear-gradient(
-                90deg,
-                rgba(242, 201, 76, 0.1),
-                transparent
-              );
-            "
+      <div class="bento-stat-grid">
+        <div class="bento-stat-card">
+          <h2
+            class="text-white fw-bold"
+            data-id="stat_1"
+            data-editable="Stat 1"
           >
-            <h2
-              class="fw-bold mb-1"
-              style="color: var(--col-gold)"
-              data-id="stat_2"
-              data-editable="Stat 2"
-            >
-              {{ page_data.stat_2|default:"600+" }}
-            </h2>
-            <p class="text-white-50 uppercase small ls-2 mb-0">
-              Zirve Mücadelesi Veren Takım
-            </p>
-          </div>
+            {{ page_data.stat_1|default:"8" }}
+          </h2>
+          <p class="text-white-50 small uppercase ls-1">Efsane Sezon</p>
+        </div>
+        <div
+          class="bento-stat-card"
+          style="grid-column: span 2; background: rgba(242, 201, 76, 0.05)"
+        >
+          <h2
+            style="color: var(--accent-color)"
+            class="fw-bold"
+            data-id="stat_2"
+            data-editable="Stat 2"
+          >
+            {{ page_data.stat_2|default:"600+" }}
+          </h2>
+          <p class="text-white-50 small uppercase ls-1">Mücadele Eden Takım</p>
+        </div>
+        <div class="bento-stat-card">
+          <h2
+            class="text-white fw-bold"
+            data-id="stat_3"
+            data-editable="Stat 3"
+          >
+            {{ page_data.stat_3|default:"15+" }}
+          </h2>
+          <p class="text-white-50 small uppercase ls-1">Global Partner</p>
         </div>
       </div>
 
-      <div class="row g-4 mt-2">
+      <div class="row g-4 mt-5 text-start align-items-stretch">
         <div class="col-lg-7">
           <div
-            class="col-stat-card h-100 border-0"
+            class="bento-stat-card h-100 border-0"
             style="background: rgba(255, 255, 255, 0.02)"
           >
-            <h6 class="text-warning fw-bold uppercase ls-2 mb-3">HAKKINDA</h6>
-            <!--prettier-ignore-->
-            <h2 class="text-white fw-bold mb-4" data-id="about_title" data-editable="Nedir Başlık">{{ page_data.about_title|default:"Efsanelerin Yarıştığı Vaka Arenası" }}</h2>
+            <h6
+              class="fw-bold uppercase ls-2 mb-3"
+              style="color: var(--accent-color)"
+            >
+              ARENA HAKKINDA
+            </h6>
+            <h2
+              class="text-white fw-bold mb-3"
+              data-id="about_title"
+              data-editable="Nedir Başlık"
+            >
+              <!--prettier-ignore-->
+              {{ page_data.about_title|default:"Efsanelerin Yarıştığı Vaka Arenası" }}
+            </h2>
             <p
-              class="text-white-50 lh-lg mb-5"
+              class="text-white-50 lh-lg mb-0"
               data-id="about_desc"
               data-editable="Nedir Açıklama"
             >
               <!--prettier-ignore-->
-              {{ page_data.about_desc|default:"CaseOfLegends, iş dünyasının en karmaşık problemlerini masaya yatıran, mühendislik vizyonunu stratejik zekayla birleştiren prestijli bir yarışmadır." }}
+              {{ page_data.about_desc|default:"CaseOfLegends, iş dünyasının karmaşık problemlerini masaya yatıran, mühendislik vizyonunu stratejik zekayla birleştiren prestijli bir vaka analiz yarışmasıdır." }}
             </p>
-
-            <div class="row g-3">
-              <div class="col-6">
-                <div class="d-flex gap-2">
-                  <i class="fas fa-check-circle text-warning mt-1"></i>
-                  <p class="text-white-50 small">
-                    Gerçek iş dünyası vakalarıyla saha deneyimi.
-                  </p>
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="d-flex gap-2">
-                  <i class="fas fa-check-circle text-warning mt-1"></i>
-                  <p class="text-white-50 small">
-                    Global şirketlerin yöneticilerinden oluşan jüri.
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
         <div class="col-lg-5">
           <div class="live-leaderboard h-100">
             <div class="d-flex justify-content-between align-items-center mb-4">
-              <h6 class="text-white fw-bold mb-0 uppercase ls-1">
-                SON SEZON ŞAMPİYONLARI
+              <h6 class="text-white fw-bold mb-0 uppercase ls-1 small">
+                ŞAMPİYONLAR KÜRSÜSÜ
               </h6>
-              <span class="badge bg-warning text-dark px-3"
+              <span
+                class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold"
                 >{{ archives.0.year }}</span
               >
             </div>
 
+            <!--prettier-ignore-->
             {% for winner in archives.0.extra_data.winners %}
             <div class="winner-row">
               <div class="rank-pill {% if winner.rank == 1 %}rank-1{% endif %}">
                 {{ winner.rank }}
               </div>
               <div class="flex-grow-1">
-                <div class="text-white fw-bold">{{ winner.team }}</div>
+                <div class="text-white small fw-bold">{{ winner.team }}</div>
                 <div class="text-white-50 extra-small">
                   {{ winner.members }}
                 </div>
@@ -238,79 +289,165 @@ Efsaneler Kürsüsü - KOÜ EMK{% endblock %} {% block content %}
               >{% endif %}
             </div>
             {% empty %}
-            <p class="text-white-50 small">Henüz kazanan bilgisi girilmemiş.</p>
+            <p class="text-white-50 small py-4 text-center">
+              Henüz kazanan bilgisi girilmemiş.
+            </p>
             {% endfor %}
-
-            <div
-              class="mt-4 p-3 rounded-4"
-              style="background: rgba(0, 0, 0, 0.2)"
-            >
-              <p class="text-white-50 small mb-0">
-                <i class="fas fa-info-circle me-2"></i> {{ archives.0.year }}
-                sezonu vakası <strong>{{ archives.0.motto }}</strong> tarafından
-                sağlandı.
-              </p>
-            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="py-5 mt-5">
+  <section class="py-5">
     <div class="container">
-      <div class="d-flex justify-content-between align-items-end mb-4 px-3">
-        <h2 class="text-white fw-bold display-5">Tüm Sezonlar</h2>
-        <div class="d-flex gap-2 mb-2">
+      <div class="d-flex justify-content-between align-items-end mb-4 px-2">
+        <h2 class="text-warning fw-bold display-5">Tüm Sezonlar</h2>
+        <div class="archive-pills d-flex gap-2">
           <button
-            class="btn btn-outline-warning rounded-circle"
-            onclick="scrollCol(-400)"
+            class="btn btn-outline-warning rounded-pill px-4 active"
+            data-filter="all"
           >
-            <i class="fas fa-chevron-left"></i>
+            Tümü
           </button>
+          {% for year in years %}
           <button
-            class="btn btn-outline-warning rounded-circle"
-            onclick="scrollCol(400)"
+            class="btn btn-outline-warning rounded-pill px-4"
+            data-filter="{{ year }}"
           >
-            <i class="fas fa-chevron-right"></i>
+            {{ year }}
           </button>
+          {% endfor %}
         </div>
       </div>
 
-      <div class="col-story-wrapper" id="colScroll">
+      <div class="story-scroll-container">
         {% for archive in archives %}
         <div
-          class="col-story-card"
-          onclick="openSBArchiveModal({{ archive.id }})"
+          class="story-card archive-item"
+          data-year="{{ archive.year }}"
+          onclick="showInlineDetail({{ archive.id }})"
+          role="button"
         >
-          <img src="{{ archive.cover_image.url }}" alt="{{ archive.motto }}" />
-          <div
-            class="position-absolute inset-0 p-4 d-flex flex-column justify-content-end"
-            style="
-              background: linear-gradient(
-                to top,
-                rgba(0, 0, 0, 0.9),
-                transparent
-              );
-            "
-          >
-            <span class="text-warning fw-bold mb-1"
-              >{{ archive.year }} Sezonu</span
-            >
-            <h4 class="text-white fw-bold mb-0">{{ archive.motto }}</h4>
+          <div class="year-tag">{{ archive.year }}</div>
+          <img
+            src="{{ archive.cover_image.url }}"
+            alt="{{ archive.motto }}"
+            loading="lazy"
+          />
+          <div class="story-overlay">
+            <h3 class="text-white fw-bold mb-1">{{ archive.motto }}</h3>
+            <p class="text-white-50 small mb-0">
+              {{ archive.description|truncatewords:10 }}
+            </p>
+            <div class="text-warning mt-2 small fw-bold opacity-75">
+              <i class="fas fa-trophy me-1"></i> SEZONU İNCELE
+            </div>
           </div>
         </div>
         {% endfor %}
+      </div>
+
+      <div id="inlineDetail" class="detail-preview-panel">
+        <div id="detailContent"></div>
       </div>
     </div>
   </section>
 </div>
 
 <script>
-  function scrollCol(dist) {
-    document
-      .getElementById("colScroll")
-      .scrollBy({ left: dist, behavior: "smooth" });
+  // Inline Detail Motoru (Standardize Edildi)
+  async function showInlineDetail(id) {
+    const panel = document.getElementById("inlineDetail");
+    const content = document.getElementById("detailContent");
+    panel.style.display = "block";
+    panel.scrollIntoView({ behavior: "smooth", block: "center" });
+    content.innerHTML = `<div class="p-5 text-center text-white my-5"><i class="fas fa-circle-notch fa-spin fa-3x text-warning"></i></div>`;
+
+    try {
+      const res = await fetch(`/editor/get-archive/${id}/`);
+      const data = await res.json();
+
+      // CoL'a özel Kazananlar Listesi (Eğer extra_data içinde varsa)
+      let winnersHTML = "";
+      if (data.extra_data?.winners?.length > 0) {
+        winnersHTML = `
+            <div class="mt-4">
+                <h6 class="extra-small fw-bold ls-2 text-warning mb-3 uppercase">SEZON ŞAMPİYONLARI</h6>
+                <div class="row g-2">
+                    ${data.extra_data.winners
+                      .map(
+                        (w) => `
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-4 d-flex align-items-center gap-3" style="background: rgba(255,255,255,0.05)">
+                                <div class="rank-pill ${w.rank == 1 ? "rank-1" : ""}">${w.rank}</div>
+                                <div><div class="small fw-bold text-white">${w.team}</div><div class="extra-small text-white-50">${w.members}</div></div>
+                            </div>
+                        </div>
+                    `,
+                      )
+                      .join("")}
+                </div>
+            </div>`;
+      }
+
+      content.innerHTML = `
+      <div class="row g-0">
+        <div class="col-md-5" style="background:url('${data.cover_url}') center/cover no-repeat; min-height:450px;"></div>
+        <div class="col-md-7 p-4 p-md-5 text-white position-relative d-flex flex-column justify-content-center">
+          <button onclick="closeDetail()" class="btn btn-link text-white position-absolute top-0 end-0 m-4 opacity-50"><i class="fas fa-times fa-lg"></i></button>
+          <div class="mb-2">
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold mb-3">${data.year} Sezonu</span>
+            <h2 class="display-6 fw-bold mb-3">${data.motto}</h2>
+          </div>
+          <p class="text-white-50 lh-lg mb-2">${data.description || "Sezon detayları henüz girilmemiş."}</p>
+          ${winnersHTML}
+        </div>
+      </div>`;
+    } catch (e) {
+      content.innerHTML = `<div class="p-5 text-center text-danger"><p>Veri çekilemedi kanka.</p></div>`;
+    }
   }
+
+  function closeDetail() {
+    document.getElementById("inlineDetail").style.display = "none";
+  }
+
+  // Filtreleme
+  document.querySelectorAll("[data-filter]").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const year = this.getAttribute("data-filter");
+      document.querySelectorAll(".archive-item").forEach((item) => {
+        item.style.display =
+          year === "all" || item.getAttribute("data-year") === year
+            ? "block"
+            : "none";
+      });
+      document
+        .querySelectorAll("[data-filter]")
+        .forEach((b) => b.classList.remove("active"));
+      this.classList.add("active");
+    });
+  });
+
+  // Timer
+  /* prettier-ignore */
+  const targetDate = new Date(document.getElementById("target_date_storage").innerText.trim() || "{{ page_data.target_date|default:'2026-05-13 09:00:00' }}").getTime();
+  function updateTimer() {
+    const diff = targetDate - new Date().getTime();
+    if (isNaN(targetDate) || diff < 0) return;
+    document.getElementById("k-days").innerText = String(
+      Math.floor(diff / 86400000),
+    ).padStart(2, "0");
+    document.getElementById("k-hours").innerText = String(
+      Math.floor((diff % 86400000) / 3600000),
+    ).padStart(2, "0");
+    document.getElementById("k-mins").innerText = String(
+      Math.floor((diff % 3600000) / 60000),
+    ).padStart(2, "0");
+  }
+  setInterval(updateTimer, 1000);
+  updateTimer();
 </script>
+
 {% endblock %}

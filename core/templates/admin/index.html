@@ -297,8 +297,19 @@
         ></div>
       </div>
 
-      <div id="editor-fields-button"></div>
-      <div id="editor-fields"></div>
+      <div
+        id="editor-fields-button"
+        class="mb-4 d-flex flex-column gap-2"
+      ></div>
+
+      <hr class="border-secondary opacity-20 my-4" />
+
+      <div id="editor-fields">
+        <div class="text-center opacity-50 py-5">
+          <i class="fas fa-mouse-pointer d-block mb-2"></i>
+          <span class="extra-small">Düzenlemek için bir alana tıkla</span>
+        </div>
+      </div>
 
       <div class="sidebar-footer">
         <button class="btn btn-publish" onclick="publishChanges()">
@@ -337,11 +348,6 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-      /**
-       * EMK ENGINE - Modernize Edilmiş Editör Scripti
-       * "Kanka, bu sürümle kodun hem okunabilir hem de genişletilebilir oldu."
-       */
-
       const frame = document.getElementById("site-frame");
       const fieldsContainer = document.getElementById("editor-fields");
       const fieldsContainerButton = document.getElementById(
@@ -453,6 +459,12 @@
             icon: "archive",
             text: "ARŞİV YÖNETİMİ",
             action: () => openArchiveManager(pageData),
+          },
+          Mentor: {
+            class: "btn-outline-info",
+            icon: "chalkboard-teacher",
+            text: "MENTÖR KADROSU",
+            action: () => openMentorManager(), // Mentör listesini açan fonksiyon
           },
         };
 
@@ -774,30 +786,37 @@
             <i class="fas fa-edit me-1"></i> ${isEdit ? "Duyuruyu Güncelle" : "Yeni Duyuru"}
           </h6>
 
-          <div class="edit-card">
+          <div class="edit-card custom-scrollbar" style="max-height: 500px; overflow-y: auto;">
             <label class="form-label extra-small opacity-50 mb-1">Kategori</label>
             <select data-id="ann-category" class="form-control mb-2">
+              <option value="EGITIM" ${data.category === "EGITIM" ? "selected" : ""}>Eğitim & Seminer</option>
               <option value="ANLIK" ${data.category === "ANLIK" ? "selected" : ""}>Anlık Duyuru</option>
               <option value="KULUP" ${data.category === "KULUP" ? "selected" : ""}>Kulüpsel Gelişmeler</option>
               <option value="ETKINLIK" ${data.category === "ETKINLIK" ? "selected" : ""}>Etkinlik Haberi</option>
             </select>
 
-            <label class="form-label extra-small opacity-50 mb-1">Başlık</label>
-            <input type="text" data-id="ann-title" class="form-control mb-2" value="${data.title || ""}">
+            <label class="form-label extra-small opacity-50 mb-1">Eğitim Başlığı</label>
+            <input type="text" data-id="ann-title" class="form-control mb-2" placeholder="Örn: Python ile Veri Analizi" value="${data.title || ""}">
 
-            <label class="form-label extra-small opacity-50 mb-1">İçerik</label>
-            <textarea data-id="ann-text" class="form-control mb-2" rows="4">${data.text || ""}</textarea>
+            <label class="form-label extra-small opacity-50 mb-1">Afiş/Resim URL (Örn: Cloudinary/Drive linki)</label>
+            <input type="url" data-id="ann-img" class="form-control mb-2" placeholder="https://..." value="${data.extra_data?.img_url || ""}">
 
-            <label class="form-label extra-small opacity-50 mb-1">Detay Linki</label>
+            <label class="form-label extra-small opacity-50 mb-1">Son Başvuru Tarihi</label>
+            <input type="date" data-id="ann-deadline" class="form-control mb-2" value="${data.extra_data?.deadline || ""}">
+            
+            <label class="form-label extra-small opacity-50 mb-1">Kısa Açıklama / İçerik</label>
+            <textarea data-id="ann-text" class="form-control mb-2" rows="3">${data.text || ""}</textarea>
+
+            <label class="form-label extra-small opacity-50 mb-1">Kayıt Linki (Google Forms vb.)</label>
             <input type="url" data-id="ann-link" class="form-control mb-3" value="${data.link || ""}">
 
             <div class="form-check form-switch mb-4">
               <input class="form-check-input" type="checkbox" data-id="ann-active" ${data.is_active !== false ? "checked" : ""}>
-              <label class="form-check-label text-white-50 small">Aktif mi?</label>
+              <label class="form-check-label text-white-50 small">Yayına Al</label>
             </div>
 
             <button class="btn btn-publish w-100 py-2" onclick="saveObject('announcement', ${id})">
-              ${isEdit ? "DEĞİŞİKLİKLERİ KAYDET" : "DUYURUYU YAYINLA"}
+              ${isEdit ? "GÜNCELLE" : "EĞİTİMİ YAYINLA"}
             </button>
             <button class="btn btn-link w-100 mt-2 text-muted btn-sm" onclick="openAnnouncementForm()">Vazgeç</button>
           </div>
@@ -823,7 +842,7 @@
 
         fieldsContainer.innerHTML = `
               <div class="d-flex justify-content-between align-items-center mb-3">
-                  <h6 class="text-white m-0 uppercase small ls-1">
+                  <h6 class="text-dark m-0 uppercase small ls-1">
                       <i class="fas fa-history me-2"></i>${slug.toUpperCase()} ARŞİVİ
                   </h6>
               </div>
@@ -852,11 +871,10 @@
           `;
       }
 
+      // --- 1. FORM RENDERER ---
       async function renderArchiveForm(id = null, slug) {
         const isEdit = id !== null;
         let data = { extra_data: { sectors: [], winners: [], mentors: [] } };
-
-        console.log(`Form Hazırlanıyor: ${slug} | ID: ${id}`);
 
         if (isEdit) {
           const res = await fetch(`/editor/get-archive/${id}/`);
@@ -864,51 +882,209 @@
         }
 
         fieldsContainer.innerHTML = `
-              <h6 class="text-white mb-3 small fw-bold">${isEdit ? "Dönemi Düzenle" : "Yeni Dönem Ekle"}</h6>
-              <div class="edit-card">
-                  <label class="form-label extra-small opacity-50 mb-1">Yıl</label>
-                  <input type="number" id="arc-year" class="form-control mb-2" value="${data.year || ""}">
+          <h6 class="text-white mb-3 small fw-bold">${isEdit ? "Dönemi Düzenle" : "Yeni Dönem Ekle"}</h6>
+          <div class="edit-card custom-scrollbar" style="max-height: 600px; overflow-y: auto; padding-right:10px;">
+              <label class="form-label extra-small opacity-50 mb-1">Yıl</label>
+              <input type="number" id="arc-year" class="form-control mb-2" value="${data.year || ""}">
 
-                  <label class="form-label extra-small opacity-50 mb-1">Motto / Başlık</label>
-                  <input type="text" id="arc-motto" class="form-control mb-2" value="${data.motto || ""}">
+              <label class="form-label extra-small opacity-50 mb-1">Motto / Başlık</label>
+              <input type="text" id="arc-motto" class="form-control mb-2" value="${data.motto || ""}">
 
-                  <label class="form-label extra-small opacity-50 mb-1">Dönem Özeti</label>
-                  <textarea id="arc-desc" class="form-control mb-2" rows="3">${data.description || ""}</textarea>
+              <label class="form-label extra-small opacity-50 mb-1">Dönem Özeti</label>
+              <textarea id="arc-desc" class="form-control mb-2" rows="3">${data.description || ""}</textarea>
 
-                  ${
-                    slug === "sb"
-                      ? `
-                      <label class="form-label extra-small opacity-50 mb-1">Sektörler (Virgülle ayır)</label>
-                      <input type="text" id="arc-extra-sectors" class="form-control mb-2" value="${data.extra_data.sectors?.join(", ") || ""}">
-                  `
-                      : ""
-                  }
+              ${
+                slug === "sb"
+                  ? `
+                  <label class="form-label extra-small opacity-50 mb-1">Sektörler (Virgülle ayır)</label>
+                  <input type="text" id="arc-extra-sectors" class="form-control mb-2" value="${data.extra_data.sectors?.join(", ") || ""}">
+              `
+                  : ""
+              }
 
-                  ${
-                    slug === "col"
-                      ? `
-                      <label class="form-label extra-small opacity-50 mb-1">Kazananlar JSON</label>
-                      <textarea id="arc-extra-json" class="form-control mb-2" rows="2">${JSON.stringify(data.extra_data.winners || [])}</textarea>
-                  `
-                      : ""
-                  }
-
-                  <div class="mt-3">
-                      <label class="form-label extra-small opacity-50 mb-1">Ana Kapak Görseli</label>
-                      <input type="file" id="arc-cover" class="form-control mb-2" accept="image/*">
-
-                      <label class="form-label extra-small opacity-50 mb-1">Galeri Fotoğrafları (Çoklu Seçim)</label>
-                      <input type="file" id="arc-gallery" class="form-control mb-4" multiple accept="image/*">
+              ${
+                slug === "col"
+                  ? `
+                  <label class="form-label extra-small opacity-50 mb-1">Şampiyonlar Kürsüsü</label>
+                  <div id="col-winners-container" class="mb-2">
+                      ${(data.extra_data.winners &&
+                      data.extra_data.winners.length > 0
+                        ? data.extra_data.winners
+                        : [{ rank: 1, team: "", members: "" }]
+                      )
+                        .map(
+                          (w, index) => `
+                          <div class="winner-input-group mb-2 p-2 border border-secondary rounded-3 position-relative">
+                              <div class="d-flex gap-2 mb-2">
+                                  <input type="number" class="form-control form-control-sm w-25 win-rank" placeholder="Sıra" value="${w.rank}">
+                                  <input type="text" class="form-control form-control-sm w-75 win-team" placeholder="Takım Adı" value="${w.team}">
+                              </div>
+                              <input type="text" class="form-control form-control-sm win-members" placeholder="Üyeler (Ali, Veli...)" value="${w.members}">
+                              <button type="button" class="btn btn-link text-danger p-0 position-absolute top-0 end-0 me-2 mt-1" onclick="this.parentElement.remove()">
+                                  <i class="fas fa-times-circle"></i>
+                              </button>
+                          </div>
+                      `,
+                        )
+                        .join("")}
                   </div>
-
-                  <button class="btn btn-publish w-100 py-2" onclick="saveArchiveObject(${id}, '${slug}')">
-                      <i class="fas fa-save me-1"></i> ${isEdit ? "GÜNCELLE" : "SİSTEME EKLE"}
+                  <button type="button" class="btn btn-sm btn-outline-warning w-100 mb-3" onclick="addNewWinnerRow()">
+                      <i class="fas fa-plus me-1"></i> Yeni Derece Ekle
                   </button>
-                  <button class="btn btn-link w-100 mt-2 text-muted btn-sm" onclick="openArchiveManager()">İptal Et</button>
+              `
+                  : ""
+              }
+
+
+              <div class="mt-3">
+                  <label class="form-label extra-small opacity-50 mb-1">Ana Kapak Görseli</label>
+                  <input type="file" id="arc-cover" class="form-control mb-2" accept="image/*">
+
+                  <label class="form-label extra-small opacity-50 mb-1">Galeri Fotoğrafları (Çoklu Seçim)</label>
+                  <input type="file" id="arc-gallery" class="form-control mb-4" multiple accept="image/*">
               </div>
-          `;
+
+              <button class="btn btn-publish w-100 py-2" onclick="saveArchiveObject(${id}, '${slug}')">
+                  <i class="fas fa-save me-1"></i> ${isEdit ? "GÜNCELLE" : "SİSTEME EKLE"}
+              </button>
+              <button class="btn btn-link w-100 mt-2 text-muted btn-sm text-decoration-none" onclick="openArchiveManager()">İptal Et</button>
+          </div>
+        `;
       }
 
+      // --- 2. DİNAMİK SATIR EKLEME ---
+      function addNewWinnerRow() {
+        const container = document.getElementById("col-winners-container");
+        const newRow = document.createElement("div");
+        newRow.className =
+          "winner-input-group mb-2 p-2 border border-secondary rounded-3 position-relative";
+        newRow.innerHTML = `
+            <div class="d-flex gap-2 mb-2">
+                <input type="number" class="form-control form-control-sm w-25 win-rank" placeholder="Sıra">
+                <input type="text" class="form-control form-control-sm w-75 win-team" placeholder="Takım Adı">
+            </div>
+            <input type="text" class="form-control form-control-sm win-members" placeholder="Üyeler (Ali, Veli...)">
+            <button type="button" class="btn btn-link text-danger p-0 position-absolute top-0 end-0 me-2 mt-1" onclick="this.parentElement.remove()">
+                <i class="fas fa-times-circle"></i>
+            </button>
+        `;
+        container.appendChild(newRow);
+      }
+
+      async function openMentorManager() {
+        // Backend'den bu sayfaya veya genel mentör listesine istek at
+        const response = await fetch("/editor/get-all-mentors/");
+        const mentors = await response.json();
+
+        const render = () => {
+          fieldsContainer.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="text-white m-0"><i class="fas fa-user-tie me-2"></i>Mentör Yönetimi</h6>
+            </div>
+
+            <button class="btn btn-sm btn-publish w-100 mb-4 py-2 fw-bold" onclick="renderMentorForm()">
+              <i class="fas fa-plus me-1"></i> YENİ MENTÖR EKLE
+            </button>
+
+            <h6 class="small text-white-50 mb-3 fw-bold uppercase">Mevcut Mentörler</h6>
+            <div class="mentor-list custom-scrollbar" style="max-height: 400px; overflow-y: auto;">
+              ${
+                mentors.length > 0
+                  ? mentors
+                      .map(
+                        (m) => `
+                <div class="edit-card mb-2 p-2" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2 cursor-pointer" onclick="renderMentorForm(${m.id})">
+                      <img src="${m.image || "https://ui-avatars.com/api/?name=" + m.name}" class="rounded-circle" style="width:30px; height:30px; object-fit:cover;">
+                      <div>
+                        <div class="small fw-bold text-white">${m.name}</div>
+                        <div class="extra-small text-white-50">${m.company}</div>
+                      </div>
+                    </div>
+                    <button class="btn btn-sm text-danger border-0" onclick="deleteObject('mentor', ${m.id})">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </div>
+              `,
+                      )
+                      .join("")
+                  : `<div class="text-center text-white-50 py-4 small">Henüz mentör eklenmemiş.</div>`
+              }
+            </div>
+
+            <button class="btn btn-link w-100 mt-2 text-muted btn-sm text-decoration-none" onclick="refreshFrame()">Kapat</button>
+        `;
+        };
+        render();
+      }
+      async function renderMentorForm(id = null) {
+        const isEdit = id !== null;
+        let data = {};
+        if (isEdit) {
+          const res = await fetch(`/editor/get-mentor/${id}/`);
+          data = await res.json();
+        }
+
+        fieldsContainer.innerHTML = `
+            <h6 class="text-white mb-3 small fw-bold">
+                <i class="fas fa-user-edit me-1"></i> ${isEdit ? "Mentörü Güncelle" : "Yeni Mentör Tanımla"}
+            </h6>
+
+            <div class="edit-card">
+                <label class="form-label extra-small opacity-50 mb-1">Ad Soyad</label>
+                <input type="text" id="m-name" class="form-control mb-2" value="${data.name || ""}">
+
+                <label class="form-label extra-small opacity-50 mb-1">Şirket</label>
+                <input type="text" id="m-company" class="form-control mb-2" value="${data.company || ""}">
+
+                <label class="form-label extra-small opacity-50 mb-1">Pozisyon / Ünvan</label>
+                <input type="text" id="m-title" class="form-control mb-2" value="${data.title || ""}">
+
+                <label class="form-label extra-small opacity-50 mb-1">Profil Fotoğrafı Seç</label>
+                <input type="file" id="m-image" class="form-control mb-4" accept="image/*">
+
+                ${isEdit && data.image ? `<div class="mb-3 text-center"><img src="${data.image}" class="rounded-circle" style="width:60px; height:60px; object-fit:cover;"></div>` : ""}
+
+                <button class="btn btn-publish w-100 py-2" onclick="saveMentorObject(${id})">
+                    ${isEdit ? "DEĞİŞİKLİKLERİ KAYDET" : "SİSTEME EKLE"}
+                </button>
+                <button class="btn btn-link w-100 mt-2 text-muted btn-sm" onclick="openMentorManager()">Vazgeç</button>
+            </div>
+        `;
+      }
+      async function saveMentorObject(id = null) {
+        const formData = new FormData();
+        formData.append("name", document.getElementById("m-name").value);
+        formData.append("company", document.getElementById("m-company").value);
+        formData.append("title", document.getElementById("m-title").value);
+
+        // Dosya seçildiyse ekle
+        const imgFile = document.getElementById("m-image").files[0];
+        if (imgFile) {
+          formData.append("image", imgFile);
+        }
+
+        const endpoint = id
+          ? `/editor/update-mentor/${id}/`
+          : "/editor/add-mentor/";
+
+        const res = await fetch(endpoint, {
+          method: "POST",
+          body: formData,
+          headers: { "X-CSRFToken": getCookie("csrftoken") },
+        });
+
+        const result = await res.json();
+        if (result.status === "success") {
+          showNotify("🚀 Mentör ve görseli başarıyla kaydedildi!");
+          openMentorManager();
+          refreshFrame();
+        }
+      }
+
+      // --- 3. KAYDETME MOTORU ---
       async function saveArchiveObject(id = null, slug) {
         const formData = new FormData();
 
@@ -920,30 +1096,40 @@
           document.getElementById("arc-desc").value,
         );
 
-        // Extra Data (Sektör, Kazananlar vb.)
         let extraData = {};
+
+        // SB Sektör İşleme
         if (slug === "sb") {
           const sectorVal = document.getElementById("arc-extra-sectors").value;
           extraData.sectors = sectorVal
             ? sectorVal.split(",").map((s) => s.trim())
             : [];
-        } else if (slug === "col") {
-          try {
-            extraData.winners = JSON.parse(
-              document.getElementById("arc-extra-json").value || "[]",
-            );
-          } catch (e) {
-            showNotify("JSON formatı hatalı!", "error");
-            return;
-          }
         }
+
+        // CoL Kazananlar İşleme (Inputlardan JSON'a)
+        else if (slug === "col") {
+          const winners = [];
+          document.querySelectorAll(".winner-input-group").forEach((group) => {
+            const rank = group.querySelector(".win-rank").value;
+            const team = group.querySelector(".win-team").value;
+            const members = group.querySelector(".win-members").value;
+            if (team) {
+              winners.push({
+                rank: parseInt(rank) || 1,
+                team: team,
+                members: members,
+              });
+            }
+          });
+          extraData.winners = winners;
+        }
+
         formData.append("extra_data_raw", JSON.stringify(extraData));
 
-        // Ana Kapak
+        // Dosya İşlemleri
         const cover = document.getElementById("arc-cover").files[0];
         if (cover) formData.append("cover_image", cover);
 
-        // ÇOKLU GALERİ (Döngü ile append)
         const galleryFiles = document.getElementById("arc-gallery").files;
         for (let i = 0; i < galleryFiles.length; i++) {
           formData.append("gallery_images", galleryFiles[i]);
@@ -963,8 +1149,8 @@
           const result = await res.json();
           if (result.status === "success") {
             showNotify("🚀 İşlem Başarılı!");
-            openArchiveManager(); // Listeye dön
-            refreshFrame(); // Iframe'i yenile
+            openArchiveManager();
+            refreshFrame();
           } else {
             showNotify("Hata: " + result.message, "error");
           }
@@ -1060,6 +1246,16 @@
             "is_active",
             document.querySelector('[data-id="ann-active"]').checked,
           );
+          const extraData = {};
+          const imgInput = document.querySelector('[data-id="ann-img"]');
+          const deadlineInput = document.querySelector(
+            '[data-id="ann-deadline"]',
+          );
+
+          if (imgInput) extraData.img_url = imgInput.value;
+          if (deadlineInput) extraData.deadline = deadlineInput.value;
+
+          formData.append("extra_data_raw", JSON.stringify(extraData));
         }
 
         try {
@@ -1109,6 +1305,8 @@
             magazine: `/editor/delete-magazine/${id}/`,
             announcement: `/editor/delete-announcement/${id}/`,
             sponsor: `/editor/delete-sponsor/${id}/`,
+            archive: `/editor/delete-archive/${id}/`,
+            mentor: `/editor/delete-mentor/${id}/`,
           };
 
           const endpoint = endpoints[type];

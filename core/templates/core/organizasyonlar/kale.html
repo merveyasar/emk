@@ -1,16 +1,16 @@
 {% extends 'base.html' %} {% load static %} {% block title %}KALE | Liderlik
 Kampı - KOÜ EMK{% endblock %} {% block content %}
+
 <style>
   :root {
-    --kale-accent: #f28c28;
-    --kale-glass: rgba(255, 255, 255, 0.04);
-    --kale-border: rgba(255, 255, 255, 0.1);
+    --accent-color: #f28c28;
+    --glass: rgba(255, 255, 255, 0.03);
   }
 
-  /* Hero & Bento Section */
-  .kale-bento-hero {
+  /* 1. Hero & Layout */
+  .hero-glass-section {
     position: relative;
-    padding: 180px 0 100px;
+    padding: 160px 0 100px;
     background:
       radial-gradient(
         circle at bottom left,
@@ -18,135 +18,156 @@ Kampı - KOÜ EMK{% endblock %} {% block content %}
         transparent
       ),
       #0f1012;
-    border-radius: 0 0 100px 100px;
+    border-radius: 0 0 80px 80px;
     margin-top: -100px;
     overflow: hidden;
   }
-
-  .hero-bg-layer {
+  .hero-glass-section::before {
+    content: "";
     position: absolute;
     inset: 0;
     background: url("{{ page_data.hero_img|default:'https://images.unsplash.com/photo-1517048676732-d65bc937f952' }}")
       center/cover no-repeat;
     opacity: 0.15;
-    filter: contrast(1.2) brightness(0.8);
+    filter: contrast(1.1) blur(3px);
   }
 
-  /* Bento Stat Grid */
-  .kale-stats-container {
+  /* 2. Bento Stats */
+  .bento-stat-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-    margin: 60px 0;
+    gap: 20px;
+    margin-top: 50px;
+  }
+  .bento-stat-card {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 30px;
+    padding: 35px;
+    transition: 0.4s ease;
   }
 
-  .kale-stat-box {
-    background: var(--kale-glass);
-    backdrop-filter: blur(30px);
-    border: 1px solid var(--kale-border);
+  /* 3. Inline Detail Panel */
+  .detail-preview-panel {
+    display: none;
+    background: #161719;
     border-radius: 40px;
-    padding: 40px;
-    transition: all 0.5s ease;
+    margin-bottom: 50px;
+    border: 1px solid var(--accent-color);
+    overflow: hidden;
+    animation: slideDown 0.6s cubic-bezier(0.2, 1, 0.2, 1);
+  }
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  /* Horizontal Story Cards */
-  .kale-story-wrapper {
+  /* 4. Story Scroll */
+  .story-scroll-container {
     display: flex;
-    gap: 40px;
+    gap: 30px;
     overflow-x: auto;
-    padding: 40px 0 80px;
-    scroll-behavior: smooth;
+    padding: 20px 0 60px;
     scrollbar-width: none;
   }
-  .kale-story-wrapper::-webkit-scrollbar {
+  .story-scroll-container::-webkit-scrollbar {
     display: none;
   }
 
-  .kale-story-card {
-    flex: 0 0 480px;
-    height: 600px;
+  .story-card {
+    flex: 0 0 400px;
+    height: 550px;
     position: relative;
-    border-radius: 50px;
+    border-radius: 40px;
     overflow: hidden;
     cursor: pointer;
-    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
   }
-
-  .kale-story-card img {
+  .story-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: 1.5s ease;
+    transition: 1.2s;
   }
-  .kale-story-card:hover img {
-    transform: scale(1.1) rotate(-1deg);
+  .story-card:hover img {
+    transform: scale(1.1);
   }
 
-  .kale-story-content {
+  .story-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      to top,
-      rgba(15, 16, 18, 0.95) 5%,
-      transparent 50%
-    );
+    padding: 40px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent 60%);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 50px;
   }
-
-  .ls-2 {
-    letter-spacing: 2px;
-  }
-  .uppercase {
-    text-transform: uppercase;
+  .year-tag {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: var(--accent-color);
+    color: #000;
+    font-weight: 800;
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    z-index: 5;
   }
 </style>
 
 <div
+  id="target_date_storage"
+  data-id="target_date"
+  data-editable="Sayaç Tarihi (Format: YYYY-MM-DD HH:MM:SS)"
+  style="display: none"
+>
+  {{ page_data.target_date|default:"2026-05-13 09:00:00" }}
+</div>
+
+<div
   class="kale-master-wrapper"
   data-model="PageContent,OrganizationArchive"
+  data-sub-model="KALE"
   data-path="{{ request.path }}"
 >
-  <!-- Hero & Bento Stats -->
-  <section class="kale-bento-hero">
-    <div class="hero-bg-layer"></div>
-    <div class="container position-relative z-index-10">
-      <div class="text-center mb-5">
-        <h1
-          class="display-1 fw-bold text-white mb-2"
-          data-id="hero_title"
-          data-editable="Hero Başlığı"
-        >
-          <!-- prettier-ignore -->
-          {{ page_data.hero_title|default:"KALE" }}
-        </h1>
-        <p
-          class="text-accent fw-bold ls-4 uppercase mb-4"
-          style="color: var(--kale-accent)"
-          data-id="hero_motto"
-          data-editable="Hero Motto"
-        >
-          <!-- prettier-ignore -->
-          {{ page_data.hero_motto|default:"Kaliteni Göster • Araştır • Lider Ol • Etkile" }}
-        </p>
+  <section class="hero-glass-section">
+    <div class="container position-relative z-index-10 text-center">
+      <h1
+        class="display-1 fw-bold text-white mb-2"
+        data-id="hero_title"
+        data-editable="Hero Başlığı"
+      >
+        {{ page_data.hero_title|default:"KALE" }}
+      </h1>
+      <p
+        class="text-accent fw-bold ls-4 uppercase mb-5"
+        style="color: var(--accent-color)"
+        data-id="hero_motto"
+        data-editable="Hero Motto"
+      >
+        <!--prettier-ignore-->
+        {{ page_data.hero_motto|default:"Kaliteni Göster • Araştır • Lider Ol • Etkile" }}
+      </p>
 
-        <!-- Minimalist Countdown -->
-        <div
-          class="d-flex justify-content-center gap-3 text-white opacity-50 small fw-bold"
-          id="kale-countdown-minimal"
-        >
-          <span id="k-days">00</span> GÜN : <span id="k-hours">00</span> SAAT :
-          <span id="k-mins">00</span> DK
-        </div>
+      <div
+        class="d-flex justify-content-center gap-4 text-white-50 mb-5 fw-bold ls-2"
+      >
+        <span id="k-days">00</span> GÜN : <span id="k-hours">00</span> SAAT :
+        <span id="k-mins">00</span> DK
       </div>
 
-      <!-- Bento Grid Stats -->
-      <div class="kale-stats-container">
-        <div class="kale-stat-box">
+      <div class="bento-stat-grid">
+        <div class="bento-stat-card">
           <h2
-            class="text-white display-4 fw-bold mb-1"
+            class="text-white display-5 fw-bold"
             data-id="stat_1"
             data-editable="Stat 1"
           >
@@ -155,18 +176,18 @@ Kampı - KOÜ EMK{% endblock %} {% block content %}
           <p class="text-white-50 uppercase small ls-2 mb-0">Yıllık Gelişim</p>
         </div>
         <div
-          class="kale-stat-box"
+          class="bento-stat-card"
           style="
             background: linear-gradient(
               135deg,
-              rgba(242, 140, 40, 0.15),
+              rgba(242, 140, 40, 0.1),
               transparent
             );
           "
         >
           <h2
-            class="fw-bold display-4 mb-1"
-            style="color: var(--kale-accent)"
+            style="color: var(--accent-color)"
+            class="display-5 fw-bold"
             data-id="stat_2"
             data-editable="Stat 2"
           >
@@ -174,9 +195,9 @@ Kampı - KOÜ EMK{% endblock %} {% block content %}
           </h2>
           <p class="text-white-50 uppercase small ls-2 mb-0">Mezun Liderimiz</p>
         </div>
-        <div class="kale-stat-box">
+        <div class="bento-stat-card">
           <h2
-            class="text-white display-4 fw-bold mb-1"
+            class="text-white display-5 fw-bold"
             data-id="stat_3"
             data-editable="Stat 3"
           >
@@ -186,36 +207,35 @@ Kampı - KOÜ EMK{% endblock %} {% block content %}
         </div>
       </div>
 
-      <!-- Hakkında & Vizyon Alanı (Bento Altı) -->
       <div class="row justify-content-center mt-5">
-        <div class="col-lg-10">
+        <div class="col-lg-12">
           <div
-            class="kale-stat-box text-start border-0"
+            class="bento-stat-card text-start border-0"
             style="background: rgba(255, 255, 255, 0.02)"
           >
             <div class="row g-4 align-items-center">
               <div class="col-md-7 border-end border-white-10">
                 <h6
-                  class="text-accent fw-bold uppercase ls-2 mb-3"
-                  style="color: var(--kale-accent)"
+                  class="fw-bold uppercase ls-2 mb-3"
+                  style="color: var(--accent-color)"
                 >
                   NEDİR?
                 </h6>
                 <h2
                   class="text-white fw-bold mb-3"
-                  id="p_about_title"
+                  data-id="p_about_title"
                   data-editable="Nedir Başlık"
                 >
-                  <!-- prettier-ignore -->
+                  <!--prettier-ignore-->
                   {{ page_data.p_about_title|default:"Liderlik Kültürünün Dijital Kampı" }}
                 </h2>
                 <p
-                  class="text-white-50 lh-lg"
-                  id="p_about_desc"
+                  class="text-white-50 lh-lg mb-0"
+                  data-id="p_about_desc"
                   data-editable="Nedir Açıklama"
                 >
-                  <!-- prettier-ignore -->
-                  {{ page_data.p_about_desc|default:"KALE, üniversitemizin en köklü liderlik ve gelişim kampıdır. Katılımcılarına sadece teknik bilgi değil, aynı zamanda kriz yönetimi, takım çalışması ve vizyoner liderlik yetkinliklerini kazandıran bir ekosistemdir." }}
+                  <!--prettier-ignore-->
+                  {{ page_data.p_about_desc|default:"KALE, üniversitemizin en köklü liderlik ve gelişim kampıdır. Katılımcılarına sadece teknik bilgi değil, aynı zamanda kriz yönetimi, takım çalışması ve vizyoner liderlik yetkinliklerini kazandırır." }}
                 </p>
               </div>
               <div class="col-md-5 ps-md-5">
@@ -223,29 +243,29 @@ Kampı - KOÜ EMK{% endblock %} {% block content %}
                   VİZYONUMUZ
                 </h6>
                 <div class="d-flex gap-3 mb-4">
-                  <div class="text-accent" style="color: var(--kale-accent)">
-                    <i class="fas fa-crown"></i>
+                  <div style="color: var(--accent-color)">
+                    <i class="fas fa-crown fa-lg"></i>
                   </div>
                   <p
                     class="text-white-50 small mb-0"
-                    id="p_vision_1"
+                    data-id="p_vision_1"
                     data-editable="Vizyon 1"
                   >
-                    Mühendis adaylarını yönetim kadrolarına hazırlayan bir
-                    basamak olmak.
+                    Türkiye'nin lider mühendislerini yetiştiren öncü ekosistem
+                    olmak.
                   </p>
                 </div>
                 <div class="d-flex gap-3">
-                  <div class="text-accent" style="color: var(--kale-accent)">
-                    <i class="fas fa-users"></i>
+                  <div style="color: var(--accent-color)">
+                    <i class="fas fa-users fa-lg"></i>
                   </div>
                   <p
                     class="text-white-50 small mb-0"
-                    id="p_vision_2"
+                    data-id="p_vision_2"
                     data-editable="Vizyon 2"
                   >
-                    Güçlü bir mezun-öğrenci ağı oluşturarak profesyonel bağları
-                    optimize etmek.
+                    Güçlü mezun-öğrenci ağıyla profesyonel bağları optimize
+                    etmek.
                   </p>
                 </div>
               </div>
@@ -256,66 +276,139 @@ Kampı - KOÜ EMK{% endblock %} {% block content %}
     </div>
   </section>
 
-  <!-- Story Archive Section -->
-  <section class="py-5 mt-5">
+  <section class="py-5">
     <div class="container">
-      <div class="d-flex justify-content-between align-items-end mb-4 px-3">
+      <div class="d-flex justify-content-between align-items-end mb-4 px-2">
         <div>
-          <h2 class="text-white fw-bold display-4">KALE Arşivi</h2>
-          <p class="text-white-50">Yıllara göre liderlik yolculuğumuz.</p>
+          <h2 class="text-warning fw-bold display-5">KALE Arşivi</h2>
+          <p class="text-white-50 small">
+            Geçmişten günümüze liderlik serüveni.
+          </p>
         </div>
-        <div class="d-flex gap-2">
+        <div class="archive-pills d-flex gap-2">
           <button
-            class="btn btn-outline-light rounded-circle"
-            onclick="scrollStory(-400)"
+            class="btn btn-outline-warning rounded-pill px-4 active"
+            data-filter="all"
           >
-            <i class="fas fa-chevron-left"></i>
+            Tümü
           </button>
+          {% for year in years %}
           <button
-            class="btn btn-outline-light rounded-circle"
-            onclick="scrollStory(400)"
+            class="btn btn-outline-warning rounded-pill px-4"
+            data-filter="{{ year }}"
           >
-            <i class="fas fa-chevron-right"></i>
+            {{ year }}
           </button>
+          {% endfor %}
         </div>
       </div>
 
-      <div class="kale-story-wrapper" id="kaleStoryContainer">
+      <div class="story-scroll-container">
         {% for archive in archives %}
         <div
-          class="kale-story-card"
-          onclick="openSBArchiveModal({{ archive.id }})"
+          class="story-card archive-item"
+          data-year="{{ archive.year }}"
+          onclick="showInlineDetail({{ archive.id }})"
+          role="button"
         >
-          <div class="kale-year-badge">{{ archive.year }}</div>
-          <img src="{{ archive.cover_image.url }}" alt="{{ archive.motto }}" />
-          <div class="kale-story-content">
-            <h3 class="text-white fw-bold mb-3">{{ archive.motto }}</h3>
-            <p class="text-white-50 mb-0 small">
-              {{ archive.description|truncatewords:15 }}
+          <div class="year-tag">{{ archive.year }}</div>
+          <img
+            src="{{ archive.cover_image.url }}"
+            alt="{{ archive.motto }}"
+            loading="lazy"
+          />
+          <div class="story-overlay">
+            <h3 class="text-white fw-bold mb-1">{{ archive.motto }}</h3>
+            <p class="text-white-50 small mb-0">
+              {{ archive.description|truncatewords:10 }}
             </p>
+            <div class="text-warning mt-2 small fw-bold opacity-75">
+              <i class="fas fa-search-plus me-1"></i> İNCELE
+            </div>
           </div>
         </div>
         {% endfor %}
+      </div>
+
+      <div id="inlineDetail" class="detail-preview-panel">
+        <div id="detailContent"></div>
       </div>
     </div>
   </section>
 </div>
 
 <script>
-  function scrollStory(distance) {
-    document
-      .getElementById("kaleStoryContainer")
-      .scrollBy({ left: distance, behavior: "smooth" });
+  async function showInlineDetail(id) {
+    const panel = document.getElementById("inlineDetail");
+    const content = document.getElementById("detailContent");
+    panel.style.display = "block";
+    panel.scrollIntoView({ behavior: "smooth", block: "center" });
+    content.innerHTML = `<div class="p-5 text-center text-white my-5"><i class="fas fa-circle-notch fa-spin fa-3x text-warning"></i></div>`;
+
+    try {
+      const res = await fetch(`/editor/get-archive/${id}/`);
+      const data = await res.json();
+
+      let galleryHTML =
+        data.extra_data?.images
+          ?.map(
+            (img) => `
+        <div class="col-4 p-1">
+          <div class="ratio ratio-1x1 rounded-3 overflow-hidden border border-secondary shadow-sm">
+            <img src="${img}" class="w-100 h-100 object-fit-cover" style="cursor:zoom-in" onclick="window.open('${img}', '_blank')">
+          </div>
+        </div>
+      `,
+          )
+          .join("") || "";
+
+      content.innerHTML = `
+      <div class="row g-0">
+        <div class="col-md-5" style="background:url('${data.cover_url}') center/cover no-repeat; min-height:450px;"></div>
+        <div class="col-md-7 p-4 p-md-5 text-white position-relative d-flex flex-column justify-content-center">
+          <button onclick="closeDetail()" class="btn btn-link text-white position-absolute top-0 end-0 m-4 opacity-50 hover-opacity-100"><i class="fas fa-times fa-lg"></i></button>
+          <div class="mb-2">
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold mb-3">${data.year}</span>
+            <h2 class="display-5 fw-bold mb-3">${data.motto}</h2>
+          </div>
+          <p class="text-white-50 lh-lg mb-4" style="font-size: 1.05rem;">${data.description || "Bu dönem için henüz bir açıklama girilmemiş."}</p>
+          <h6 class="extra-small fw-bold ls-2 text-white-50 mb-3 uppercase">ETKİNLİK GALERİSİ</h6>
+          <div class="row g-1">${galleryHTML || '<p class="text-warning small">Görsel bulunamadı.</p>'}</div>
+        </div>
+      </div>`;
+    } catch (e) {
+      content.innerHTML = `<div class="p-5 text-center text-danger"><i class="fas fa-exclamation-triangle fa-2x mb-3"></i><p>Hata oluştu.</p></div>`;
+    }
   }
 
-  /* Sayaç (KALE Hedefi) */
-  const kaleTargetDate = new Date(
-    "{{ page_data.kale_target|default:'May 13, 2026 09:00:00' }}",
-  ).getTime();
-  function updateKaleTimer() {
-    const now = new Date().getTime();
-    const diff = kaleTargetDate - now;
-    if (diff < 0) return;
+  function closeDetail() {
+    document.getElementById("inlineDetail").style.display = "none";
+  }
+
+  // Filter Logic
+  document.querySelectorAll("[data-filter]").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const year = this.getAttribute("data-filter");
+      document.querySelectorAll(".archive-item").forEach((item) => {
+        item.style.display =
+          year === "all" || item.getAttribute("data-year") === year
+            ? "block"
+            : "none";
+      });
+      document
+        .querySelectorAll("[data-filter]")
+        .forEach((b) => b.classList.remove("active"));
+      this.classList.add("active");
+    });
+  });
+
+  // Timer Engine
+  /* prettier-ignore */
+  const targetDate = new Date(document.getElementById("target_date_storage").innerText.trim() || "{{ page_data.target_date|default:'2026-05-13 09:00:00' }}").getTime();
+
+  function updateTimer() {
+    const diff = targetDate - new Date().getTime();
+    if (isNaN(targetDate) || diff < 0) return;
     document.getElementById("k-days").innerText = String(
       Math.floor(diff / 86400000),
     ).padStart(2, "0");
@@ -326,7 +419,8 @@ Kampı - KOÜ EMK{% endblock %} {% block content %}
       Math.floor((diff % 3600000) / 60000),
     ).padStart(2, "0");
   }
-  setInterval(updateKaleTimer, 1000);
-  updateKaleTimer();
+  setInterval(updateTimer, 1000);
+  updateTimer();
 </script>
+
 {% endblock %}

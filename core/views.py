@@ -8,7 +8,7 @@ from django.core.files.storage import default_storage
 from .models import (
     OrganizationEvent, OrganizationArchive, 
     TeamMember, PageContent, Magazine, 
-    Announcement, Sponsor
+    Announcement, Sponsor, Mentor
 )
 
 def sb(request):
@@ -84,17 +84,44 @@ def teknik_gezi(request):
 
 def egitim_seminerleri(request):
     # Sayfa genel içerikleri (Hero vs.)
+    event, _ = OrganizationEvent.objects.get_or_create(
+        slug='egitim-seminerleri', 
+        defaults={'name': 'Eğitim ve Seminerler', 'description': 'Eğitim ve seminer etkinliklerimiz.'}
+    )
+    
     content, _ = PageContent.objects.get_or_create(path=request.path)
     
     # Aktif Duyurular/Eğitimler (Modelin is_active ise filtrele)
     # Burada Announcement modelini veya özel bir Education modelini kullanabilirsin
-    egitimler = Announcement.objects.filter(category='ETKINLIK', is_active=True).order_by('-created_at')
+    egitimler = Announcement.objects.filter(category='EGITIM', is_active=True).order_by('-created_at')
+
+    from datetime import datetime
+    bugun = datetime.now().date()
+    for edu in egitimler:
+        deadline_str = edu.extra_data.get('deadline')
+        if deadline_str:
+            try:
+                # String'i gerçek tarih objesine çeviriyoruz
+                deadline_date = datetime.strptime(deadline_str, '%Y-%m-%d').date()
+                
+                print(f"Deadline: {deadline_date}, Bugün: {bugun}") # Debug için
+                edu.is_expired = deadline_date < bugun
+            except ValueError:
+                # Eğer tarih formatı bozuksa güvenlik için süresi dolmuş sayalım
+                edu.is_expired = True
+        else:
+            # Deadline girilmemişse her zaman açık kalsın
+            edu.is_expired = False
+    archives = event.archives.all().order_by('-year')
+    years = event.archives.values_list('year', flat=True).distinct().order_by('-year')
 
     return render(request, 'core/organizasyonlar/egitim_seminerleri.html', {
         'page_data': content.data,
         'egitimler': egitimler,
+        'archives': archives,
+        'years': years,
     })
-
+    
 def gdkg(request):
     event, _ = OrganizationEvent.objects.get_or_create(
         slug='gdkg', 
@@ -137,14 +164,85 @@ def mentorship(request):
     
     # Mentör portföyü ve galeri verilerini içeren arşiv nesnelerini çekiyoruz
     archives = event.archives.all().order_by('-year')
+    mentors = Mentor.objects.filter(is_active=True).order_by('-id') # Tüm aktif mentörler (son eklenen üstte)
 
     return render(request, 'core/organizasyonlar/mentorship.html', {
         'page_data': content.data,
         'archives': archives,
+        'mentors': mentors,
     })
-     
+
+def get_all_mentors(request):
+    """Editör panelindeki listeleme için"""
+    mentors = Mentor.objects.all().order_by('-id')
+    data = [{
+        'id': m.id,
+        'name': m.name,
+        'company': m.company,
+        'title': m.title,
+        'image': m.image # URLField olarak tuttuğunu varsayıyorum
+    } for m in mentors]
+    return JsonResponse(data, safe=False)
+
+def get_mentor_detail(request, pk):
+    """Düzenleme formu açıldığında verileri doldurmak için"""
+    m = get_object_or_404(Mentor, pk=pk)
+    return JsonResponse({
+        'id': m.id,
+        'name': m.name,
+        'company': m.company,
+        'title': m.title,
+        'image': m.image
+    })
+
+@csrf_exempt
+@require_POST
+def add_mentor(request):
+    try:
+        Mentor.objects.create(
+            name=request.POST.get('name'),
+            company=request.POST.get('company'),
+            title=request.POST.get('title'),
+            image=request.FILES.get('image') # URL değil, dosya objesi aldık
+        )
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
+
+@csrf_exempt
+@require_POST
+def update_mentor(request, pk):
+    try:
+        m = get_object_or_404(Mentor, pk=pk)
+        m.name = request.POST.get('name')
+        m.company = request.POST.get('company')
+        m.title = request.POST.get('title')
+        
+        # Eğer yeni bir görsel seçildiyse güncelle
+        if 'image' in request.FILES:
+            m.image = request.FILES['image']
+            
+        m.save()
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
+    
+@csrf_exempt
+@require_POST
+def delete_mentor(request, pk):
+    """Mentör Silme"""
+    try:
+        m = get_object_or_404(Mentor, pk=pk)
+        m.delete()
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
+  
 
 def get_all_archives(request, slug):
+    
+    events = OrganizationEvent.objects.all()
+    print([event.slug for event in events]) # Debug: Organizasyon etkinliklerini kontrol et
     # Belirli bir organizasyonun tüm yıllarını getirir
     event = get_object_or_404(OrganizationEvent, slug=slug)
     archives = event.archives.all().order_by('-year')
@@ -182,34 +280,48 @@ def save_archive(request, pk=None):
     archive.motto = request.POST.get('motto')
     archive.description = request.POST.get('description')
     
-    # Mevcut extra_data'yı al veya boş sözlük oluştur
+    # Mevcut extra_data'yı al
     extra = archive.extra_data or {}
 
-    # --- KRİTİK: ÇOKLU GÖRSEL İŞLEME ---
-    gallery_paths = extra.get('images', []) # Eskiler kalsın istiyorsan
-    
-    # "gallery_images" adıyla gönderilen tüm dosyaları dön
+    # 1. ÇOKLU GÖRSEL İŞLEME
+    gallery_paths = extra.get('images', []) 
     files = request.FILES.getlist('gallery_images')
     for f in files:
-        path = default_storage.save(f'org/gallery/{f.name}', f)
+        # Dosya ismi çakışmaması için slug ve yıl ekleyerek kaydedebiliriz
+        path = default_storage.save(f'org/gallery/{slug}_{archive.year}_{f.name}', f)
         gallery_paths.append(f'/media/{path}')
     
-    extra['images'] = gallery_paths # Listeyi JSON'a ekle
+    extra['images'] = gallery_paths 
     
-    # Diğer verileri de (sektörler, kazananlar) ekle
+    # 2. EK VERİLERİ (Sektörler, Kazananlar vb.) GÜNCELLE
     extra_json = request.POST.get('extra_data_raw')
     if extra_json:
-        extra.update(json.loads(extra_json))
+        # JSON'dan gelen veriyi mevcut extra_data ile birleştir
+        # (Örn: winners veya sectors listesini günceller)
+        new_data = json.loads(extra_json)
+        extra.update(new_data)
 
     archive.extra_data = extra
 
-    # Ana Kapak Fotoğrafı
+    # 3. ANA KAPAK FOTOĞRAFI
     if 'cover_image' in request.FILES:
         archive.cover_image = request.FILES['cover_image']
             
     archive.save()
-    return JsonResponse({'status': 'success'})  
-      
+    return JsonResponse({'status': 'success'})
+
+@csrf_exempt
+@require_POST
+def delete_archive(request, pk):
+    """Sadece Arşiv Silen Özel View"""
+    try:
+        archive = get_object_or_404(OrganizationArchive, pk=pk)
+        archive.delete()
+        return JsonResponse({'status': 'success', 'message': 'Arşiv silindi.'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
+
+
 def dashboard(request):
     content, _ = PageContent.objects.get_or_create(path='/')
     
@@ -246,17 +358,25 @@ def get_announcement(request, pk):
         'title': a.title,
         'text': a.text,
         'link': a.link,
+        'extra_data': a.extra_data, # img_url, deadline gibi esnek veriler burada
         'is_active': a.is_active
     })
 
 def add_announcement(request):
     if request.method == 'POST':
+        # extra_data'yı JSON olarak al
+        extra_data = {}
+        extra_data_raw = request.POST.get('extra_data_raw')
+        if extra_data_raw:
+            extra_data = json.loads(extra_data_raw)
+
         Announcement.objects.create(
             category=request.POST.get('category'),
             title=request.POST.get('title'),
             text=request.POST.get('text'),
             link=request.POST.get('link'),
-            is_active=request.POST.get('is_active') == 'true'
+            is_active=request.POST.get('is_active') == 'true',
+            extra_data=extra_data # Modele kaydet
         )
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'}, status=400)
@@ -264,6 +384,12 @@ def add_announcement(request):
 def update_announcement(request, pk):
     if request.method == 'POST':
         a = get_object_or_404(Announcement, pk=pk)
+        
+        # extra_data güncellemesi
+        extra_data_raw = request.POST.get('extra_data_raw')
+        if extra_data_raw:
+            a.extra_data = json.loads(extra_data_raw)
+
         a.category = request.POST.get('category')
         a.title = request.POST.get('title')
         a.text = request.POST.get('text')

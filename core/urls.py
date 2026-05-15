@@ -12,12 +12,18 @@ urlpatterns = [
     path('organizasyonlar/col/', views.col, name='col'),
     path('organizasyonlar/mentorship/', views.mentorship, name='mentorship'),
     
+    path('editor/get-all-mentors/', views.get_all_mentors, name='get_all_mentors'),
+    path('editor/get-mentor/<int:pk>/', views.get_mentor_detail, name='get_mentor_detail'),
+    path('editor/add-mentor/', views.add_mentor, name='add_mentor'),
+    path('editor/update-mentor/<int:pk>/', views.update_mentor, name='update_mentor'),
+    path('editor/delete-mentor/<int:pk>/', views.delete_mentor, name='delete_mentor'),
+    
     
     path('editor/get-all-archives/<slug:slug>/', views.get_all_archives, name='get_all_archives'),
     path('editor/get-archive/<int:pk>/', views.get_archive_detail, name='get_archive_detail'),
     path('editor/save-archive/', views.save_archive, name='add_archive'),
     path('editor/save-archive/<int:pk>/', views.save_archive, name='update_archive'),
-    
+    path('editor/delete-archive/<int:pk>/', views.delete_archive, name='delete_archive'),
     
     path('', views.dashboard, name='dashboard'),
     

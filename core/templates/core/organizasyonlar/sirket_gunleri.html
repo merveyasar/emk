@@ -1,16 +1,16 @@
 {% extends 'base.html' %} {% load static %} {% block title %}Şirket Günleri |
 Kariyerin Zirvesi - KOÜ EMK{% endblock %} {% block content %}
+
 <style>
   :root {
-    --sg-accent: #f28c28;
-    --sg-glass: rgba(255, 255, 255, 0.03);
-    --sg-border: rgba(255, 255, 255, 0.08);
+    --accent-color: #f28c28;
+    --glass: rgba(255, 255, 255, 0.03);
   }
 
   /* 1. Career Hero Section */
-  .sg-bento-hero {
+  .hero-glass-section {
     position: relative;
-    padding: 180px 0 100px;
+    padding: 160px 0 100px;
     background:
       radial-gradient(
         circle at top left,
@@ -18,179 +18,195 @@ Kariyerin Zirvesi - KOÜ EMK{% endblock %} {% block content %}
         transparent
       ),
       #0f1012;
-    border-radius: 0 0 100px 100px;
+    border-radius: 0 0 80px 80px;
     margin-top: -100px;
     overflow: hidden;
   }
-
-  .hero-bg-layer {
+  .hero-glass-section::before {
+    content: "";
     position: absolute;
     inset: 0;
     background: url("{{ page_data.hero_img|default:'https://images.unsplash.com/photo-1511578314322-379afb476865' }}")
       center/cover no-repeat;
     opacity: 0.15;
-    filter: grayscale(1) contrast(1.1);
+    filter: grayscale(1) contrast(1.1) blur(3px);
   }
 
-  /* 2. Bento Grid Stats */
-  .sg-stats-container {
+  /* 2. Bento Stats */
+  .bento-stat-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
-    margin: 60px 0;
+    margin-top: 50px;
   }
-
-  .sg-stat-box {
-    background: var(--sg-glass);
+  .bento-stat-card {
+    background: var(--glass);
     backdrop-filter: blur(25px);
-    border: 1px solid var(--sg-border);
-    border-radius: 35px;
-    padding: 35px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 30px;
+    padding: 30px;
     transition: 0.4s ease;
   }
-  .sg-stat-box:hover {
-    transform: translateY(-8px);
-    border-color: var(--sg-accent);
+
+  /* 3. INLINE DETAIL PANEL (Büyüteç) */
+  .detail-preview-panel {
+    display: none;
+    background: #161719;
+    border-radius: 40px;
+    margin-bottom: 50px;
+    border: 1px solid var(--accent-color);
+    overflow: hidden;
+    animation: slideDown 0.6s cubic-bezier(0.2, 1, 0.2, 1);
+  }
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  /* 3. Company Logo Grid */
-  .company-logo-card {
-    background: white;
-    border-radius: 20px;
-    height: 120px;
+  /* 4. Story Scroll (Logo veya Kart Görünümü İçin) */
+  .story-scroll-container {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    transition: 0.3s;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    gap: 30px;
+    overflow-x: auto;
+    padding: 20px 0 60px;
+    scrollbar-width: none;
   }
-  .company-logo-card img {
-    max-width: 100%;
-    max-height: 100%;
-    filter: grayscale(1);
-    opacity: 0.6;
-    transition: 0.3s;
-  }
-  .company-logo-card:hover img {
-    filter: grayscale(0);
-    opacity: 1;
-  }
-  .company-logo-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
+  .story-scroll-container::-webkit-scrollbar {
+    display: none;
   }
 
-  /* Tablo ve Filtreleme Pills */
-  .filter-pills .nav-link {
-    color: #86868b;
-    font-weight: 600;
-    border-radius: 12px;
-    padding: 10px 25px;
-    margin: 0 5px;
-    background: #f5f5f7;
-    border: none;
+  .story-card {
+    flex: 0 0 400px;
+    height: 500px;
+    position: relative;
+    border-radius: 40px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
   }
-  .filter-pills .nav-link.active {
-    background: var(--sg-accent) !important;
-    color: white !important;
+  .story-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 1s;
+  }
+  .story-card:hover img {
+    transform: scale(1.1);
+  }
+
+  .story-overlay {
+    position: absolute;
+    inset: 0;
+    padding: 40px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent 60%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .year-tag {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: var(--accent-color);
+    color: #000;
+    font-weight: 800;
+    padding: 8px 20px;
+    border-radius: 100px;
   }
 
   @media (max-width: 992px) {
-    .sg-stats-container {
+    .bento-stat-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 </style>
 
 <div
+  id="target_date_storage"
+  data-id="target_date"
+  data-editable="Sayaç Tarihi (Format: YYYY-MM-DD HH:MM:SS)"
+  style="display: none"
+>
+  {{ page_data.target_date|default:"2026-04-10 09:00:00" }}
+</div>
+
+<div
   class="sg-master-wrapper"
   data-model="PageContent,OrganizationArchive"
+  data-sub-model="SG"
   data-path="{{ request.path }}"
 >
-  <!-- Hero & Bento Stats -->
-  <section class="sg-bento-hero">
-    <div class="hero-bg-layer"></div>
+  <section class="hero-glass-section">
     <div class="container position-relative z-index-10 text-center">
       <h1
         class="display-2 fw-bold text-white mb-3"
         data-id="hero_title"
         data-editable="Hero Başlığı"
       >
+        <!--prettier-ignore-->
         {{ page_data.hero_title|default:"ŞİRKET GÜNLERİ" }}
       </h1>
-      <p
-        class="text-white-50 fs-5 mx-auto mb-5"
-        style="max-width: 700px"
-        data-id="hero_subtitle"
-        data-editable="Hero Alt Başlık"
-      >
-        <!-- prettier-ignore -->
-        {{ page_data.hero_subtitle|default:"Kocaeli Üniversitesi'nin en geniş kapsamlı kariyer ve istihdam fuarı." }}
-      </p>
 
-      <!-- Minimal Countdown -->
       <div
-        class="d-flex justify-content-center gap-4 text-white-50 small fw-bold ls-2 mb-5"
+        class="d-flex justify-content-center gap-4 text-white-50 mb-5 fw-bold ls-2"
       >
-        <span id="sg-days">00</span> GÜN : <span id="sg-hours">00</span> SAAT :
-        <span id="sg-mins">00</span> DK
+        <span id="k-days">00</span> GÜN : <span id="k-hours">00</span> SAAT :
+        <span id="k-mins">00</span> DK
       </div>
 
-      <!-- Bento Grid Stats -->
-      <div class="sg-stats-container">
-        <div class="sg-stat-box">
+      <div class="bento-stat-grid">
+        <div class="bento-stat-card">
           <h2
-            class="text-white fw-bold mb-1"
+            class="text-white fw-bold"
             data-id="stat_1"
             data-editable="Stat 1"
           >
             {{ page_data.stat_1|default:"50+" }}
           </h2>
-          <p class="text-white-50 uppercase small ls-1 mb-0">Katılımcı Firma</p>
+          <p class="text-white-50 small uppercase ls-1">Katılımcı Firma</p>
         </div>
         <div
-          class="sg-stat-box"
+          class="bento-stat-card"
           style="grid-column: span 2; background: rgba(242, 140, 40, 0.05)"
         >
           <h2
-            class="fw-bold mb-1"
-            style="color: var(--sg-accent)"
+            style="color: var(--accent-color)"
             data-id="stat_2"
             data-editable="Stat 2"
           >
             {{ page_data.stat_2|default:"3000+" }}
           </h2>
-          <p class="text-white-50 uppercase small ls-1 mb-0">
-            Ziyaretçi ve Mülakat
-          </p>
+          <p class="text-white-50 small uppercase ls-1">Ziyaretçi & Mülakat</p>
         </div>
-        <div class="sg-stat-box">
+        <div class="bento-stat-card">
           <h2
-            class="text-white fw-bold mb-1"
+            class="text-white fw-bold"
             data-id="stat_3"
             data-editable="Stat 3"
           >
             {{ page_data.stat_3|default:"100+" }}
           </h2>
-          <p class="text-white-50 uppercase small ls-1 mb-0">
-            Staj & İş İmkanı
-          </p>
+          <p class="text-white-50 small uppercase ls-1">Staj & İş İmkanı</p>
         </div>
       </div>
 
-      <!-- Nedir Bloku (Bento Altı) -->
-      <div class="row justify-content-center mt-5">
-        <div class="col-lg-10">
+      <div class="row justify-content-center mt-4">
+        <div class="col-lg-12">
           <div
-            class="sg-stat-box text-start border-0"
+            class="bento-stat-card text-start border-0"
             style="background: rgba(255, 255, 255, 0.02)"
           >
             <div class="row g-4 align-items-center">
               <div class="col-md-7 border-end border-white-10">
                 <h6
-                  class="text-accent fw-bold uppercase ls-2 mb-3"
-                  style="color: var(--sg-accent)"
+                  class="fw-bold uppercase ls-2 mb-3"
+                  style="color: var(--accent-color)"
                 >
                   HAKKINDA
                 </h6>
@@ -199,41 +215,46 @@ Kariyerin Zirvesi - KOÜ EMK{% endblock %} {% block content %}
                   data-id="about_title"
                   data-editable="Hakkında Başlık"
                 >
-                  <!-- prettier-ignore -->
+                  <!--prettier-ignore-->
                   {{ page_data.about_title|default:"Kariyerinizin İlk Büyük Adımı" }}
                 </h2>
                 <p
-                  class="text-white-50 lh-lg"
+                  class="text-white-50 lh-lg mb-0"
                   data-id="about_desc"
                   data-editable="Hakkında Açıklama"
                 >
-                  {{ page_data.about_desc|default:"Şirket Günleri, her yıl
-                  onlarca global ve ulusal lider firmayı öğrencilerimizle
-                  buluşturan, mülakat simülasyonlarından canlı staj
-                  başvurularına kadar geniş bir kariyer yelpazesi sunan dev bir
-                  organizasyondur." }}
+                  <!--prettier-ignore-->
+                  {{ page_data.about_desc|default:"Şirket Günleri, her yıl onlarca global ve ulusal lider firmayı öğrencilerimizle buluşturan dev bir organizasyondur." }}
                 </p>
               </div>
               <div class="col-md-5 ps-md-5">
                 <h6 class="text-white-50 fw-bold uppercase ls-2 mb-3 small">
                   VİZYONUMUZ
                 </h6>
-                <div class="d-flex gap-3 mb-4">
-                  <div class="text-accent" style="color: var(--sg-accent)">
-                    <i class="fas fa-briefcase"></i>
+                <div class="d-flex gap-3 mb-3">
+                  <div style="color: var(--accent-color)">
+                    <i class="fas fa-briefcase fa-lg"></i>
                   </div>
-                  <p class="text-white-50 small mb-0">
-                    Öğrencilere henüz kampüsteyken profesyonel iş dünyasının
-                    kapılarını açmak.
+                  <p
+                    class="text-white-50 small mb-0"
+                    data-id="vision_1"
+                    data-editable="Vizyon 1"
+                  >
+                    <!--prettier-ignore-->
+                    {{ page_data.vision_1|default:"Öğrencilere kampüsteyken profesyonel iş dünyasının kapılarını açmak." }}
                   </p>
                 </div>
                 <div class="d-flex gap-3">
-                  <div class="text-accent" style="color: var(--sg-accent)">
-                    <i class="fas fa-handshake"></i>
+                  <div style="color: var(--accent-color)">
+                    <i class="fas fa-handshake fa-lg"></i>
                   </div>
-                  <p class="text-white-50 small mb-0">
-                    Üniversite-Sanayi köprüsünü doğrudan istihdam odaklı
-                    optimize etmek.
+                  <p
+                    class="text-white-50 small mb-0"
+                    data-id="vision_2"
+                    data-editable="Vizyon 2"
+                  >
+                    <!--prettier-ignore-->
+                    {{ page_data.vision_2|default:"Üniversite-Sanayi köprüsünü doğrudan istihdam odaklı optimize etmek." }}
                   </p>
                 </div>
               </div>
@@ -244,83 +265,155 @@ Kariyerin Zirvesi - KOÜ EMK{% endblock %} {% block content %}
     </div>
   </section>
 
-  <!-- Katılımcı Arşivi (Logo Grid) -->
-  <section class="bg-light py-5 mt-5" style="border-radius: 60px 60px 0 0">
-    <div class="container py-5">
-      <div class="text-center mb-5">
-        <h3 class="fw-bold mb-4 text-dark">Geçmiş Katılımcılarımız</h3>
-        <nav class="nav filter-pills justify-content-center" id="sg-filter-nav">
-          <a class="nav-link active" data-filter="all">TÜM YILLAR</a>
+  <section class="py-5">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-end mb-4 px-2">
+        <h2 class="text-warning fw-bold display-5">Etkinlik Arşivi</h2>
+        <div class="archive-pills d-flex gap-2">
+          <button
+            class="btn btn-outline-warning rounded-pill px-4 active"
+            data-filter="all"
+          >
+            Tümü
+          </button>
           {% for year in years %}
-          <a class="nav-link" data-filter="{{ year }}">{{ year }}</a>
+          <button
+            class="btn btn-outline-warning rounded-pill px-4"
+            data-filter="{{ year }}"
+          >
+            {{ year }}
+          </button>
           {% endfor %}
-        </nav>
+        </div>
       </div>
 
-      <div class="row g-4" id="sg-logo-grid">
+      <div class="story-scroll-container">
         {% for archive in archives %}
-        <div class="col-12 archive-year-section" data-year="{{ archive.year }}">
-          <h5 class="fw-bold text-muted mb-4 border-bottom pb-2">
-            {{ archive.year }} Dönemi
-          </h5>
-          <div class="row g-3">
-            {% for logo in archive.extra_data.logos %}
-            <div class="col-lg-2 col-md-3 col-6">
-              <div class="company-logo-card">
-                <img src="{{ logo }}" alt="Firma" loading="lazy" />
-              </div>
+        <div
+          class="story-card archive-item"
+          data-year="{{ archive.year }}"
+          onclick="showInlineDetail({{ archive.id }})"
+          role="button"
+        >
+          <div class="year-tag">{{ archive.year }}</div>
+          <img
+            src="{{ archive.cover_image.url }}"
+            alt="{{ archive.motto }}"
+            loading="lazy"
+          />
+          <div class="story-overlay">
+            <h3 class="text-white fw-bold mb-1">{{ archive.motto }}</h3>
+            <p class="text-white-50 small mb-0">
+              {{ archive.description|truncatewords:10 }}
+            </p>
+            <div class="text-warning mt-2 small fw-bold opacity-75">
+              <i class="fas fa-search-plus me-1"></i> İNCELE
             </div>
-            {% endfor %}
           </div>
         </div>
         {% endfor %}
+      </div>
+
+      <div id="inlineDetail" class="detail-preview-panel">
+        <div id="detailContent"></div>
       </div>
     </div>
   </section>
 </div>
 
 <script>
-  // 1. Filtreleme Mantığı
-  document.addEventListener("DOMContentLoaded", function () {
-    const filters = document.querySelectorAll("#sg-filter-nav .nav-link");
-    const sections = document.querySelectorAll(".archive-year-section");
+  // 1. DETAIL PANEL MOTORU
+  async function showInlineDetail(id) {
+    const panel = document.getElementById("inlineDetail");
+    const content = document.getElementById("detailContent");
+    panel.style.display = "block";
+    panel.scrollIntoView({ behavior: "smooth", block: "center" });
+    content.innerHTML = `<div class="p-5 text-center text-white my-5"><i class="fas fa-circle-notch fa-spin fa-3x text-warning"></i></div>`;
 
-    filters.forEach((filter) => {
-      filter.addEventListener("click", function () {
-        filters.forEach((f) => f.classList.remove("active"));
-        this.classList.add("active");
+    try {
+      const res = await fetch(`/editor/get-archive/${id}/`);
+      const data = await res.json();
 
-        const year = this.getAttribute("data-filter");
-        sections.forEach((sec) => {
-          if (year === "all" || sec.getAttribute("data-year") === year) {
-            sec.style.display = "block";
-          } else {
-            sec.style.display = "none";
-          }
-        });
+      // Şirket Günleri'ne özel logoları da burada dökebiliriz
+      let logosHTML = "";
+      if (data.extra_data?.logos?.length > 0) {
+        logosHTML = `
+            <div class="mt-4">
+                <h6 class="extra-small fw-bold ls-2 text-white-50 mb-3 uppercase">KATILIMCI FİRMALAR</h6>
+                <div class="row g-2">
+                    ${data.extra_data.logos
+                      .map(
+                        (logo) => `
+                        <div class="col-3 col-md-2">
+                            <div class="bg-white p-2 rounded-3 d-flex align-items-center justify-content-center" style="height:60px; overflow:hidden;">
+                                <img src="${logo}" style="max-width:100%; max-height:100%; object-fit:contain;">
+                            </div>
+                        </div>
+                    `,
+                      )
+                      .join("")}
+                </div>
+            </div>`;
+      }
+
+      content.innerHTML = `
+      <div class="row g-0">
+        <div class="col-md-5" style="background:url('${data.cover_url}') center/cover no-repeat; min-height:450px;"></div>
+        <div class="col-md-7 p-4 p-md-5 text-white position-relative d-flex flex-column justify-content-center">
+          <button onclick="closeDetail()" class="btn btn-link text-white position-absolute top-0 end-0 m-4 opacity-50"><i class="fas fa-times fa-lg"></i></button>
+          <div class="mb-2">
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold mb-3">${data.year}</span>
+            <h2 class="display-6 fw-bold mb-3">${data.motto}</h2>
+          </div>
+          <p class="text-white-50 lh-lg mb-0" style="font-size: 1.05rem;">${data.description || "Detaylar girilmemiş."}</p>
+          ${logosHTML}
+        </div>
+      </div>`;
+    } catch (e) {
+      content.innerHTML = `<div class="p-5 text-center text-danger"><p>Hata oluştu kanka.</p></div>`;
+    }
+  }
+
+  function closeDetail() {
+    document.getElementById("inlineDetail").style.display = "none";
+  }
+
+  // 2. FİLTRELEME
+  document.querySelectorAll("[data-filter]").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const year = this.getAttribute("data-filter");
+      document.querySelectorAll(".archive-item").forEach((item) => {
+        item.style.display =
+          year === "all" || item.getAttribute("data-year") === year
+            ? "block"
+            : "none";
       });
+      document
+        .querySelectorAll("[data-filter]")
+        .forEach((b) => b.classList.remove("active"));
+      this.classList.add("active");
     });
   });
 
-  // 2. Sayaç (SG Hedefi)
-  const sgTarget = new Date(
-    "{{ page_data.sg_target|default:'Apr 10, 2026 09:00:00' }}",
-  ).getTime();
-  function updateSGTimer() {
-    const now = new Date().getTime();
-    const diff = sgTarget - now;
-    if (diff < 0) return;
-    document.getElementById("sg-days").innerText = String(
+  // 3. SAYAÇ (TIMER)
+  /* prettier-ignore */
+  const targetDate = new Date(document.getElementById("target_date_storage").innerText.trim() || "{{ page_data.target_date|default:'2026-04-10 09:00:00' }}").getTime();
+
+  function updateTimer() {
+    const diff = targetDate - new Date().getTime();
+    if (isNaN(targetDate) || diff < 0) return;
+    document.getElementById("k-days").innerText = String(
       Math.floor(diff / 86400000),
     ).padStart(2, "0");
-    document.getElementById("sg-hours").innerText = String(
+    document.getElementById("k-hours").innerText = String(
       Math.floor((diff % 86400000) / 3600000),
     ).padStart(2, "0");
-    document.getElementById("sg-mins").innerText = String(
+    document.getElementById("k-mins").innerText = String(
       Math.floor((diff % 3600000) / 60000),
     ).padStart(2, "0");
   }
-  setInterval(updateSGTimer, 1000);
-  updateSGTimer();
+  setInterval(updateTimer, 1000);
+  updateTimer();
 </script>
+
 {% endblock %}

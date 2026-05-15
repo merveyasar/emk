@@ -118,7 +118,14 @@
     border-radius: 100px;
   }
 </style>
-
+<div
+  id="target_date_storage"
+  data-id="target_date"
+  data-editable="Sayaç Tarihi (Format: YYYY-MM-DD HH:MM:SS)"
+  style="display: none"
+>
+  {{ page_data.target_date|default:"2026-05-13 09:00:00" }}
+</div>
 <div
   class="org-page-wrapper"
   data-model="PageContent,OrganizationArchive"
@@ -138,8 +145,8 @@
       <div
         class="d-flex justify-content-center gap-4 text-white-50 mb-5 fw-bold ls-2"
       >
-        <span id="k-days">00</span>D : <span id="k-hours">00</span>H :
-        <span id="k-mins">00</span>M
+        <span id="k-days">00</span> GÜN : <span id="k-hours">00</span> SAAT :
+        <span id="k-mins">00</span> DK
       </div>
 
       <div class="bento-stat-grid">
@@ -253,7 +260,7 @@
   <section class="py-5">
     <div class="container">
       <div class="d-flex justify-content-between align-items-end mb-4 px-2">
-        <h2 class="text-white fw-bold display-5">Etkinlik Arşivi</h2>
+        <h2 class="text-warning fw-bold display-5">Etkinlik Arşivi</h2>
         <div class="archive-pills d-flex gap-2">
           <button
             class="btn btn-outline-warning rounded-pill px-4 active"
@@ -423,12 +430,27 @@
     });
   });
 
-  const targetDate = new Date(
-    "{{ page_data.target_date|default:'May 13, 2026 09:00:00' }}",
-  ).getTime();
-  setInterval(() => {
-    const diff = targetDate - new Date().getTime();
-    if (diff < 0) return;
+  /* prettier-ignore */
+  // Önce gizli div'deki tarihi al, yoksa Django'dan geleni kullan, o da yoksa default.
+  const timerContainer = document.getElementById("target_date_storage");
+  const targetStr = timerContainer
+    ? timerContainer.innerText.trim()
+    : "{{ page_data.target_date|default:'2026-05-13 09:00:00' }}";
+
+  const targetDate = new Date(targetStr).getTime();
+
+  function updateTimer() {
+    const now = new Date().getTime();
+    const diff = targetDate - now;
+
+    if (isNaN(targetDate) || diff < 0) {
+      // Tarih hatalıysa veya süre bittiyse sıfırla
+      document.getElementById("k-days").innerText = "00";
+      document.getElementById("k-hours").innerText = "00";
+      document.getElementById("k-mins").innerText = "00";
+      return;
+    }
+
     document.getElementById("k-days").innerText = String(
       Math.floor(diff / 86400000),
     ).padStart(2, "0");
@@ -438,7 +460,9 @@
     document.getElementById("k-mins").innerText = String(
       Math.floor((diff % 3600000) / 60000),
     ).padStart(2, "0");
-  }, 1000);
+  }
+  setInterval(updateTimer, 1000);
+  updateTimer();
 </script>
 
 {% endblock %}

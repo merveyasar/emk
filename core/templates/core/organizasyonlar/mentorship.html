@@ -1,16 +1,16 @@
 {% extends 'base.html' %} {% load static %} {% block title %}Menti-Mentör |
 Geleceğe Rehberlik - KOÜ EMK{% endblock %} {% block content %}
+
 <style>
   :root {
-    --mm-accent: #f28c28;
-    --mm-glass: rgba(255, 255, 255, 0.03);
-    --mm-border: rgba(255, 255, 255, 0.08);
+    --accent-color: #f28c28;
+    --glass: rgba(255, 255, 255, 0.03);
   }
 
   /* 1. Mentorship Hero */
-  .mm-hero {
+  .hero-glass-section {
     position: relative;
-    padding: 180px 0 100px;
+    padding: 160px 0 100px;
     background:
       radial-gradient(
         circle at top right,
@@ -18,34 +18,37 @@ Geleceğe Rehberlik - KOÜ EMK{% endblock %} {% block content %}
         transparent
       ),
       #0f1012;
-    border-radius: 0 0 100px 100px;
+    border-radius: 0 0 80px 80px;
     margin-top: -100px;
     overflow: hidden;
   }
-  .hero-bg-layer {
+  .hero-glass-section::before {
+    content: "";
     position: absolute;
     inset: 0;
     background: url("{{ page_data.hero_img|default:'https://images.unsplash.com/photo-1521737711867-e3b97375f902' }}")
       center/cover no-repeat;
     opacity: 0.15;
-    filter: grayscale(1) brightness(0.8);
+    filter: grayscale(1) brightness(0.8) blur(3px);
   }
 
-  /* 2. Bento Stat Cards */
-  .mm-stat-card {
-    background: var(--mm-glass);
-    backdrop-filter: blur(25px);
-    border: 1px solid var(--mm-border);
-    border-radius: 35px;
-    padding: 35px;
-    transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  /* 2. Bento Stats */
+  .bento-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 50px;
   }
-  .mm-stat-card:hover {
-    transform: translateY(-8px);
-    border-color: var(--mm-accent);
+  .bento-stat-card {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 30px;
+    padding: 30px;
+    transition: 0.4s ease;
   }
 
-  /* 3. Mentor Card (Minimalist Apple Style) */
+  /* 3. Mentor Card (Apple Style) */
   .mentor-card {
     background: white;
     border-radius: 30px;
@@ -59,57 +62,95 @@ Geleceğe Rehberlik - KOÜ EMK{% endblock %} {% block content %}
     transform: translateY(-10px);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
   }
-
   .mentor-avatar {
     width: 100px;
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 20px;
-    border: 3px solid var(--mm-accent);
+    border: 3px solid var(--accent-color);
     padding: 3px;
   }
 
-  /* 4. Story Scroll (Bizden Kareler) */
-  .mm-story-container {
+  /* 4. INLINE DETAIL PANEL (Büyüteç) */
+  .detail-preview-panel {
+    display: none;
+    background: #161719;
+    border-radius: 40px;
+    margin-bottom: 50px;
+    border: 1px solid var(--accent-color);
+    overflow: hidden;
+    animation: slideDown 0.6s cubic-bezier(0.2, 1, 0.2, 1);
+  }
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 5. Story Scroll */
+  .story-scroll-container {
     display: flex;
-    gap: 25px;
+    gap: 30px;
     overflow-x: auto;
     padding: 20px 0 60px;
     scrollbar-width: none;
-    -ms-overflow-style: none;
   }
-  .mm-story-container::-webkit-scrollbar {
+  .story-scroll-container::-webkit-scrollbar {
     display: none;
   }
-  .mm-story-card {
-    flex: 0 0 320px;
+  .story-card {
+    flex: 0 0 350px;
     height: 450px;
+    position: relative;
     border-radius: 40px;
     overflow: hidden;
-    position: relative;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
   }
-  .mm-story-card img {
+  .story-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: 1s;
+    transition: 1.2s;
   }
-  .mm-story-card:hover img {
+  .story-card:hover img {
     transform: scale(1.1);
+  }
+  .story-overlay {
+    position: absolute;
+    inset: 0;
+    padding: 40px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent 60%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .year-tag {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: var(--accent-color);
+    color: #000;
+    font-weight: 800;
+    padding: 8px 20px;
+    border-radius: 100px;
   }
 </style>
 
 <div
   class="mm-master-wrapper"
-  data-model="PageContent,OrganizationArchive"
+  data-model="PageContent,OrganizationArchive,Mentor"
+  data-sub-model="menti-mentor"
   data-path="{{ request.path }}"
 >
-  <!-- Hero & Stats -->
-  <section class="mm-hero text-center">
-    <div class="hero-bg-layer"></div>
-    <div class="container position-relative z-index-10">
+  <section class="hero-glass-section">
+    <div class="container position-relative z-index-10 text-center">
       <h1
         class="display-3 fw-bold text-white mb-3"
         data-id="hero_title"
@@ -124,119 +165,59 @@ Geleceğe Rehberlik - KOÜ EMK{% endblock %} {% block content %}
         data-editable="Hero Alt Başlık"
       >
         <!--prettier-ignore-->
-        {{ page_data.hero_subtitle|default:"Tecrübenin genç vizyonla buluştuğu, mezun-öğrenci bağını optimize eden gelişim yolculuğu." }}
+        {{ page_data.hero_subtitle|default:"Tecrübenin genç vizyonla buluştuğu gelişim yolculuğu." }}
       </p>
 
-      <!-- Bento Stats -->
-      <div class="row g-4 justify-content-center mb-5">
-        <div class="col-md-3">
-          <div
-            class="mm-stat-card border-0"
-            style="background: rgba(255, 255, 255, 0.02)"
+      <div class="bento-stat-grid">
+        <div class="bento-stat-card">
+          <h2
+            class="text-white fw-bold"
+            data-id="stat_1"
+            data-editable="Stat 1"
           >
-            <h2
-              class="text-white fw-bold mb-1"
-              data-id="stat_1"
-              data-editable="Stat 1"
-            >
-              {{ page_data.stat_1|default:"100+" }}
-            </h2>
-            <p class="text-white-50 uppercase small ls-1">Aktif Eşleşme</p>
-          </div>
+            {{ page_data.stat_1|default:"100+" }}
+          </h2>
+          <p class="text-white-50 small uppercase ls-1">Aktif Eşleşme</p>
         </div>
-        <div class="col-md-3">
-          <div
-            class="mm-stat-card border-0"
-            style="background: rgba(242, 140, 40, 0.05)"
+        <div
+          class="bento-stat-card"
+          style="grid-column: span 2; background: rgba(242, 140, 40, 0.05)"
+        >
+          <h2
+            style="color: var(--accent-color)"
+            class="fw-bold"
+            data-id="stat_2"
+            data-editable="Stat 2"
           >
-            <h2
-              class="fw-bold mb-1"
-              style="color: var(--mm-accent)"
-              data-id="stat_2"
-              data-editable="Stat 2"
-            >
-              {{ page_data.stat_2|default:"60+" }}
-            </h2>
-            <p class="text-white-50 uppercase small ls-1">Gönüllü Mentör</p>
-          </div>
+            {{ page_data.stat_2|default:"60+" }}
+          </h2>
+          <p class="text-white-50 small uppercase ls-1">Gönüllü Mentör</p>
         </div>
-      </div>
-
-      <!-- Hakkında & Vizyon -->
-      <div class="row justify-content-center mt-5 text-start">
-        <div class="col-lg-10">
-          <div
-            class="mm-stat-card border-0"
-            style="background: rgba(255, 255, 255, 0.02)"
+        <div class="bento-stat-card">
+          <h2
+            class="text-white fw-bold"
+            data-id="stat_3"
+            data-editable="Stat 3"
           >
-            <div class="row g-4 align-items-center">
-              <div class="col-md-7 border-end border-white-10">
-                <h6
-                  class="text-accent fw-bold uppercase ls-2 mb-3"
-                  style="color: var(--mm-accent)"
-                >
-                  PROGRAM HAKKINDA
-                </h6>
-                <h2
-                  class="text-white fw-bold mb-3"
-                  data-id="about_title"
-                  data-editable="Nedir Başlık"
-                >
-                  <!--prettier-ignore-->
-                  {{ page_data.about_title|default:"Kariyer Yolculuğunda Rehberlik" }}
-                </h2>
-                <p
-                  class="text-white-50 lh-lg"
-                  data-id="about_desc"
-                  data-editable="Nedir Açıklama"
-                >
-                  <!--prettier-ignore-->
-                  {{ page_data.about_desc|default:"Menti-Mentör programı, mezunlarımızın profesyonel deneyimlerini henüz öğrenci olan üyelerimize aktardığı, EMK bağlarını güçlendiren bir rehberlik sistemidir." }}
-                </p>
-              </div>
-              <div class="col-md-5 ps-md-5">
-                <h6 class="text-white-50 fw-bold uppercase ls-2 mb-3 small">
-                  HEDEFLER
-                </h6>
-                <div class="d-flex gap-3 mb-4">
-                  <i class="fas fa-seedling text-warning"></i>
-                  <p class="text-white-50 small mb-0">
-                    Öğrencilerin kariyer farkındalığını artırmak.
-                  </p>
-                </div>
-                <div class="d-flex gap-3">
-                  <i class="fas fa-network-wired text-warning"></i>
-                  <p class="text-white-50 small mb-0">
-                    Güçlü bir mezun-öğrenci network'ü oluşturmak.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+            {{ page_data.stat_3|default:"1500+" }}
+          </h2>
+          <p class="text-white-50 small uppercase ls-1">Mezun Ağı</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Mentör Portföyü -->
   <section class="container py-5 mt-5">
     <div class="text-center mb-5">
-      <h2 class="fw-bold text-dark display-5">Mentörlerimiz</h2>
-      <p class="text-muted">
-        Gönüllü rehberlikleriyle geleceğe ışık tutan mezunlarımız.
-      </p>
+      <h2 class="fw-bold text-dark display-5">Güncel Mentörlerimiz</h2>
+      <p class="text-muted">Geleceğe ışık tutan değerli mezunlarımız.</p>
     </div>
-
     <div class="row g-4">
-      {% for mentor in current_archive.extra_data.mentors %}
-      <div
-        class="col-lg-3 col-md-6"
-        data-aos="fade-up"
-        data-aos-delay="{{ forloop.counter|add:'100' }}"
-      >
+      {% for mentor in mentors %}
+      <div class="col-lg-3 col-md-6">
         <div class="mentor-card">
           <img
-            src="{{ mentor.image }}"
+            src="{% if mentor.image %}{{ mentor.image.url }}{% else %}https://ui-avatars.com/api/?name={{ mentor.name|urlencode }}&background=f28c28&color=fff{% endif %}"
             class="mentor-avatar"
             alt="{{ mentor.name }}"
           />
@@ -247,56 +228,119 @@ Geleceğe Rehberlik - KOÜ EMK{% endblock %} {% block content %}
           <small class="text-muted d-block">{{ mentor.title }}</small>
         </div>
       </div>
-      {% empty %}
-      <div class="col-12 text-center py-5 opacity-25">
-        Mentör listesi henüz yüklenmemiş.
-      </div>
       {% endfor %}
     </div>
   </section>
 
-  <!-- Bizden Kareler (Horizontal Scroll) -->
-  <section class="py-5 mt-5">
-    <div class="container py-5">
+  <section class="py-5">
+    <div class="container">
       <div class="d-flex justify-content-between align-items-end mb-4 px-2">
-        <h2 class="text-warning fw-bold display-5 m-0">Bizden Kareler</h2>
-        <small class="text-warning opacity-75"
-          >Sağa kaydır <i class="fas fa-chevron-right ms-1"></i
-        ></small>
+        <h2 class="text-warning fw-bold display-5">Program Arşivi</h2>
+        <div class="archive-pills d-flex gap-2">
+          <button
+            class="btn btn-outline-warning rounded-pill px-4 active"
+            data-filter="all"
+          >
+            Tümü
+          </button>
+          {% for year in years %}<button
+            class="btn btn-outline-warning rounded-pill px-4"
+            data-filter="{{ year }}"
+          >
+            {{ year }}</button
+          >{% endfor %}
+        </div>
       </div>
 
-      <div class="mm-story-container">
-        {% for archive in archives %} {% for img in archive.extra_data.images %}
-        <div class="mm-story-card">
-          <img src="{{ img }}" alt="Program Anısı" loading="lazy" />
-          <div
-            class="position-absolute bottom-0 start-0 w-100 p-4"
-            style="background: linear-gradient(transparent, rgba(0, 0, 0, 0.7))"
-          >
-            <span class="badge bg-warning text-dark">{{ archive.year }}</span>
+      <div class="story-scroll-container">
+        {% for archive in archives %}
+        <div
+          class="story-card archive-item"
+          data-year="{{ archive.year }}"
+          onclick="showInlineDetail({{ archive.id }})"
+          role="button"
+        >
+          <div class="year-tag">{{ archive.year }}</div>
+          <img
+            src="{{ archive.cover_image.url }}"
+            alt="{{ archive.motto }}"
+            loading="lazy"
+          />
+          <div class="story-overlay">
+            <h3 class="text-white fw-bold mb-1">{{ archive.motto }}</h3>
+            <p class="text-white-50 small mb-0">
+              {{ archive.description|truncatewords:10 }}
+            </p>
           </div>
         </div>
-        {% endfor %} {% endfor %}
+        {% endfor %}
+      </div>
+      <div id="inlineDetail" class="detail-preview-panel">
+        <div id="detailContent"></div>
       </div>
     </div>
   </section>
 </div>
 
 <script>
-  // Editör Mesajlaşması
-  document.addEventListener("click", function (e) {
-    if (window.self === window.top) return;
-    const target = e.target.closest(".mentor-card");
-    if (target) {
-      window.parent.postMessage(
-        {
-          type: "OBJECT_CLICKED",
-          model: "OrganizationArchive",
-          object: "{{ current_archive.id }}",
-        },
-        "*",
-      );
+  async function showInlineDetail(id) {
+    const panel = document.getElementById("inlineDetail");
+    const content = document.getElementById("detailContent");
+    panel.style.display = "block";
+    panel.scrollIntoView({ behavior: "smooth", block: "center" });
+    content.innerHTML = `<div class="p-5 text-center text-white my-5"><i class="fas fa-circle-notch fa-spin fa-3x text-warning"></i></div>`;
+
+    try {
+      const res = await fetch(`/editor/get-archive/${id}/`);
+      const data = await res.json();
+
+      let mentorsHTML =
+        data.extra_data?.mentors
+          ?.map(
+            (m) => `
+        <div class="col-md-4 mb-3">
+          <div class="p-3 rounded-4 bg-white text-dark d-flex align-items-center gap-3">
+             <img src="${m.image}" class="rounded-circle" style="width:50px; height:50px; object-fit:cover;">
+             <div><div class="fw-bold small">${m.name}</div><div class="extra-small text-muted">${m.company}</div></div>
+          </div>
+        </div>`,
+          )
+          .join("") || "";
+
+      content.innerHTML = `
+        <div class="row g-0">
+          <div class="col-md-5" style="background:url('${data.cover_url}') center/cover no-repeat; min-height:450px;"></div>
+          <div class="col-md-7 p-4 p-md-5 text-white position-relative d-flex flex-column justify-content-center">
+            <button onclick="closeDetail()" class="btn btn-link text-white position-absolute top-0 end-0 m-4 opacity-50"><i class="fas fa-times fa-lg"></i></button>
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold mb-3">${data.year}</span>
+            <h2 class="display-6 fw-bold mb-3">${data.motto}</h2>
+            <p class="text-white-50 lh-lg mb-4">${data.description || "Program detayları."}</p>
+            <h6 class="extra-small fw-bold ls-2 text-warning mb-3 uppercase">DÖNEM MENTÖRLERİ</h6>
+            <div class="row g-2">${mentorsHTML}</div>
+          </div>
+        </div>`;
+    } catch (e) {
+      content.innerHTML = `<p class="p-5 text-center text-danger">Hata oluştu.</p>`;
     }
+  }
+  function closeDetail() {
+    document.getElementById("inlineDetail").style.display = "none";
+  }
+
+  document.querySelectorAll("[data-filter]").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const year = this.getAttribute("data-filter");
+      document.querySelectorAll(".archive-item").forEach((item) => {
+        item.style.display =
+          year === "all" || item.getAttribute("data-year") === year
+            ? "block"
+            : "none";
+      });
+      document
+        .querySelectorAll("[data-filter]")
+        .forEach((b) => b.classList.remove("active"));
+      this.classList.add("active");
+    });
   });
 </script>
 {% endblock %}
